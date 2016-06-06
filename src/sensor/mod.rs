@@ -1,17 +1,17 @@
 #[derive(Debug,Eq,PartialEq)]
 pub enum SensorType {
-    NEMOTO_CO,
-    NEMOTO_NO,
+    NemotoCO,
+    NemotoNO,
 }
 
 pub struct Sensor {
-    pub adc_value: u32,
+    pub adc_value: Option<u32>,
     pub sensor_type: SensorType,
 }
 
 impl Sensor {
     pub fn new(sensor_type: SensorType) -> Self {
-        Sensor { adc_value: 0, sensor_type: sensor_type }
+        Sensor { adc_value: None, sensor_type: sensor_type }
     }
 }
 

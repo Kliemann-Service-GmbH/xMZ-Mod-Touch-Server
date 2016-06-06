@@ -9,7 +9,7 @@ use xmz_shift_register::{ShiftRegister, RegisterType};
 pub struct Server {
     leds: ShiftRegister,
     relais: ShiftRegister,
-    module: Vec<Module>,
+    module: Option<Vec<Module>>,
     zonen: Vec<Zone>
 }
 
@@ -18,7 +18,7 @@ impl Server {
         Server {
             leds: ShiftRegister::new(RegisterType::LED),
             relais: ShiftRegister::new(RegisterType::RELAIS),
-            module: vec!(),
+            module: None,
             zonen: vec![
                 Zone::new(ZoneType::Stoerung),
                 Zone::new(ZoneType::Schwellenwert),
@@ -52,7 +52,7 @@ impl Server {
 #[cfg(test)]
 mod test {
     use server::Server;
-    
+
     #[test]
     fn server_default_werte() {
         let server = Server::new();

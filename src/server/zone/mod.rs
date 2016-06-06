@@ -1,15 +1,14 @@
-//! Alarmzonen, Schaltpunkte die die Relais und LED steuern
 pub enum ZoneType {
     Stoerung,
     Schwellenwert,
 }
 
-#[derive(Clone)] // f+r die Initalisierung `vec![Alarmpunkt(false); 4]`
+#[derive(Clone, Debug, Eq, PartialEq)] // f+r die Initalisierung `vec![Alarmpunkt(false); 4]`
 struct Alarmpunkt(bool);
 
 pub struct Zone {
     zone_type: ZoneType,
-    alarm_punkte: Vec<Alarmpunkt>,
+    alarmpunkte: Vec<Alarmpunkt>,
 }
 
 impl Zone {
@@ -17,11 +16,11 @@ impl Zone {
         match zone_type {
             ZoneType::Stoerung => Zone {
                 zone_type: ZoneType::Stoerung,
-                alarm_punkte: vec![Alarmpunkt(false)],
+                alarmpunkte: vec![Alarmpunkt(false)],
             },
             ZoneType::Schwellenwert => Zone {
                 zone_type: ZoneType::Schwellenwert,
-                alarm_punkte: vec![Alarmpunkt(false); 4],
+                alarmpunkte: vec![Alarmpunkt(false); 4],
             },
         }
     }
@@ -30,17 +29,25 @@ impl Zone {
 
 #[cfg(test)]
 mod tests {
-    use server::zone::{Zone, ZoneType};
+    use server::zone::{Alarmpunkt, Zone, ZoneType};
 
     #[test]
     fn zone_type_stoerung_hat_ein_alarmpunkt() {
         let zone = Zone::new(ZoneType::Stoerung);
-        assert_eq!(zone.alarm_punkte.len(), 1);
+        assert_eq!(zone.alarmpunkte.len(), 1);
     }
 
     #[test]
     fn zone_type_schwellenwert_hat_4_alarmpunkte() {
         let zone = Zone::new(ZoneType::Schwellenwert);
-        assert_eq!(zone.alarm_punkte.len(), 4);
+        assert_eq!(zone.alarmpunkte.len(), 4);
+    }
+
+    #[test]
+    fn alarmpunkt_kann_gesetzt_werden() {
+        let mut zone = Zone::new(ZoneType::Schwellenwert);
+        assert_eq!(zone.alarmpunkte[1], Alarmpunkt(false));
+        zone.alarmpunkte[1] = Alarmpunkt(true);
+        assert_eq!(zone.alarmpunkte[1], Alarmpunkt(true));
     }
 }
