@@ -1,7 +1,5 @@
 //! Alarmzonen, Schaltpunkte die die Relais und LED steuern
-
-
-enum ZoneType {
+pub enum ZoneType {
     Stoerung,
     Schwellenwert,
 }
@@ -9,13 +7,13 @@ enum ZoneType {
 #[derive(Clone)] // f+r die Initalisierung `vec![Alarmpunkt(false); 4]`
 struct Alarmpunkt(bool);
 
-struct Zone {
+pub struct Zone {
     zone_type: ZoneType,
     alarm_punkte: Vec<Alarmpunkt>,
 }
 
 impl Zone {
-    fn new(zone_type: ZoneType) -> Self {
+    pub fn new(zone_type: ZoneType) -> Self {
         match zone_type {
             ZoneType::Stoerung => Zone {
                 zone_type: ZoneType::Stoerung,
