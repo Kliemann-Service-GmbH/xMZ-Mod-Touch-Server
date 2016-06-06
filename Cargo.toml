@@ -6,7 +6,7 @@ description = "xMZ-Mod-Touch Client Server Binaries"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
 homepage = "https://gaswarnanlagen.com/xmz-mod-touch"
 repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Client-Server.git"
-license = "GPL-3.0"
+license = "AGPL-3.0"
 
 [dependencies]
 nanomsg = "*"
