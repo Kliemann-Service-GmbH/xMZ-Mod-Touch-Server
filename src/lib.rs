@@ -1,6 +1,6 @@
-#![doc(html_logo_url = "../../../share/xmz-logo.png",
-       html_favicon_url = "../../../share/favicon.ico",
-       html_root_url = "https://doc.rust-lang.org/")]
+#![doc(html_logo_url = "https://raw.githubusercontent.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server/master/share/xmz-logo.png",
+       html_favicon_url = "https://raw.githubusercontent.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server/master/share/favicon.ico",
+       html_root_url = "https://gaswarnanlagen.com/")]
 #![feature(stmt_expr_attributes)]
 //! xMZ-Mod-Touch Server
 //!
