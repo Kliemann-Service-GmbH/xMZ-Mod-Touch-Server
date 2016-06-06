@@ -10,3 +10,4 @@ license = "GPL-3.0"
 
 [dependencies]
 nanomsg = "*"
+xmz_shift_register = { git = "https://github.com/zzeroo/xmz_shift_register.git" }

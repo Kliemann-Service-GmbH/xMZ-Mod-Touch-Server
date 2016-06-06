@@ -1,17 +1,46 @@
-//! xMZ-Mod-Touch Server Core
+//! xMZ-Mod-Touch Server
 //!
-//! Der Kern des Servers.
-use module::Module;
+//! Das ist der zentrale Teil der 'xMZ-Mod-Touch'-Plattform.
+mod zone;
 
-struct Server {
-    led: u8,
-    relais: u8,
-    module: Vec<Module>,
+use module::Module;
+use xmz_shift_register::{ShiftRegister, RegisterType};
+
+pub struct Server {
+    leds: ShiftRegister,
+    relais: ShiftRegister,
+    modules: Vec<Module>,
 }
 
 impl Server {
     pub fn new() -> Self {
-        Server { led: 0, relais: 0, module: vec!() }
+        Server {
+            leds: ShiftRegister::new(RegisterType::LED),
+            relais: ShiftRegister::new(RegisterType::RELAIS),
+            modules: vec!()
+        }
+    }
+
+    /// Default Konfiguration des Servers
+    pub fn default_configuration(&mut self) {
+        self.relais.set(1);
+        self.leds.set(1);
+        self.leds.set(3);
+        #[cfg(target_arch = "arm")]
+        {
+            self.leds.shift_out();
+            self.relais.init();
+        }
+    }
+
+    pub fn init(&mut self) {
+        #[cfg(target_arch = "arm")]
+        {
+            self.leds.init();
+            self.relais.init();
+        }
+
+        self.default_configuration();
     }
 }
 

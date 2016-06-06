@@ -3,7 +3,13 @@ name = "xmz_server"
 version = "0.1.0"
 dependencies = [
  "nanomsg 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "xmz_shift_register 0.1.0 (git+https://github.com/zzeroo/xmz_shift_register.git)",
 ]
+
+[[package]]
+name = "bitflags"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "libc"
@@ -25,5 +31,30 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "nix"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "bitflags 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "sysfs_gpio"
+version = "0.4.0"
+source = "git+https://github.com/zzeroo/rust-sysfs-gpio.git#df18636b02b6fbbd5a02694ac6fa8242c1cb8cb3"
+dependencies = [
+ "nix 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "xmz_shift_register"
+version = "0.1.0"
+source = "git+https://github.com/zzeroo/xmz_shift_register.git#7e653c2805248e360e77405b561ecc0d949c5556"
+dependencies = [
+ "sysfs_gpio 0.4.0 (git+https://github.com/zzeroo/rust-sysfs-gpio.git)",
 ]
 
