@@ -10,7 +10,7 @@ impl<'a> Module<'a> {
         Module {
             sensor: vec![
                 Sensor::new(SensorType::NemotoCO),
-                Sensor::new(SensorType::NemotoNO),
+                Sensor::new(SensorType::NemotoNO2),
             ]
         }
     }
@@ -31,6 +31,6 @@ mod test {
     fn default_module_sensor1() {
         let module = Module::new();
         assert_eq!(module.sensor[0].sensor_type, SensorType::NemotoCO);
-        assert_eq!(module.sensor[1].sensor_type, SensorType::NemotoNO);
+        assert_eq!(module.sensor[1].sensor_type, SensorType::NemotoNO2);
     }
 }

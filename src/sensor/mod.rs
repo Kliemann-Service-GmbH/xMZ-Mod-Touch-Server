@@ -2,8 +2,8 @@ use server::zone::Zone;
 
 #[derive(Debug,Eq,PartialEq)]
 pub enum SensorType {
+    NemotoNO2,
     NemotoCO,
-    NemotoNO,
 }
 
 #[derive(Debug,Eq,PartialEq)]
@@ -24,18 +24,18 @@ pub struct Sensor<'a> {
 impl<'a> Sensor<'a> {
     pub fn new(sensor_type: SensorType) -> Self {
         match sensor_type {
-            SensorType::NemotoCO => {
+            SensorType::NemotoNO2 => {
                 Sensor {
-                    sensor_type: SensorType::NemotoCO,
+                    sensor_type: SensorType::NemotoNO2,
                     adc_value: None,
                     modbus_register_address: 1,
                     alarmauswertung: Alarmauswertung::Simulation,
                     zones: vec!(),
                 }
             },
-            SensorType::NemotoNO => {
+            SensorType::NemotoCO => {
                 Sensor {
-                    sensor_type: SensorType::NemotoNO,
+                    sensor_type: SensorType::NemotoCO,
                     adc_value: None,
                     modbus_register_address: 2,
                     alarmauswertung: Alarmauswertung::Simulation,
@@ -53,21 +53,21 @@ mod test {
     use sensor::{Alarmauswertung, Sensor, SensorType};
 
     #[test]
-    fn modbus_register_address_nemoto_co() {
-        let sensor = Sensor::new(SensorType::NemotoCO);
+    fn modbus_register_adresse_nemoto_no2() {
+        let sensor = Sensor::new(SensorType::NemotoNO2);
         assert_eq!(sensor.modbus_register_address, 1);
     }
 
     #[test]
-    fn modbus_register_adresse_nemoto_no() {
-        let sensor = Sensor::new(SensorType::NemotoNO);
+    fn modbus_register_address_nemoto_co() {
+        let sensor = Sensor::new(SensorType::NemotoCO);
         assert_eq!(sensor.modbus_register_address, 2);
     }
 
     #[test]
     fn alarmauswertung() {
         let sensor1 = Sensor::new(SensorType::NemotoCO);
-        let sensor2 = Sensor::new(SensorType::NemotoNO);
+        let sensor2 = Sensor::new(SensorType::NemotoNO2);
         assert_eq!(sensor1.alarmauswertung, Alarmauswertung::Simulation);
         assert_eq!(sensor2.alarmauswertung, Alarmauswertung::Simulation);
     }
