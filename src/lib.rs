@@ -3,8 +3,9 @@
        html_root_url = "https://gaswarnanlagen.com/")]
 #![feature(stmt_expr_attributes)]
 //! xMZ-Mod-Touch Server
-extern crate xmz_shift_register;
-
+//extern crate xmz_shift_register;
+/// Shift register, Zugriff und Steuerung der an die Shift Register angeschlossenen Hardware
+pub mod shift_register;
 /// Server
 ///
 /// Der Server Prozess ist der Hauptprozess der 'xMZ-Mod-Touch' Plattform.

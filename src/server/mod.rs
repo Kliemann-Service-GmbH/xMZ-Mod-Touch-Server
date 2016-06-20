@@ -1,10 +1,12 @@
 //! xMZ-Mod-Touch Server
 //!
 //! Das ist der zentrale Teil der 'xMZ-Mod-Touch'-Plattform.
+
+/// Zonen
 pub mod zone;
 use server::zone::{Zone, ZoneType};
 use module::Module;
-use xmz_shift_register::{ShiftRegister, RegisterType};
+use shift_register::{ShiftRegister, ShiftRegisterType};
 
 pub struct Server<'a> {
     leds: ShiftRegister,
@@ -16,8 +18,8 @@ pub struct Server<'a> {
 impl<'a> Server<'a> {
     pub fn new() -> Self {
         Server {
-            leds: ShiftRegister::new(RegisterType::LED),
-            relais: ShiftRegister::new(RegisterType::RELAIS),
+            leds: ShiftRegister::new(ShiftRegisterType::LED),
+            relais: ShiftRegister::new(ShiftRegisterType::RELAIS),
             module: None,
             zones: vec![
                 Zone::new(ZoneType::Stoerung),
