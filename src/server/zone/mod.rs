@@ -1,11 +1,13 @@
+#[derive(Debug,Eq,PartialEq)]
 pub enum ZoneType {
     Stoerung,
     Schwellenwert,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)] // f+r die Initalisierung `vec![Alarmpunkt(false); 4]`
+#[derive(Clone, Debug, Eq, PartialEq)] // für die Initalisierung `vec![Alarmpunkt(false); 4]`
 struct Alarmpunkt(bool);
 
+#[derive(Debug,Eq,PartialEq)]
 pub struct Zone {
     zone_type: ZoneType,
     alarmpunkte: Vec<Alarmpunkt>,

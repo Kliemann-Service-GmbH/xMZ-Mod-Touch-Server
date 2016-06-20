@@ -1,25 +1,25 @@
 //! xMZ-Mod-Touch Server
 //!
 //! Das ist der zentrale Teil der 'xMZ-Mod-Touch'-Plattform.
-mod zone;
+pub mod zone;
 use server::zone::{Zone, ZoneType};
 use module::Module;
 use xmz_shift_register::{ShiftRegister, RegisterType};
 
-pub struct Server {
+pub struct Server<'a> {
     leds: ShiftRegister,
     relais: ShiftRegister,
-    module: Option<Vec<Module>>,
-    zonen: Vec<Zone>
+    module: Option<Vec<Module<'a>>>,
+    pub zones: Vec<Zone>
 }
 
-impl Server {
+impl<'a> Server<'a> {
     pub fn new() -> Self {
         Server {
             leds: ShiftRegister::new(RegisterType::LED),
             relais: ShiftRegister::new(RegisterType::RELAIS),
             module: None,
-            zonen: vec![
+            zones: vec![
                 Zone::new(ZoneType::Stoerung),
                 Zone::new(ZoneType::Schwellenwert),
             ],
@@ -56,7 +56,6 @@ mod test {
     #[test]
     fn server_default_werte() {
         let server = Server::new();
-
-        assert_eq!(server.zonen.len(), 2);
+        assert_eq!(server.zones.len(), 2);
     }
 }

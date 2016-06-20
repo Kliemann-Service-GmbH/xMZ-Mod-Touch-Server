@@ -1,11 +1,11 @@
 use sensor::{Sensor, SensorType};
 
 
-pub struct Module {
-    sensor: Vec<Sensor>,
+pub struct Module<'a> {
+    sensor: Vec<Sensor<'a>>,
 }
 
-impl Module {
+impl<'a> Module<'a> {
     pub fn new() -> Self {
         Module {
             sensor: vec![
