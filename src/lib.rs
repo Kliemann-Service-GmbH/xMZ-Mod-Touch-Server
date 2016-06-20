@@ -3,13 +3,18 @@
        html_root_url = "https://gaswarnanlagen.com/")]
 #![feature(stmt_expr_attributes)]
 //! xMZ-Mod-Touch Server
-//!
-//! Der Server Prozess ist der Hauptprozess der 'xMZ-Mod-Touch' Plattform.
-//! Er steuert die LED, Relais, Alarmzonen und kontrolliert die Module mit den Sensoren.
 extern crate xmz_shift_register;
+
+/// Server
+///
+/// Der Server Prozess ist der Hauptprozess der 'xMZ-Mod-Touch' Plattform.
+/// Er verbindet die LED, Relais, Alarmzonen und kontrolliert die Module mit deren Sensoren.
 pub mod server;
 mod module;
-mod sensor;
+/// Sensoren
+///
+/// Dieses Modul beinhaltet alle Funktionen und Datenstrukturen die zur Sensorauswertung nötig sind.
+pub mod sensor;
 
 #[cfg(test)]
 mod tests {
