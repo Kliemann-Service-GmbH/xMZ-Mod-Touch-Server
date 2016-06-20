@@ -87,11 +87,54 @@ impl<'a> Sensor<'a> {
     ///
     /// Die Funktion liefert ein `Result<u32, SensorError>` zurück.
     /// Im Erfolgsfall ein u32 ansonnsten ein SensorError.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::sensor::{Sensor, SensorError, SensorType};
+    ///
+    /// let mut sensor = Sensor::new(SensorType::NemotoNO2);
+    /// assert_eq!(sensor.concentration_from_adc(), Err(SensorError::NoAdcValue));
+    /// ```
     pub fn concentration_from_adc(&mut self) -> Result<f32> {
         let x = match self.adc_value {
             None => {return Err(SensorError::NoAdcValue); }
             Some(value) => {value}
         };
+        let y2 = match self.concentration_messgas{
+            None => {return Err(SensorError::NoConcentrationMessgas); }
+            Some(value) => {value}
+        };
+        let y1 = match self.concentration_nullgas{
+            None => {return Err(SensorError::NoConcentrationNullgas); }
+            Some(value) => {value}
+        };
+        let x2 = match self.adc_value_at_messgas{
+            None => {return Err(SensorError::NoAdcValueAtMessgas); }
+            Some(value) => {value}
+        };
+        let x1 = match self.adc_value_at_nullgas{
+            None => {return Err(SensorError::NoAdcValueAtNullgas); }
+            Some(value) => {value}
+        };
+
+        let result: f32 = (y2 as f32 - y1 as f32) / (x2 as f32 - x1 as f32) * (x as f32 - x1 as f32) + y1 as f32;
+
+        Ok(result)
+    }
+
+    /// Liefert den ADC Wert für eine gegebene Konzentration
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::sensor::{Sensor, SensorType};
+    ///
+    /// let mut sensor = Sensor::new(SensorType::NemotoNO2);
+    /// assert_eq!(sensor.adc_from_concentration(20.0).unwrap(), 60.133335);
+    /// ```
+    pub fn adc_from_concentration(&self, concentration: f32) -> Result<f32> {
+        let x = concentration;
         let y2 = match self.concentration_messgas{
             None => {return Err(SensorError::NoConcentrationMessgas); }
             Some(value) => {value}
