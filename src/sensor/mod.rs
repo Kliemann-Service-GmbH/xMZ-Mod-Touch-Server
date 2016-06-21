@@ -31,13 +31,16 @@ enum Alarmauswertung {
 }
 
 pub struct Sensor<'a> {
+    /// Sensor Typ
     pub sensor_type: SensorType,
-    adc_value: Option<u32>,
+    /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
+    pub adc_value: Option<u32>,
     adc_value_at_nullgas: Option<u32>,
     adc_value_at_messgas: Option<u32>,
     concentration_nullgas: Option<u32>,
     concentration_messgas: Option<u32>,
-    modbus_register_address: u32,
+    /// Adresse des Modbus Registers für den ADC Wert
+    pub modbus_register_address: u32,
     alarmauswertung: Alarmauswertung,
     zones: Vec<&'a Zone>,
 }
@@ -71,7 +74,7 @@ impl<'a> Sensor<'a> {
                     adc_value_at_messgas: Some(888),  // TODO: Read in sensor calibration data
                     concentration_nullgas: Some(0),  // TODO: Read in sensor calibration data
                     concentration_messgas: Some(280),  // TODO: Read in sensor calibration data
-                    modbus_register_address: 2,
+                    modbus_register_address: 11,
                     alarmauswertung: Alarmauswertung::Simulation,
                     zones: vec!(),
                 }
@@ -211,7 +214,7 @@ mod test {
     #[test]
     fn modbus_register_address_nemoto_co() {
         let sensor = Sensor::new(SensorType::NemotoCO);
-        assert_eq!(sensor.modbus_register_address, 2);
+        assert_eq!(sensor.modbus_register_address, 11);
     }
 
     #[test]

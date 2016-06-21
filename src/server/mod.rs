@@ -76,9 +76,17 @@ mod test {
     fn kann_module_modbus_adresse_abfragen() {
         let mut server = Server::new();
         let module = Module::new(ModuleType::RAGAS_CO_NO2);
-        server.init();
-        assert_eq!(server.module.len(), 0);
         server.module.push(module);
-        assert_eq!(server.module.len(), 1);
+        assert_eq!(server.module.get(0).unwrap().modbus_address, 1);
+    }
+
+    #[test]
+    fn kann_module_sensor1_modbus_register_address_abfragen() {
+        let mut server = Server::new();
+        let module = Module::new(ModuleType::RAGAS_CO_NO2);
+        server.module.push(module);
+        assert_eq!(server.module.get(0).unwrap().sensors.get(0).unwrap().modbus_register_address, 1);
+        // Der zweite Sensor des Ersten Moduls (CO) hat die Modbus Register Adress
+        assert_eq!(server.module.get(0).unwrap().sensors.get(1).unwrap().modbus_register_address, 11);
     }
 }

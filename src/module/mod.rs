@@ -74,13 +74,13 @@ mod test {
     }
 
     #[test]
-    fn default_module_has_2_sensor() {
+    fn default_module_has_2_sensors() {
         let module = Module::new(ModuleType::RAGAS_CO_NO2);
         assert_eq!(module.sensors.len(), 2);
     }
 
     #[test]
-    fn default_module_sensor1() {
+    fn default_module_sensor_config() {
         let module = Module::new(ModuleType::RAGAS_CO_NO2);
         assert_eq!(module.sensors[0].sensor_type, SensorType::NemotoNO2);
         assert_eq!(module.sensors[1].sensor_type, SensorType::NemotoCO);
