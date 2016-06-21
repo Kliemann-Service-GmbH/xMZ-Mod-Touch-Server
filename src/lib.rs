@@ -6,15 +6,20 @@
 //extern crate xmz_shift_register;
 /// Shift register, Zugriff und Steuerung der an die Shift Register angeschlossenen Hardware
 pub mod shift_register;
-/// Server
+/// Server  - Der Server Prozess ist der Hauptprozess der 'xMZ-Mod-Touch' Plattform
 ///
-/// Der Server Prozess ist der Hauptprozess der 'xMZ-Mod-Touch' Plattform.
 /// Er verbindet die LED, Relais, Alarmzonen und kontrolliert die Module mit deren Sensoren.
 pub mod server;
-mod module;
-/// Sensoren
+/// Module  - Sensorplatinen mit Modbus Transceiver und ein oder mehr Sensor Messzellen
+///
+/// Eine Sensorplatine verfügt immer über ein Modbus Transceiver (Sender/ Empfänger). Auf der Platine oder an
+/// der Platine sind Sensormesszellen angeschlossen. Diese haben entsprechende Register (Speicherbereiche) die
+/// dann über das Modbus Protokoll abgefragt werden konnen.
+pub mod module;
+/// Sensore     - Einzellne Messzelle
 ///
 /// Dieses Modul beinhaltet alle Funktionen und Datenstrukturen die zur Sensorauswertung nötig sind.
+/// Also die Umwandlung des Analog Signals in ein Wert, die Mittelwert Bildung und in Teilen auch die Störungsüberwachung.
 pub mod sensor;
 
 #[cfg(test)]

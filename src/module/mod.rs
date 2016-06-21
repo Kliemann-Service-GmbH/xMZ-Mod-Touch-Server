@@ -1,17 +1,63 @@
 use sensor::{Sensor, SensorType};
 
-
-pub struct Module<'a> {
-    sensor: Vec<Sensor<'a>>,
+/// Module Arten
+///
+/// Zur Zeit wird nur eine Art Modul unterstützt
+#[derive(Debug, Eq, PartialEq)]
+#[allow(non_camel_case_types)]
+pub enum ModuleType {
+    /// * RAGAS_CO_NO2       - RA-GAS GmbH Kombisensor mit CO und NO Messzelle
+    RAGAS_CO_NO2,
 }
 
+
+/// Sensorplatine mit einem oder mehreren Messzellen
+pub struct Module<'a> {
+    /// Typ des Sensor Moduls
+    module_type: ModuleType,
+    /// Vector der auf dieser Platine angeschlossenen Sensoren
+    pub sensors: Vec<Sensor<'a>>,
+    pub modbus_device: &'a str,
+    pub modbus_baud: i32,
+    pub modbus_parity: char,
+    pub modbus_data_bit: i32,
+    pub modbus_stop_bit: i32,
+    pub modbus_address: i32,
+}
+
+
+
 impl<'a> Module<'a> {
-    pub fn new() -> Self {
-        Module {
-            sensor: vec![
-                Sensor::new(SensorType::NemotoCO),
-                Sensor::new(SensorType::NemotoNO2),
-            ]
+    /// Erzeugt ein neue Sensorplatine
+    ///
+    /// # Attribute
+    /// * `module_type`         - Art des Moduls
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::module::{Module, ModuleType};
+    ///
+    /// let module1 = Module::new(ModuleType::RAGAS_CO_NO2);
+    /// assert_eq!(module1.sensors.len(), 2);
+    /// ```
+    pub fn new(module_type: ModuleType) -> Self {
+        match module_type {
+            ModuleType::RAGAS_CO_NO2 => {
+                Module {
+                    module_type: ModuleType::RAGAS_CO_NO2,
+                    sensors: vec![
+                        Sensor::new(SensorType::NemotoNO2),
+                        Sensor::new(SensorType::NemotoCO),
+                    ],
+                    modbus_device: "/dev/ttyS1",
+                    modbus_baud: 9600,
+                    modbus_parity: 'N',
+                    modbus_data_bit: 8,
+                    modbus_stop_bit: 1,
+                    modbus_address: 1,
+                }
+            }
         }
     }
 }
@@ -22,15 +68,21 @@ mod test {
     use sensor::{SensorType};
 
     #[test]
+    fn defaults() {
+        let module = Module::new(ModuleType::RAGAS_CO_NO2);
+        assert_eq!(module.module_type, ModuleType::RAGAS_CO_NO2);
+    }
+
+    #[test]
     fn default_module_has_2_sensor() {
-        let module = Module::new();
-        assert_eq!(module.sensor.len(), 2);
+        let module = Module::new(ModuleType::RAGAS_CO_NO2);
+        assert_eq!(module.sensors.len(), 2);
     }
 
     #[test]
     fn default_module_sensor1() {
-        let module = Module::new();
-        assert_eq!(module.sensor[0].sensor_type, SensorType::NemotoCO);
-        assert_eq!(module.sensor[1].sensor_type, SensorType::NemotoNO2);
+        let module = Module::new(ModuleType::RAGAS_CO_NO2);
+        assert_eq!(module.sensors[0].sensor_type, SensorType::NemotoNO2);
+        assert_eq!(module.sensors[1].sensor_type, SensorType::NemotoCO);
     }
 }

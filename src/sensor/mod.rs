@@ -230,15 +230,47 @@ mod test {
 
     #[test]
     fn sensor_mit_einer_zone() {
-        let _sensor = Sensor::new(SensorType::NemotoNO2);
-        let _server = Server::new();
+        let server = Server::new();
+        let mut sensor = Sensor::new(SensorType::NemotoNO2);
+        sensor.zones.push(&server.zones[0]);
+        assert_eq!(sensor.zones.len(), 1);
     }
 
     #[test]
     fn sensor_mit_mehr_als_einer_zone() {
-        let _sensor = Sensor::new(SensorType::NemotoNO2);
+        let server = Server::new();
+        let mut sensor = Sensor::new(SensorType::NemotoNO2);
+        sensor.zones.push(&server.zones[0]);
+        sensor.zones.push(&server.zones[1]);
+        assert_eq!(sensor.zones.len(), 2);
     }
 
+    #[test]
+    fn sensor_mit_einer_zone_kann_alarmpunkt_setzen() {
+        let server = Server::new();
+        let mut sensor = Sensor::new(SensorType::NemotoNO2);
+        sensor.zones.push(&server.zones[0]);
+        assert_eq!(sensor.zones[0].alarmpunkt(0).unwrap(), false);
+        sensor.zones[0].alarmpunkt_set(0, true);
+        assert_eq!(sensor.zones[0].alarmpunkt(0).unwrap(), true);
+    }
+
+    #[test]
+    fn sensor_mit_mehr_als_einer_zone_kann_alarmpunkt_setzen() {
+        let server = Server::new();
+        let mut sensor = Sensor::new(SensorType::NemotoNO2);
+        sensor.zones.push(&server.zones[0]);
+        sensor.zones.push(&server.zones[1]);
+        assert_eq!(sensor.zones[0].alarmpunkt(0).unwrap(), false);
+        assert_eq!(sensor.zones[1].alarmpunkt(0).unwrap(), false);
+        sensor.zones[0].alarmpunkt_set(0, true);
+        sensor.zones[1].alarmpunkt_set(3, true);
+        assert_eq!(sensor.zones[0].alarmpunkt(0).unwrap(), true);
+        assert_eq!(sensor.zones[1].alarmpunkt(3).unwrap(), true);
+    }
+
+
+    // ADC
     #[test]
     fn concentration_should_fail_with_no_adc_value() {
         let mut sensor = default_no2_sensor();
