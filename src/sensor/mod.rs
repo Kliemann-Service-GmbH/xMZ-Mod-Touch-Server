@@ -34,8 +34,9 @@ pub struct Sensor<'a> {
     /// Sensor Typ
     pub sensor_type: SensorType,
     /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
-    pub adc_value: Option<u32>,
-    si: &'a str,
+    pub adc_value: Option<u16>,
+    /// SI Einheit des Sensors (ppm, %UEG, Vol %)
+    pub si: &'a str,
     adc_value_at_nullgas: Option<u32>,
     adc_value_at_messgas: Option<u32>,
     concentration_nullgas: Option<u32>,
@@ -102,7 +103,7 @@ impl<'a> Sensor<'a> {
     /// let mut sensor = Sensor::new(SensorType::NemotoNO2);
     /// assert_eq!(sensor.concentration(), Err(SensorError::NoAdcValue));
     /// ```
-    pub fn concentration(&mut self) -> Result<f32> {
+    pub fn concentration(&self) -> Result<f32> {
         let x = match self.adc_value {
             None => {return Err(SensorError::NoAdcValue); }
             Some(value) => {value}

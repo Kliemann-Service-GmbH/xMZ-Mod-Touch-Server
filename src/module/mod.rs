@@ -17,11 +17,6 @@ pub struct Module<'a> {
     module_type: ModuleType,
     /// Vector der auf dieser Platine angeschlossenen Sensoren
     pub sensors: Vec<Sensor<'a>>,
-    pub modbus_device: &'a str,
-    pub modbus_baud: i32,
-    pub modbus_parity: char,
-    pub modbus_data_bit: i32,
-    pub modbus_stop_bit: i32,
     pub modbus_address: i32,
 }
 
@@ -50,11 +45,6 @@ impl<'a> Module<'a> {
                         Sensor::new(SensorType::NemotoNO2),
                         Sensor::new(SensorType::NemotoCO),
                     ],
-                    modbus_device: "/dev/ttyS1",
-                    modbus_baud: 9600,
-                    modbus_parity: 'N',
-                    modbus_data_bit: 8,
-                    modbus_stop_bit: 1,
                     modbus_address: 1,
                 }
             }

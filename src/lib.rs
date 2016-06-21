@@ -3,6 +3,9 @@
        html_root_url = "https://gaswarnanlagen.com/")]
 #![feature(stmt_expr_attributes)]
 //! xMZ-Mod-Touch Server
+
+extern crate libmodbus_rs;
+
 //extern crate xmz_shift_register;
 /// Shift register, Zugriff und Steuerung der an die Shift Register angeschlossenen Hardware
 pub mod shift_register;

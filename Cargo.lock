@@ -2,9 +2,15 @@
 name = "xmz_server"
 version = "0.1.0"
 dependencies = [
+ "libmodbus-rs 0.1.0 (git+https://github.com/zzeroo/libmodbus-rs.git)",
  "nanomsg 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "xmz_shift_register 0.1.0 (git+https://github.com/zzeroo/xmz_shift_register.git)",
 ]
+
+[[package]]
+name = "bitflags"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "bitflags"
@@ -12,9 +18,34 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "gcc"
+version = "0.3.28"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "libc"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "libmodbus-rs"
+version = "0.1.0"
+source = "git+https://github.com/zzeroo/libmodbus-rs.git#e3040e414a5d48d3e89a10f4a83ac4cb7ea6cc71"
+dependencies = [
+ "bitflags 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libmodbus-sys 0.1.1 (git+https://github.com/zzeroo/libmodbus-rs.git)",
+]
+
+[[package]]
+name = "libmodbus-sys"
+version = "0.1.1"
+source = "git+https://github.com/zzeroo/libmodbus-rs.git#e3040e414a5d48d3e89a10f4a83ac4cb7ea6cc71"
+dependencies = [
+ "gcc 0.3.28 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pkg-config 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "nanomsg"
@@ -41,6 +72,11 @@ dependencies = [
  "bitflags 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "pkg-config"
+version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "sysfs_gpio"
