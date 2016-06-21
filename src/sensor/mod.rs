@@ -35,6 +35,7 @@ pub struct Sensor<'a> {
     pub sensor_type: SensorType,
     /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
     pub adc_value: Option<u32>,
+    si: &'a str,
     adc_value_at_nullgas: Option<u32>,
     adc_value_at_messgas: Option<u32>,
     concentration_nullgas: Option<u32>,
@@ -57,6 +58,7 @@ impl<'a> Sensor<'a> {
                 Sensor {
                     sensor_type: SensorType::NemotoNO2,
                     adc_value: None,
+                    si: "ppm",
                     adc_value_at_nullgas: Some(922),  // TODO: Read in sensor calibration data
                     adc_value_at_messgas: Some(622),  // TODO: Read in sensor calibration data
                     concentration_nullgas: Some(0),  // TODO: Read in sensor calibration data
@@ -70,6 +72,7 @@ impl<'a> Sensor<'a> {
                 Sensor {
                     sensor_type: SensorType::NemotoCO,
                     adc_value: None,
+                    si: "ppm",
                     adc_value_at_nullgas: Some(107),  // TODO: Read in sensor calibration data
                     adc_value_at_messgas: Some(888),  // TODO: Read in sensor calibration data
                     concentration_nullgas: Some(0),  // TODO: Read in sensor calibration data
@@ -82,7 +85,7 @@ impl<'a> Sensor<'a> {
         }
     }
 
-    /// `concentration_from_adc` - Liefert den aktuell, berechneten Wert zurück
+    /// `concentration` - Liefert den aktuell, berechneten Wert zurück
     ///
     /// Der Wert wird mit einer linearen Funktion aus den Calibrationsdaten `adc_value_at_nullgas`,
     /// `adc_value_at_messgas`, `concentration_nullgas`, `concentration_messgas` und dem akuellen
@@ -97,9 +100,9 @@ impl<'a> Sensor<'a> {
     /// use xmz_server::sensor::{Sensor, SensorError, SensorType};
     ///
     /// let mut sensor = Sensor::new(SensorType::NemotoNO2);
-    /// assert_eq!(sensor.concentration_from_adc(), Err(SensorError::NoAdcValue));
+    /// assert_eq!(sensor.concentration(), Err(SensorError::NoAdcValue));
     /// ```
-    pub fn concentration_from_adc(&mut self) -> Result<f32> {
+    pub fn concentration(&mut self) -> Result<f32> {
         let x = match self.adc_value {
             None => {return Err(SensorError::NoAdcValue); }
             Some(value) => {value}
@@ -182,7 +185,7 @@ impl<'a> Sensor<'a> {
     pub fn list_all_concentrations(&mut self) {
         for i in 0..1024 {
             self.adc_value = Some(i);
-            println!("{}: {}", i, self.concentration_from_adc().unwrap());
+            println!("ADC Wert: [{}] entspricht einer Konzentration von: {} {}", i, self.concentration().unwrap(), self.si);
         }
     }
 }
@@ -278,45 +281,45 @@ mod test {
     fn concentration_should_fail_with_no_adc_value() {
         let mut sensor = default_no2_sensor();
         sensor.adc_value = None;
-        assert_eq!(sensor.concentration_from_adc(), Err(SensorError::NoAdcValue));
+        assert_eq!(sensor.concentration(), Err(SensorError::NoAdcValue));
     }
 
     #[test]
     fn concentration_should_fail_with_no_adc_value_at_nullgas() {
         let mut sensor = default_no2_sensor();
         sensor.adc_value_at_nullgas = None;
-        assert_eq!(sensor.concentration_from_adc(), Err(SensorError::NoAdcValueAtNullgas));
+        assert_eq!(sensor.concentration(), Err(SensorError::NoAdcValueAtNullgas));
     }
 
     #[test]
     fn concentration_should_fail_with_no_concentration_nullgas() {
         let mut sensor = default_no2_sensor();
         sensor.concentration_nullgas = None;
-        assert_eq!(sensor.concentration_from_adc(), Err(SensorError::NoConcentrationNullgas));
+        assert_eq!(sensor.concentration(), Err(SensorError::NoConcentrationNullgas));
     }
 
     #[test]
     fn concentration_should_fail_with_no_concentration_messgas() {
         let mut sensor = default_no2_sensor();
         sensor.concentration_messgas = None;
-        assert_eq!(sensor.concentration_from_adc(), Err(SensorError::NoConcentrationMessgas));
+        assert_eq!(sensor.concentration(), Err(SensorError::NoConcentrationMessgas));
     }
 
     #[test]
-    fn concentration_from_adc_no2() {
+    fn concentration_no2() {
         let mut sensor = default_no2_sensor();
-        assert_eq!(sensor.concentration_from_adc().unwrap(), 10.000001);
+        assert_eq!(sensor.concentration().unwrap(), 10.000001);
     }
 
     #[test]
-    fn concentration_from_adc_co() {
+    fn concentration_co() {
         let mut sensor = Sensor::new(SensorType::NemotoCO);
         sensor.adc_value = Some(333);
         sensor.adc_value_at_nullgas = Some(114);
         sensor.concentration_nullgas = Some(0);
         sensor.adc_value_at_messgas = Some(875);
         sensor.concentration_messgas = Some(280);
-        assert_eq!(sensor.concentration_from_adc().unwrap(), 80.578186);
+        assert_eq!(sensor.concentration().unwrap(), 80.578186);
     }
 
 }
