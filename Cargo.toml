@@ -12,3 +12,4 @@ license = "AGPL-3.0"
 nanomsg = "*"
 xmz_shift_register = { git = "https://github.com/zzeroo/xmz_shift_register.git" }
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
+ansi_term = "0.7"

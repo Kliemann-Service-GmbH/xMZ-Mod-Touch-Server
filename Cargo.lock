@@ -2,10 +2,16 @@
 name = "xmz_server"
 version = "0.1.0"
 dependencies = [
+ "ansi_term 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "libmodbus-rs 0.1.0 (git+https://github.com/zzeroo/libmodbus-rs.git)",
  "nanomsg 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "xmz_shift_register 0.1.0 (git+https://github.com/zzeroo/xmz_shift_register.git)",
 ]
+
+[[package]]
+name = "ansi_term"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "bitflags"

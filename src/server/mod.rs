@@ -54,9 +54,6 @@ impl<'a> Server<'a> {
             self.leds.shift_out();
             self.relais.init();
         }
-        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        self.modules[0].modbus_address = 46;
-        self.modbus_device = "/dev/ttyUSB0";
     }
 
     pub fn init(&mut self) {
