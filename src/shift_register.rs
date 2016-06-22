@@ -153,6 +153,10 @@ impl ShiftRegister {
     pub fn toggle(&mut self, num: u64) {
         self.data ^= 1 << num -1;
     }
+
+    pub fn init(&self) {}
+
+    pub fn shift_out(&self) {}
 }
 
 
