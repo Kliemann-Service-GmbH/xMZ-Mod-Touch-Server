@@ -19,7 +19,7 @@ pub enum Direction {
 }
 
 // für die Initalisierung `vec![Alarmpunkt(false); 4]`
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 struct Alarmpunkt(bool);
 
 /// Datenstruktur die die Zonen representiert

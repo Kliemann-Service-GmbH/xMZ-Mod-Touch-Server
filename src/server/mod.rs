@@ -9,6 +9,9 @@ use libmodbus_rs::modbus::{Modbus};
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use module::{Module, ModuleType};
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 
 pub struct Server<'a> {
     leds: ShiftRegister,
@@ -64,17 +67,22 @@ impl<'a> Server<'a> {
         }
         // Rufe die default Konfiguration auf
         self.default_configuration();
+
+
     }
 
+    // Public api
+
+    /// Sensor Update Task
     pub fn update_sensors(&mut self) {
         // Modbus Kontext erzeugen
         let mut modbus_context = Modbus::new_rtu(self.modbus_device, self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
 
         for modul in &mut self.modules {
-            let modbus_address = modul.modbus_address;
-            //try!(modbus_context.set_slave(modul.modbus_address).map_err(|e| e.to_string()));
-            let _ = modbus_context.set_slave(modul.modbus_address);
-            let _ = modbus_context.set_debug(false);
+            let modbus_slave_id = modul.modbus_slave_id;
+            //try!(modbus_context.set_slave(modul.modbus_slave_id).map_err(|e| e.to_string()));
+            let _ = modbus_context.set_slave(modul.modbus_slave_id);
+            let _ = modbus_context.set_debug(true);
             let _ = modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN);
 
             match modbus_context.connect() {
@@ -115,7 +123,7 @@ mod test {
         let mut server = Server::new();
         let module = Module::new(ModuleType::RAGAS_CO_NO2);
         server.modules.push(module);
-        assert_eq!(server.modules.get(0).unwrap().modbus_address, 1);
+        assert_eq!(server.modules.get(0).unwrap().modbus_slave_id, 1);
     }
 
     #[test]
