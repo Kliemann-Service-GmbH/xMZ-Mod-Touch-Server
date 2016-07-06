@@ -11,6 +11,7 @@ pub enum ModuleType {
 
 
 /// Sensorplatine mit einem oder mehreren Messzellen
+#[derive(Debug)]
 pub struct Module<'a> {
     /// Typ des Sensor Moduls
     module_type: ModuleType,

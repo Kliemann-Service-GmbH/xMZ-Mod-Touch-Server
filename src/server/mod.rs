@@ -6,12 +6,14 @@ pub mod zone;
 
 use libmodbus_rs::*;
 use libmodbus_rs::modbus::{Modbus};
+use module::{Module, ModuleType};
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
-use module::{Module, ModuleType};
+use std::fs;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
+
 
 pub struct Server<'a> {
     leds: ShiftRegister,
@@ -67,33 +69,53 @@ impl<'a> Server<'a> {
         }
         // Rufe die default Konfiguration auf
         self.default_configuration();
-
-
     }
 
     // Public api
 
     /// Sensor Update Task
+    ///
+    /// Dieser Task checkt zu Begin ob das konfigurierte Modbus Interface `modbus_device` erreichbar ist.
+    /// Wenn das Device nicht existiert, oder die Berechtigungen des Users nicht ausreichen wird ein Fehler
+    /// ausgegeben.
+    ///
     pub fn update_sensors(&mut self) {
-        // Modbus Kontext erzeugen
-        let mut modbus_context = Modbus::new_rtu(self.modbus_device, self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
+        match fs::metadata(self.modbus_device){
+            Ok(_) => {
+                // Modbus Kontext erzeugen
+                let mut modbus_context = Modbus::new_rtu(self.modbus_device, self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
+                for modul in &mut self.modules {
+                    let modbus_slave_id = modul.modbus_slave_id;
+                    match modbus_context.set_slave(modul.modbus_slave_id) {
+                        Ok(_) => {
+                            // let _ = modbus_context.set_debug(true);
+                            match modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN) {
+                                Ok(_) => {
+                                    let mut tab_reg: Vec<u16> = Vec::new();
 
-        for modul in &mut self.modules {
-            let modbus_slave_id = modul.modbus_slave_id;
-            //try!(modbus_context.set_slave(modul.modbus_slave_id).map_err(|e| e.to_string()));
-            let _ = modbus_context.set_slave(modul.modbus_slave_id);
-            let _ = modbus_context.set_debug(true);
-            let _ = modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN);
-
-            match modbus_context.connect() {
-                Err(_) => { modbus_context.free(); }
-                Ok(_) => {
-                    for sensor in &mut modul.sensors {
-                        let tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
-                        sensor.adc_value = Some(tab_reg[0]);
+                                    for sensor in &mut modul.sensors {
+                                        match modbus_context.connect() {
+                                            Ok(_) => {
+                                                    tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
+                                                    tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
+                                                    modbus_context.close();
+                                                }
+                                                Err(err) => {
+                                                    println!("Modbus connect() ist fehlgeschlagen: {}", err);
+                                                    modbus_context.free();
+                                                }
+                                            }
+                                        }
+                                    }
+                                Err(err) => { println!("Konnte RTU_RTS_DOWN nicht setzen: {}", err); }
+                            }
+                        }
+                        Err(err) => { println!("Modbus Context konnte nicht erzeugt werden: {}", err); }
                     }
-                }
-            }
+                };
+                modbus_context.free();
+            },
+            Err(err) => { println!("Modbus Device: '{}' ist nicht verfügbar: {}", self.modbus_device, err); }
         }
     }
 }

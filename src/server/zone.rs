@@ -23,6 +23,7 @@ pub enum Direction {
 struct Alarmpunkt(bool);
 
 /// Datenstruktur die die Zonen representiert
+#[derive(Debug)]
 pub struct Zone {
     pub zone_type: ZoneType,
     // alarmpunkte: Arc<RwLock<Vec<Alarmpunkt>>>,
