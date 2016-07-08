@@ -220,14 +220,14 @@ impl ShiftRegister {
 
     /// Toogelt den Clock Pin high->low
     fn clock_in(&self) {
-        &self.clock_pin.set_value(1).unwrap();
-        &self.clock_pin.set_value(0).unwrap();
+        &self.clock_pin.set_value(1).unwrap_or(());
+        &self.clock_pin.set_value(0).unwrap_or(());
     }
 
     /// Toggelt den Latch Pin pin high->low,
     fn latch_out(&self) {
-        &self.latch_pin.set_value(1).unwrap();
-        &self.latch_pin.set_value(0).unwrap();
+        &self.latch_pin.set_value(1).unwrap_or(());
+        &self.latch_pin.set_value(0).unwrap_or(());
     }
 
     /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
@@ -235,6 +235,16 @@ impl ShiftRegister {
     pub fn shift_out(&self) {
         self.export_pins();
         self.set_pin_direction_output();
+
+        // Daten einclocken
+        for i in (0..64).rev() {
+            match (self.data >> i) & 1 {
+                1 => { self.ds_pin.set_value(1).unwrap_or(()); },
+                _ => { self.ds_pin.set_value(0).unwrap_or(()); },
+            }
+            self.clock_in();
+        }
+        self.latch_out();
     }
 
 }
