@@ -180,19 +180,43 @@ impl ShiftRegister {
     fn export(&self) {
         match self.oe_pin.export() {
             Ok(_) => {},
-            Err(err) => { println!("!OE (output enabled) Pin konnte nicht exportiert werden: {}", err) }
+            Err(err) => { println!("!OE (output enabled) Pin konnte nicht exportiert werden: {}", err) },
         }
         match self.ds_pin.export() {
             Ok(_) => {},
-            Err(err) => { println!("DATA Pin konnte nicht exportiert werden: {}", err) }
+            Err(err) => { println!("DATA Pin konnte nicht exportiert werden: {}", err) },
         }
         match self.clock_pin.export() {
             Ok(_) => {},
-            Err(err) => { println!("CLOCK Pin konnte nicht exportiert werden: {}", err) }
+            Err(err) => { println!("CLOCK Pin konnte nicht exportiert werden: {}", err) },
         }
         match self.latch_pin.export() {
             Ok(_) => {},
-            Err(err) => { println!("LATCH Pin konnte nicht exportiert werden: {}", err) }
+            Err(err) => { println!("LATCH Pin konnte nicht exportiert werden: {}", err) },
+        }
+    }
+
+    /// Schaltet die Pins in den OUTPUT Pin Modus
+    ///
+    fn set_pin_direction_output(&self) {
+        match self.oe_pin.set_direction(Direction::Out) {
+            Ok(_) => { let _ = self.oe_pin.set_value(0); }, // !OE pin low == Shift register enabled.
+            Err(err) => { println!("DATA Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
+        }
+
+        match self.ds_pin.set_direction(Direction::Out) {
+            Ok(_) => { let _ = self.ds_pin.set_value(0); },
+            Err(err) => { println!("DATA Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
+        }
+
+        match self.clock_pin.set_direction(Direction::Out) {
+            Ok(_) => { let _ = self.clock_pin.set_value(0); },
+            Err(err) => { println!("CLOCK Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
+        }
+
+        match self.latch_pin.set_direction(Direction::Out) {
+            Ok(_) => { let _ = self.latch_pin.set_value(0); },
+            Err(err) => { println!("LATCH Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
         }
     }
 
@@ -243,7 +267,13 @@ mod tests {
 
     #[test]
     fn export() {
-        let mut led = ShiftRegister::new(ShiftRegisterType::LED);
+        let led = ShiftRegister::new(ShiftRegisterType::LED);
         led.export();
+    }
+
+    #[test]
+    fn  set_pin_direction_output() {
+        let led = ShiftRegister::new(ShiftRegisterType::LED);
+        led.set_pin_direction_output();
     }
 }
