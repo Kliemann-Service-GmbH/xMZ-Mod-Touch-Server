@@ -101,7 +101,6 @@ impl<'a> Server<'a> {
                                             }
                                             Err(err) => {
                                                 println!("Modbus Connect ist fehlgeschlagen: {}", err);
-                                                modbus_context.free();
                                             }
                                         }
                                     }
