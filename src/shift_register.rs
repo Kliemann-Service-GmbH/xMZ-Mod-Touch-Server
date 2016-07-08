@@ -1,5 +1,8 @@
 //! Kontrolliert die ShiftRegister Hardware der 'xMZ-Mod-Touch'-Plattform
 use sysfs_gpio::{Direction, Pin};
+use std::thread;
+use std::time::Duration;
+use std::sync::Arc;
 
 
 /// Representiert die verschiedenen Shift Register Typen
@@ -170,14 +173,9 @@ impl ShiftRegister {
         self.data ^= 1 << num -1;
     }
 
-    pub fn init(&self) {}
-
-    pub fn shift_out(&self) {}
-
-
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
-    fn export(&self) {
+    fn export_pins(&self) {
         match self.oe_pin.export() {
             Ok(_) => {},
             Err(err) => { println!("!OE (output enabled) Pin konnte nicht exportiert werden: {}", err) },
@@ -218,6 +216,25 @@ impl ShiftRegister {
             Ok(_) => { let _ = self.latch_pin.set_value(0); },
             Err(err) => { println!("LATCH Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
         }
+    }
+
+    /// Toogelt den Clock Pin high->low
+    fn clock_in(&self) {
+        &self.clock_pin.set_value(1).unwrap();
+        &self.clock_pin.set_value(0).unwrap();
+    }
+
+    /// Toggelt den Latch Pin pin high->low,
+    fn latch_out(&self) {
+        &self.latch_pin.set_value(1).unwrap();
+        &self.latch_pin.set_value(0).unwrap();
+    }
+
+    /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
+    /// Schiebe Register (latch out)
+    pub fn shift_out(&self) {
+        self.export_pins();
+        self.set_pin_direction_output();
     }
 
 }
@@ -266,14 +283,20 @@ mod tests {
     }
 
     #[test]
-    fn export() {
+    fn export_pins() {
         let led = ShiftRegister::new(ShiftRegisterType::LED);
-        led.export();
+        led.export_pins();
     }
 
     #[test]
     fn  set_pin_direction_output() {
         let led = ShiftRegister::new(ShiftRegisterType::LED);
         led.set_pin_direction_output();
+    }
+
+    #[test]
+    fn  shift_out() {
+        let led = ShiftRegister::new(ShiftRegisterType::LED);
+        led.shift_out();
     }
 }

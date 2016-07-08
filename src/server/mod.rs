@@ -16,8 +16,8 @@ use std::time::Duration;
 
 
 pub struct Server<'a> {
-    leds: ShiftRegister,
-    relais: ShiftRegister,
+    pub leds: ShiftRegister,
+    pub relais: ShiftRegister,
     // Sensor Module des Servers
     pub modules: Vec<Module<'a>>,
     // Alarm/ Störzonen des Servers
@@ -50,20 +50,25 @@ impl<'a> Server<'a> {
     }
 
     /// Default Konfiguration des Servers
-    fn default_configuration(&mut self) {
+    pub fn default_configuration(&mut self) {
         self.relais.set(1);
         self.leds.set(1);
         self.leds.set(3);
-    }
 
-    pub fn init(&mut self) {
-        #[cfg(target_arch = "arm")]
-        {
-            self.leds.init();
-            self.relais.init();
-        }
-        // Rufe die default Konfiguration auf
-        self.default_configuration();
+        self.modbus_device = "/dev/ttyUSB0";
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules[0].modbus_slave_id = 1;
+        self.modules[1].modbus_slave_id = 2;
+        self.modules[2].modbus_slave_id = 3;
+        self.modules[3].modbus_slave_id = 4;
+        self.modules[4].modbus_slave_id = 5;
+        self.modules[5].modbus_slave_id = 6;
+
     }
 
     // Public api

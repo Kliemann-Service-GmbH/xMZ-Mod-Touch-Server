@@ -11,21 +11,7 @@ use xmz_server::server::{Server};
 
 fn main() {
     let mut server = Server::new();
-    server.init();
-
-    server.modbus_device = "/dev/ttyUSB0";
-    server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-    server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-    server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-    server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-    server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-    server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-    server.modules[0].modbus_slave_id = 1;
-    server.modules[1].modbus_slave_id = 2;
-    server.modules[2].modbus_slave_id = 3;
-    server.modules[3].modbus_slave_id = 4;
-    server.modules[4].modbus_slave_id = 5;
-    server.modules[5].modbus_slave_id = 6;
+    server.default_configuration();
 
     let server = Arc::new(RwLock::new(server));
     // Verschiedene Server Instanzen erzeugen, diese werden später in den Threads erneut geklont.
@@ -42,6 +28,7 @@ fn main() {
                 let mut server1 = server1.write().expect("Fehler beim write lock des Servers");
                 server1.update_sensors();
             });
+            // update_task.join();
 
             // 2. Thread zur Zeit Ausgabe der Sensorwerte
             let server2 = server2.clone();
@@ -56,22 +43,21 @@ fn main() {
                         print!("{}[2J", 27 as char);
                     }
                     Err(err) => { println!("Error while lock: {}", err) }
-                }
+                };
                 thread::sleep(Duration::from_millis(1000));
             });
             worker_task.join();
 
-            // // 3. Task
-            // let server3 = server3.clone();
-            // let nanomsg_server = thread::spawn(move || {
-            //     let mut server = server3.write().expect("Fehler beim write lock des Servers");
-            //     if server.modules.len() > 10 { return };
-            //
-            //     let module = Module::new(ModuleType::RAGAS_CO_NO2);
-            //     server.modules.push(module);
-            //     thread::sleep(Duration::new(2, 0));
-            // });
-            // nanomsg_server.join();
+            // 3. Task
+            let server3 = server3.clone();
+            let i = 1;
+            let nanomsg_server = thread::spawn(move || {
+                let mut server = server3.write().expect("Fehler beim write lock des Servers");
+                server.leds.set(i);
+                server.leds.shift_out();
+                //println!("Tick");
+            });
+            nanomsg_server.join();
 
         } // Ende loop
     });
