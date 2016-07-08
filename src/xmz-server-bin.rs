@@ -22,11 +22,13 @@ fn main() {
     let guard = thread::spawn(move || {
         loop {
 
-            // 1. Task Update der Sensoren
+            // 1. Task, Update Sensoren, LED und Relais
             let server1 = server1.clone();
             let update_task = thread::spawn(move || {
-                let mut server1 = server1.write().expect("Fehler beim write lock des Servers");
-                server1.update_sensors();
+                let mut server = server1.write().expect("Fehler beim write lock des Servers");
+                server.update_sensors();
+                server.leds.shift_out();
+                server.relais.shift_out();
             });
             // update_task.join();
 
@@ -50,12 +52,8 @@ fn main() {
 
             // 3. Task
             let server3 = server3.clone();
-            let mut i = 1;
             let nanomsg_server = thread::spawn(move || {
                 let mut server = server3.write().expect("Fehler beim write lock des Servers");
-                i += 1;
-                server.leds.set(i);
-                server.leds.shift_out();
                 //println!("Tick");
             });
             nanomsg_server.join();
