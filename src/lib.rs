@@ -5,6 +5,7 @@
 //! xMZ-Mod-Touch Server
 
 extern crate libmodbus_rs;
+extern crate sysfs_gpio;
 
 //extern crate xmz_shift_register;
 /// Shift register, Zugriff und Steuerung der an die Shift Register angeschlossenen Hardware

@@ -1,3 +1,7 @@
+//! Kontrolliert die ShiftRegister Hardware der 'xMZ-Mod-Touch'-Plattform
+use sysfs_gpio::{Direction, Pin};
+
+
 /// Representiert die verschiedenen Shift Register Typen
 ///
 /// Zur Zeit gibt es 2 verschiedene Shift Register Typen
@@ -20,6 +24,10 @@ pub enum ShiftRegisterType {
 #[derive(Debug, Eq, PartialEq)]
 pub struct ShiftRegister {
     register_type: ShiftRegisterType,
+    pub oe_pin: Pin,
+    pub ds_pin: Pin,
+    pub clock_pin: Pin,
+    pub latch_pin: Pin,
     pub data: u64,
 }
 
@@ -43,10 +51,18 @@ impl ShiftRegister {
         match register_type {
             ShiftRegisterType::LED => ShiftRegister {
                 register_type: ShiftRegisterType::LED,
+                oe_pin: Pin::new(276),
+                ds_pin: Pin::new(38),
+                clock_pin: Pin::new(44),
+                latch_pin: Pin::new(40),
                 data: 0,
             },
             ShiftRegisterType::RELAIS => ShiftRegister {
                 register_type: ShiftRegisterType::RELAIS,
+                oe_pin: Pin::new(277),
+                ds_pin: Pin::new(45),
+                clock_pin: Pin::new(39),
+                latch_pin: Pin::new(37),
                 data: 0,
             }
         }
@@ -157,6 +173,29 @@ impl ShiftRegister {
     pub fn init(&self) {}
 
     pub fn shift_out(&self) {}
+
+
+    /// Exportiert die Pins in das sysfs des Linux Kernels
+    ///
+    fn export(&self) {
+        match self.oe_pin.export() {
+            Ok(_) => {},
+            Err(err) => { println!("!OE (output enabled) Pin konnte nicht exportiert werden: {}", err) }
+        }
+        match self.ds_pin.export() {
+            Ok(_) => {},
+            Err(err) => { println!("DATA Pin konnte nicht exportiert werden: {}", err) }
+        }
+        match self.clock_pin.export() {
+            Ok(_) => {},
+            Err(err) => { println!("CLOCK Pin konnte nicht exportiert werden: {}", err) }
+        }
+        match self.latch_pin.export() {
+            Ok(_) => {},
+            Err(err) => { println!("LATCH Pin konnte nicht exportiert werden: {}", err) }
+        }
+    }
+
 }
 
 
@@ -200,5 +239,11 @@ mod tests {
             led.toggle(i);
             assert_eq!(led.get(i), false);
         }
+    }
+
+    #[test]
+    fn export() {
+        let mut led = ShiftRegister::new(ShiftRegisterType::LED);
+        led.export();
     }
 }

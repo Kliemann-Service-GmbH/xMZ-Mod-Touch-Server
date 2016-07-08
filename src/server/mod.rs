@@ -54,11 +54,6 @@ impl<'a> Server<'a> {
         self.relais.set(1);
         self.leds.set(1);
         self.leds.set(3);
-        #[cfg(target_arch = "arm")]
-        {
-            self.leds.shift_out();
-            self.relais.init();
-        }
     }
 
     pub fn init(&mut self) {
