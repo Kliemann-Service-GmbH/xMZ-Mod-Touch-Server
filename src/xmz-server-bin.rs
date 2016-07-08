@@ -1,19 +1,19 @@
 extern crate xmz_server;
 
-use xmz_server::module::{Module, ModuleType};
-use xmz_server::server::{Server};
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
+use std::sync::{Arc, Mutex, RwLock};
+use std::sync::mpsc::channel;
 use std::thread;
 use std::time::Duration;
-use std::sync::{Arc, RwLock};
+use xmz_server::module::{Module, ModuleType};
+use xmz_server::server::{Server};
 
 fn main() {
     let mut server = Server::new();
     server.init();
 
     server.modbus_device = "/dev/ttyUSB0";
-
     server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
     server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
     server.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
@@ -27,37 +27,33 @@ fn main() {
     server.modules[4].modbus_slave_id = 27;
     server.modules[5].modbus_slave_id = 28;
 
-    // let server = Arc::new(RwLock::new(server));
-    // let server = server.clone();
-    loop {
-        server.update_sensors();
-        for module in &server.modules {
-            for sensor in &module.sensors {
-                println!("{} ({}):{:.2} {}", module.modbus_slave_id, sensor.sensor_type, sensor.concentration().unwrap_or(0.0), sensor.si);
-                // println!("\t\t{}", sensor.adc_value.unwrap_or(0));
-            }
+    let server = Arc::new(RwLock::new(server));
+    let server1 = server.clone();
+    let server2 = server.clone();
+
+    let guard = thread::spawn(move || {
+        loop {
+            let server1 = server1.clone();
+            let update_task = thread::spawn(move || {
+                let mut server1 = server1.write().unwrap();
+                println!("Update");
+                server1.update_sensors();
+                // thread::sleep(Duration::from_millis(2000));
+            });
+
+            let server2 = server2.clone();
+            let worker_task = thread::spawn(move || {
+                match server2.read() {
+                    Ok(server) => {
+                        println!("Do work");
+                        println!("{}", &server.modules[0].sensors[0].adc_value.unwrap_or(0));
+                    }
+                    Err(err) => { println!("Error while lock: {}", err) }
+                }
+                thread::sleep(Duration::from_millis(1000));
+            });
+            worker_task.join();
         }
-        print!("{}[2J", 27 as char);
-    }
-
-
-    // loop {
-    //     let server = server.clone();
-    //     let thread2 = thread::spawn(move || {
-    //         let server = server.read().expect("Failed to acquire read lock");
-    //         for module in &server.modules {
-    //             for sensor in &module.sensors {
-    //                 println!("{} ({}): {}", module.modbus_slave_id, sensor.sensor_type, sensor.concentration().unwrap_or(0.0));
-    //             }
-    //         }
-    //
-    //         thread::sleep(Duration::from_millis(100));
-    //     });
-    // }
-
-    // for modul in server.modules {
-    //     for sensor in modul.sensors {
-    //         println!("{} ({}): {}", modul.modbus_slave_id, sensor.sensor_type, sensor.concentration().unwrap());
-    //     }
-    // }
+    });
+    guard.join();
 }

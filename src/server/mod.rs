@@ -85,7 +85,6 @@ impl<'a> Server<'a> {
                 // Modbus Kontext erzeugen
                 let mut modbus_context = Modbus::new_rtu(self.modbus_device, self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
                 for modul in &mut self.modules {
-                    let modbus_slave_id = modul.modbus_slave_id;
                     match modbus_context.set_slave(modul.modbus_slave_id) {
                         Ok(_) => {
                             // let _ = modbus_context.set_debug(true);
@@ -96,18 +95,18 @@ impl<'a> Server<'a> {
                                     for sensor in &mut modul.sensors {
                                         match modbus_context.connect() {
                                             Ok(_) => {
-                                                    tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
-                                                    tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
-                                                    modbus_context.close();
-                                                }
-                                                Err(err) => {
-                                                    println!("Modbus connect() ist fehlgeschlagen: {}", err);
-                                                    modbus_context.free();
-                                                }
+                                                tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
+                                                tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
+                                                modbus_context.close();
+                                            }
+                                            Err(err) => {
+                                                println!("Modbus Connect ist fehlgeschlagen: {}", err);
+                                                modbus_context.free();
                                             }
                                         }
                                     }
-                                Err(err) => { println!("Konnte RTU_RTS_DOWN nicht setzen: {}", err); }
+                                }
+                                Err(err) => { println!("Konnte MODBUS_RTU_RTS_DOWN nicht setzen: {}", err); }
                             }
                         }
                         Err(err) => { println!("Modbus Context konnte nicht erzeugt werden: {}", err); }
