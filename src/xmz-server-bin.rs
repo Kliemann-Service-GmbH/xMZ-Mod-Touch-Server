@@ -50,9 +50,10 @@ fn main() {
 
             // 3. Task
             let server3 = server3.clone();
-            let i = 1;
+            let mut i = 1;
             let nanomsg_server = thread::spawn(move || {
                 let mut server = server3.write().expect("Fehler beim write lock des Servers");
+                i += 1;
                 server.leds.set(i);
                 server.leds.shift_out();
                 //println!("Tick");
