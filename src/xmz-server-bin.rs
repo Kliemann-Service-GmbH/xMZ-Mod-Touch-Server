@@ -28,32 +28,43 @@ fn main() {
     server.modules[5].modbus_slave_id = 28;
 
     let server = Arc::new(RwLock::new(server));
+    // Verschiedene Server Instanzen erzeugen, diese werden später in den Threads erneut geklont.
     let server1 = server.clone();
     let server2 = server.clone();
+    
 
     let guard = thread::spawn(move || {
         loop {
+
+            // 1. Task Update der Sensoren
             let server1 = server1.clone();
             let update_task = thread::spawn(move || {
-                let mut server1 = server1.write().unwrap();
-                println!("Update");
+                let mut server1 = server1.write().expect("Fehler beim write lock des Servers");
                 server1.update_sensors();
-                // thread::sleep(Duration::from_millis(2000));
             });
 
+            // 2. Thread zur Zeit Ausgabe der Sensorwerte
             let server2 = server2.clone();
             let worker_task = thread::spawn(move || {
                 match server2.read() {
                     Ok(server) => {
-                        println!("Do work");
-                        println!("{}", &server.modules[0].sensors[0].adc_value.unwrap_or(0));
+                        for module in &server.modules[..] {
+                            for sensor in module.sensors.iter() {
+                                println!("{}: ({}) {:.2} {} [{}]", module.modbus_slave_id, sensor.sensor_type, sensor.concentration().unwrap_or(0.0), sensor.si, sensor.adc_value.unwrap_or(0));
+                            }
+                        }
+                        print!("{}[2J", 27 as char);
                     }
                     Err(err) => { println!("Error while lock: {}", err) }
                 }
                 thread::sleep(Duration::from_millis(1000));
             });
             worker_task.join();
-        }
+
+
+
+
+        } // Ende loop
     });
     guard.join();
 }
