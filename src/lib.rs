@@ -5,6 +5,7 @@
 //! xMZ-Mod-Touch Server
 
 extern crate libmodbus_rs;
+extern crate nanomsg;
 extern crate sysfs_gpio;
 
 //extern crate xmz_shift_register;
@@ -25,6 +26,8 @@ pub mod module;
 /// Dieses Modul beinhaltet alle Funktionen und Datenstrukturen die zur Sensorauswertung nötig sind.
 /// Also die Umwandlung des Analog Signals in ein Wert, die Mittelwert Bildung und in Teilen auch die Störungsüberwachung.
 pub mod sensor;
+
+pub mod nanomsg_device;
 
 #[cfg(test)]
 mod tests {

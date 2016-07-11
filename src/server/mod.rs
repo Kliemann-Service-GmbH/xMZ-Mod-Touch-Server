@@ -13,7 +13,9 @@ use std::fs;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-
+use nanomsg::{Socket, Protocol, Error};
+use std::io::{Read, Write};
+use std::result::Result;
 
 pub struct Server<'a> {
     pub leds: ShiftRegister,
@@ -49,7 +51,43 @@ impl<'a> Server<'a> {
         }
     }
 
-    /// Default Konfiguration des Servers
+    pub fn init(&mut self) {
+        let mut socket = Socket::new(Protocol::Rep).unwrap();
+        let mut endpoint = socket.connect("ipc:///tmp/xmz-server.ipc").unwrap();
+
+        let mut request = String::new();
+
+        let server_thread = thread::spawn(move || {
+            println!("Server ist bereit");
+
+            loop {
+                match socket.read_to_string(&mut request) {
+                    Ok(_) => {
+                        println!("Server Empfang: {}", request);
+
+                        match socket.write_all("OK".as_bytes()) {
+                            Ok(..) => { println!("Server sendet OK"); }
+                            Err(err) => {
+                                println!("Server konnte nicht OK senden");
+                                break
+                            }
+                        }
+                        request.clear();
+                    },
+                    Err(err) => {
+                        println!("Server konnte Anfrage nicht verarbeiten: {}", err);
+                    }
+                }
+                request.clear();
+            }
+            match endpoint.shutdown() {
+                Ok(_) => {}
+                Err(err) => { panic!("{}", err); }
+            }
+        });
+    }
+
+/// Default Konfiguration des Servers
     pub fn default_configuration(&mut self) {
         self.relais.set(1);
         self.leds.set(1);

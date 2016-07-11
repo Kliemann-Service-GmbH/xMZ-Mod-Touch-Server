@@ -13,7 +13,7 @@ name = "xmz-server-bin"
 path = "src/xmz-server-bin.rs"
 
 [dependencies]
-nanomsg = "*"
+nanomsg = "0.6.0"
 xmz_shift_register = { git = "https://github.com/zzeroo/xmz_shift_register.git" }
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
 sysfs_gpio = "*"
