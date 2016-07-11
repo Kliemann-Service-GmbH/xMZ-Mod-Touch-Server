@@ -6,16 +6,20 @@ pub mod zone;
 
 use libmodbus_rs::*;
 use libmodbus_rs::modbus::{Modbus};
+use module::{Module, ModuleType};
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
-use module::{Module, ModuleType};
+use std::fs;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
+use nanomsg::{Socket, Protocol, Error};
+use std::io::{Read, Write};
+use std::result::Result;
 
 pub struct Server<'a> {
-    leds: ShiftRegister,
-    relais: ShiftRegister,
+    pub leds: ShiftRegister,
+    pub relais: ShiftRegister,
     // Sensor Module des Servers
     pub modules: Vec<Module<'a>>,
     // Alarm/ Störzonen des Servers
@@ -47,53 +51,107 @@ impl<'a> Server<'a> {
         }
     }
 
-    /// Default Konfiguration des Servers
-    fn default_configuration(&mut self) {
+    pub fn init(&mut self) {
+        let mut socket = Socket::new(Protocol::Rep).unwrap();
+        let mut endpoint = socket.connect("ipc:///tmp/xmz-server.ipc").unwrap();
+
+        let mut request = String::new();
+
+        let server_thread = thread::spawn(move || {
+            println!("Server ist bereit");
+
+            loop {
+                match socket.read_to_string(&mut request) {
+                    Ok(_) => {
+                        println!("Server Empfang: {}", request);
+
+                        match socket.write_all("OK".as_bytes()) {
+                            Ok(..) => { println!("Server sendet OK"); }
+                            Err(err) => {
+                                println!("Server konnte nicht OK senden");
+                                break
+                            }
+                        }
+                        request.clear();
+                    },
+                    Err(err) => {
+                        println!("Server konnte Anfrage nicht verarbeiten: {}", err);
+                    }
+                }
+                request.clear();
+            }
+            match endpoint.shutdown() {
+                Ok(_) => {}
+                Err(err) => { panic!("{}", err); }
+            }
+        });
+    }
+
+/// Default Konfiguration des Servers
+    pub fn default_configuration(&mut self) {
         self.relais.set(1);
         self.leds.set(1);
         self.leds.set(3);
-        #[cfg(target_arch = "arm")]
-        {
-            self.leds.shift_out();
-            self.relais.init();
-        }
-    }
 
-    pub fn init(&mut self) {
-        #[cfg(target_arch = "arm")]
-        {
-            self.leds.init();
-            self.relais.init();
-        }
-        // Rufe die default Konfiguration auf
-        self.default_configuration();
-
+        self.modbus_device = "/dev/ttyUSB0";
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
+        self.modules[0].modbus_slave_id = 1;
+        self.modules[1].modbus_slave_id = 2;
+        self.modules[2].modbus_slave_id = 3;
+        self.modules[3].modbus_slave_id = 4;
+        self.modules[4].modbus_slave_id = 5;
+        self.modules[5].modbus_slave_id = 6;
 
     }
 
     // Public api
 
     /// Sensor Update Task
+    ///
+    /// Dieser Task checkt zu Begin ob das konfigurierte Modbus Interface `modbus_device` erreichbar ist.
+    /// Wenn das Device nicht existiert, oder die Berechtigungen des Users nicht ausreichen wird ein Fehler
+    /// ausgegeben.
+    ///
     pub fn update_sensors(&mut self) {
-        // Modbus Kontext erzeugen
-        let mut modbus_context = Modbus::new_rtu(self.modbus_device, self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
+        match fs::metadata(self.modbus_device){
+            Ok(_) => {
+                // Modbus Kontext erzeugen
+                let mut modbus_context = Modbus::new_rtu(self.modbus_device, self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
+                for modul in &mut self.modules {
+                    match modbus_context.set_slave(modul.modbus_slave_id) {
+                        Ok(_) => {
+                            // let _ = modbus_context.set_debug(true);
+                            match modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN) {
+                                Ok(_) => {
+                                    let mut tab_reg: Vec<u16> = Vec::new();
 
-        for modul in &mut self.modules {
-            let modbus_slave_id = modul.modbus_slave_id;
-            //try!(modbus_context.set_slave(modul.modbus_slave_id).map_err(|e| e.to_string()));
-            let _ = modbus_context.set_slave(modul.modbus_slave_id);
-            let _ = modbus_context.set_debug(true);
-            let _ = modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN);
-
-            match modbus_context.connect() {
-                Err(_) => { modbus_context.free(); }
-                Ok(_) => {
-                    for sensor in &mut modul.sensors {
-                        let tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
-                        sensor.adc_value = Some(tab_reg[0]);
+                                    for sensor in &mut modul.sensors {
+                                        match modbus_context.connect() {
+                                            Ok(_) => {
+                                                tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
+                                                tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
+                                                modbus_context.close();
+                                            }
+                                            Err(err) => {
+                                                println!("Modbus Connect ist fehlgeschlagen: {}", err);
+                                            }
+                                        }
+                                    }
+                                }
+                                Err(err) => { println!("Konnte MODBUS_RTU_RTS_DOWN nicht setzen: {}", err); }
+                            }
+                        }
+                        Err(err) => { println!("Modbus Context konnte nicht erzeugt werden: {}", err); }
                     }
-                }
-            }
+                };
+                modbus_context.free();
+            },
+            Err(err) => { println!("Modbus Device: '{}' ist nicht verfügbar: {}", self.modbus_device, err); }
         }
     }
 }

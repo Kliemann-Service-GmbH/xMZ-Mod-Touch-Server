@@ -1,5 +1,6 @@
 use server::zone::Zone;
 use std::result;
+use std::fmt;
 
 /// Mögliche Fehler die auftreten können
 #[derive(Debug, Eq, PartialEq)]
@@ -23,6 +24,15 @@ pub enum SensorType {
     NemotoCO,
 }
 
+impl fmt::Display for SensorType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            SensorType::NemotoNO2 => write!(f, "Nemoto NO2"),
+            SensorType::NemotoCO => write!(f, "Nemoto CO"),
+        }
+    }
+}
+
 #[derive(Debug, Eq, PartialEq)]
 enum Alarmauswertung {
     On,
@@ -30,13 +40,14 @@ enum Alarmauswertung {
     Simulation,
 }
 
+#[derive(Debug)]
 pub struct Sensor<'a> {
     /// Sensor Typ
     pub sensor_type: SensorType,
     /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
     pub adc_value: Option<u16>,
     /// SI Einheit des Sensors (ppm, %UEG, Vol %)
-    pub si: &'a str,
+    pub si: String,
     adc_value_at_nullgas: Option<u32>,
     adc_value_at_messgas: Option<u32>,
     concentration_nullgas: Option<u32>,
@@ -59,7 +70,7 @@ impl<'a> Sensor<'a> {
                 Sensor {
                     sensor_type: SensorType::NemotoNO2,
                     adc_value: None,
-                    si: "ppm",
+                    si: "ppm".to_string(),
                     adc_value_at_nullgas: Some(922),  // TODO: Read in sensor calibration data
                     adc_value_at_messgas: Some(622),  // TODO: Read in sensor calibration data
                     concentration_nullgas: Some(0),  // TODO: Read in sensor calibration data
@@ -73,7 +84,7 @@ impl<'a> Sensor<'a> {
                 Sensor {
                     sensor_type: SensorType::NemotoCO,
                     adc_value: None,
-                    si: "ppm",
+                    si: "ppm".to_string(),
                     adc_value_at_nullgas: Some(107),  // TODO: Read in sensor calibration data
                     adc_value_at_messgas: Some(888),  // TODO: Read in sensor calibration data
                     concentration_nullgas: Some(0),  // TODO: Read in sensor calibration data
@@ -105,24 +116,24 @@ impl<'a> Sensor<'a> {
     /// ```
     pub fn concentration(&self) -> Result<f32> {
         let x = match self.adc_value {
-            None => {return Err(SensorError::NoAdcValue); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoAdcValue); }
+            Some(value) => { value }
         };
         let y2 = match self.concentration_messgas{
-            None => {return Err(SensorError::NoConcentrationMessgas); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoConcentrationMessgas); }
+            Some(value) => { value }
         };
         let y1 = match self.concentration_nullgas{
-            None => {return Err(SensorError::NoConcentrationNullgas); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoConcentrationNullgas); }
+            Some(value) => { value }
         };
         let x2 = match self.adc_value_at_messgas{
-            None => {return Err(SensorError::NoAdcValueAtMessgas); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoAdcValueAtMessgas); }
+            Some(value) => { value }
         };
         let x1 = match self.adc_value_at_nullgas{
-            None => {return Err(SensorError::NoAdcValueAtNullgas); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoAdcValueAtNullgas); }
+            Some(value) => { value }
         };
 
         let result: f32 = (y2 as f32 - y1 as f32) / (x2 as f32 - x1 as f32) * (x as f32 - x1 as f32) + y1 as f32;
@@ -143,20 +154,20 @@ impl<'a> Sensor<'a> {
     pub fn adc_from_concentration(&self, concentration: f32) -> Result<f32> {
         let x = concentration;
         let y2 = match self.concentration_messgas{
-            None => {return Err(SensorError::NoConcentrationMessgas); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoConcentrationMessgas); }
+            Some(value) => { value }
         };
         let y1 = match self.concentration_nullgas{
-            None => {return Err(SensorError::NoConcentrationNullgas); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoConcentrationNullgas); }
+            Some(value) => { value }
         };
         let x2 = match self.adc_value_at_messgas{
-            None => {return Err(SensorError::NoAdcValueAtMessgas); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoAdcValueAtMessgas); }
+            Some(value) => { value }
         };
         let x1 = match self.adc_value_at_nullgas{
-            None => {return Err(SensorError::NoAdcValueAtNullgas); }
-            Some(value) => {value}
+            None => { return Err(SensorError::NoAdcValueAtNullgas); }
+            Some(value) => { value }
         };
 
         let result: f32 = (y2 as f32 - y1 as f32) / (x2 as f32 - x1 as f32) * (x as f32 - x1 as f32) + y1 as f32;

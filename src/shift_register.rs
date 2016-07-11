@@ -1,3 +1,10 @@
+//! Kontrolliert die ShiftRegister Hardware der 'xMZ-Mod-Touch'-Plattform
+use sysfs_gpio::{Direction, Pin};
+use std::thread;
+use std::time::Duration;
+use std::sync::Arc;
+
+
 /// Representiert die verschiedenen Shift Register Typen
 ///
 /// Zur Zeit gibt es 2 verschiedene Shift Register Typen
@@ -20,6 +27,10 @@ pub enum ShiftRegisterType {
 #[derive(Debug, Eq, PartialEq)]
 pub struct ShiftRegister {
     register_type: ShiftRegisterType,
+    pub oe_pin: Pin,
+    pub ds_pin: Pin,
+    pub clock_pin: Pin,
+    pub latch_pin: Pin,
     pub data: u64,
 }
 
@@ -43,10 +54,18 @@ impl ShiftRegister {
         match register_type {
             ShiftRegisterType::LED => ShiftRegister {
                 register_type: ShiftRegisterType::LED,
+                oe_pin: Pin::new(276),
+                ds_pin: Pin::new(38),
+                clock_pin: Pin::new(44),
+                latch_pin: Pin::new(40),
                 data: 0,
             },
             ShiftRegisterType::RELAIS => ShiftRegister {
                 register_type: ShiftRegisterType::RELAIS,
+                oe_pin: Pin::new(277),
+                ds_pin: Pin::new(45),
+                clock_pin: Pin::new(39),
+                latch_pin: Pin::new(37),
                 data: 0,
             }
         }
@@ -154,9 +173,80 @@ impl ShiftRegister {
         self.data ^= 1 << num -1;
     }
 
-    pub fn init(&self) {}
+    /// Exportiert die Pins in das sysfs des Linux Kernels
+    ///
+    fn export_pins(&self) {
+        match self.oe_pin.export() {
+            Ok(_) => {},
+            Err(err) => { println!("!OE (output enabled) Pin konnte nicht exportiert werden: {}", err) },
+        }
+        match self.ds_pin.export() {
+            Ok(_) => {},
+            Err(err) => { println!("DATA Pin konnte nicht exportiert werden: {}", err) },
+        }
+        match self.clock_pin.export() {
+            Ok(_) => {},
+            Err(err) => { println!("CLOCK Pin konnte nicht exportiert werden: {}", err) },
+        }
+        match self.latch_pin.export() {
+            Ok(_) => {},
+            Err(err) => { println!("LATCH Pin konnte nicht exportiert werden: {}", err) },
+        }
+    }
 
-    pub fn shift_out(&self) {}
+    /// Schaltet die Pins in den OUTPUT Pin Modus
+    ///
+    fn set_pin_direction_output(&self) {
+        match self.oe_pin.set_direction(Direction::Out) {
+            Ok(_) => { let _ = self.oe_pin.set_value(0); }, // !OE pin low == Shift register enabled.
+            Err(err) => { println!("DATA Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
+        }
+
+        match self.ds_pin.set_direction(Direction::Out) {
+            Ok(_) => { let _ = self.ds_pin.set_value(0); },
+            Err(err) => { println!("DATA Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
+        }
+
+        match self.clock_pin.set_direction(Direction::Out) {
+            Ok(_) => { let _ = self.clock_pin.set_value(0); },
+            Err(err) => { println!("CLOCK Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
+        }
+
+        match self.latch_pin.set_direction(Direction::Out) {
+            Ok(_) => { let _ = self.latch_pin.set_value(0); },
+            Err(err) => { println!("LATCH Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
+        }
+    }
+
+    /// Toogelt den Clock Pin high->low
+    fn clock_in(&self) {
+        &self.clock_pin.set_value(1).unwrap_or(());
+        &self.clock_pin.set_value(0).unwrap_or(());
+    }
+
+    /// Toggelt den Latch Pin pin high->low,
+    fn latch_out(&self) {
+        &self.latch_pin.set_value(1).unwrap_or(());
+        &self.latch_pin.set_value(0).unwrap_or(());
+    }
+
+    /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
+    /// Schiebe Register (latch out)
+    pub fn shift_out(&self) {
+        self.export_pins();
+        self.set_pin_direction_output();
+
+        // Daten einclocken
+        for i in (0..64).rev() {
+            match (self.data >> i) & 1 {
+                1 => { self.ds_pin.set_value(1).unwrap_or(()); },
+                _ => { self.ds_pin.set_value(0).unwrap_or(()); },
+            }
+            self.clock_in();
+        }
+        self.latch_out();
+    }
+
 }
 
 
@@ -200,5 +290,23 @@ mod tests {
             led.toggle(i);
             assert_eq!(led.get(i), false);
         }
+    }
+
+    #[test]
+    fn export_pins() {
+        let led = ShiftRegister::new(ShiftRegisterType::LED);
+        led.export_pins();
+    }
+
+    #[test]
+    fn  set_pin_direction_output() {
+        let led = ShiftRegister::new(ShiftRegisterType::LED);
+        led.set_pin_direction_output();
+    }
+
+    #[test]
+    fn  shift_out() {
+        let led = ShiftRegister::new(ShiftRegisterType::LED);
+        led.shift_out();
     }
 }
