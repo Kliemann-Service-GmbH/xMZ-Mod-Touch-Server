@@ -8,7 +8,7 @@ use std::sync::mpsc::channel;
 use std::thread;
 use std::time::Duration;
 use xmz_server::module::{Module, ModuleType};
-use xmz_server::server::{Server};
+use xmz_server::server::server::Server;
 use nanomsg::{Socket, Protocol};
 use std::io::{Read, Write};
 use xmz_server::nanomsg_device::NanoMsgDevice;
