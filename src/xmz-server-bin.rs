@@ -1,24 +1,23 @@
 extern crate xmz_server;
 extern crate nanomsg;
 
+use nanomsg::{Socket, Protocol};
 use std::cell::RefCell;
+use std::io::{Read, Write};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex, RwLock};
 use std::sync::mpsc::channel;
 use std::thread;
 use std::time::Duration;
 use xmz_server::module::{Module, ModuleType};
-use xmz_server::server::server::Server;
-use nanomsg::{Socket, Protocol};
-use std::io::{Read, Write};
 use xmz_server::nanomsg_device::NanoMsgDevice;
-
+use xmz_server::server::server::Server;
+use xmz_server::server::server_command::{ServerCommand};
+use std::str::FromStr;
 
 fn main() {
     let mut server = Server::new();
     let device = NanoMsgDevice::create();
-    server.init();
-
     server.default_configuration();
 
     let server = Arc::new(RwLock::new(server));
@@ -62,7 +61,44 @@ fn main() {
             let server3 = server3.clone();
             let nanomsg_server = thread::spawn(move || {
                 let mut server = server3.write().expect("Fehler beim write lock des Servers");
-                //println!("Tick");
+
+                match Socket::new(Protocol::Rep) {
+                    Ok(mut socket) => {
+                        match socket.connect("ipc:///tmp/xmz-server.ipc") {
+                            Ok(mut endpoint) => {
+                                let mut request = String::new();
+
+                                println!("Nanomsg Server ist bereit");
+
+                                loop {
+                                    match socket.read_to_string(&mut request) {
+                                        Ok(_) => {
+                                            println!("Server Empfang: {}", request);
+                                            let server_command = ServerCommand::from_str(&request).unwrap();
+                                            server.execute(server_command);
+
+                                            match socket.write_all("OK".as_bytes()) {
+                                                Ok(..) => { println!("Server sendet OK"); }
+                                                Err(err) => {
+                                                    println!("Server konnte nicht OK senden");
+                                                    break
+                                                }
+                                            }
+                                            request.clear();
+                                        }
+                                        Err(err) => {
+                                            println!("Server konnte Anfrage nicht verarbeiten: {}", err);
+                                        }
+                                    }
+                                    request.clear();
+                                }
+                                let _ = endpoint.shutdown();
+                            }
+                            Err(err) => { println!("Fehler beim Erstellen des Nanomsg Endpoints: {}", err); }
+                        }
+                    }
+                    Err(err) => { println!("Fehler beim Erstellen des Nanomsg Sockets: {}", err); }
+                }
             });
             nanomsg_server.join();
 

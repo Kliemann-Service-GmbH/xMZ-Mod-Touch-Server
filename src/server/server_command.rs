@@ -8,7 +8,7 @@ pub enum ServerCommandError {
     InvalidSubCommand,
 }
 
-/// Liste der Befehle die der Server verarbeiten kann_module_modbus_adresse_abfragen
+/// Liste der Befehle die der Server verarbeiten kann
 ///
 #[derive (Debug, Eq, PartialEq)]
 pub enum ServerCommand {
