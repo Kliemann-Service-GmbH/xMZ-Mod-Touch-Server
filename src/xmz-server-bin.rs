@@ -32,7 +32,7 @@ fn main() {
             // 1. Task, Update Sensoren, LED und Relais
             let server1 = server1.clone();
             let update_task = thread::spawn(move || {
-                let mut server = server1.write().expect("Fehler beim write lock des Servers");
+                let mut server = server1.write().expect("@Update Task: Fehler beim write lock des Servers");
                 server.update_sensors();
                 // server.leds.shift_out();
                 // server.relais.shift_out();
@@ -60,7 +60,7 @@ fn main() {
             // 3. Task
             let server3 = server3.clone();
             let nanomsg_server = thread::spawn(move || {
-                let mut server = server3.write().expect("Fehler beim write lock des Servers");
+                let mut server = server3.write().expect("@Nanomsg Server: Fehler beim write lock des Servers");
 
                 match Socket::new(Protocol::Rep) {
                     Ok(mut socket) => {
@@ -74,8 +74,10 @@ fn main() {
                                     match socket.read_to_string(&mut request) {
                                         Ok(_) => {
                                             println!("Server Empfang: {}", request);
-                                            let server_command = ServerCommand::from_str(&request).unwrap();
-                                            server.execute(server_command);
+                                            match ServerCommand::from_str(&request) {
+                                                Ok(server_command) => { server.execute(server_command); }
+                                                Err(err) => {println!("Fehler beim Auswerten des Server Commands: {}", err); }
+                                            }
 
                                             match socket.write_all("OK".as_bytes()) {
                                                 Ok(..) => { println!("Server sendet OK"); }

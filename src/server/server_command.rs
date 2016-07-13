@@ -1,4 +1,5 @@
 // Inspiration: http://cosmo0920.github.io/ruroonga_command/src/ruroonga_command/src/command.rs.html#17-63
+use std::fmt;
 use std::str::FromStr;
 
 /// Mögliche Fehler die auftreten können
@@ -10,52 +11,17 @@ pub enum ServerCommandError {
 
 /// Liste der Befehle die der Server verarbeiten kann
 ///
-#[derive (Debug, Eq, PartialEq)]
+#[derive (Clone, Debug, Eq, PartialEq)]
 pub enum ServerCommand {
     Led { subcommand: String, params: String },
+    Relais { subcommand: String, params: String },
 }
 
-impl ServerCommand {
-    /// # Examples
-    ///
-    /// ```
-    /// use std::str::FromStr;
-    /// use xmz_server::server::server_command::{ServerCommand, ServerCommandError};
-    ///
-    /// let string = "led set 1";
-    /// assert_eq!(ServerCommand::from_str(string).unwrap().execute(), Ok(0));
-    /// let string = "led get 1";
-    /// assert_eq!(ServerCommand::from_str(string).unwrap().execute(), Ok(0));
-    /// ```
-    ///
-    /// Mit ungültigem SubCommand
-    ///
-    /// ```
-    /// use std::str::FromStr;
-    /// use xmz_server::server::server_command::{ServerCommand, ServerCommandError};
-    ///
-    /// let string = "led foo 1";
-    /// assert_eq!(ServerCommand::from_str(string).unwrap().execute(), Err(ServerCommandError::InvalidSubCommand));
-    /// ```
-    pub fn execute(self) -> Result<i32, ServerCommandError> {
-        match self {
-            ServerCommand::Led { subcommand, params, ..} => {
-                match subcommand.as_ref() {
-                    "set" => {
-                        // server.led.set(1);
-                        println!("server.led.{}({});", subcommand, params);
-                        Ok(0)
-                    },
-                    "get" => {
-                        // server.led.get(1);
-                        println!("server.led.{}({});", subcommand, params);
-                        Ok(0)
-                    },
-                    "clear" => { unimplemented!() },
-                    "toggle" => { unimplemented!() },
-                    _ => { Err(ServerCommandError::InvalidSubCommand) },
-                }
-            }
+impl fmt::Display for ServerCommandError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ServerCommandError::InvalidCommand => write!(f, "Ungültiger Befehl"),
+            ServerCommandError::InvalidSubCommand => write!(f, "Ungültiger Unterbefehl (SubCommand)"),
         }
     }
 }
@@ -81,6 +47,7 @@ impl FromStr for ServerCommand {
 
         match v[0] {
             "led" => Ok(ServerCommand::Led {subcommand: String::from(v[1]), params: String::from(v[2])}),
+            "relais" => Ok(ServerCommand::Relais {subcommand: String::from(v[1]), params: String::from(v[2])}),
             _ => Err(ServerCommandError::InvalidCommand),
         }
     }

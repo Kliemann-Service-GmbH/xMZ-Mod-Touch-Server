@@ -13,6 +13,7 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
+
 pub struct Server<'a> {
     pub leds: ShiftRegister,
     pub relais: ShiftRegister,
@@ -116,6 +117,18 @@ impl<'a> Server<'a> {
 
     /// Führt ein Befehl ausgegeben
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use xmz_server::server::server::{Server};
+    /// use xmz_server::server::server_command::{ServerCommand, ServerCommandError};
+    ///
+    /// let mut server = Server::new();
+    /// let string = "led set 1";
+    /// let server_command = ServerCommand::from_str(string).unwrap();
+    /// server.execute(server_command);
+    /// ```
     pub fn execute(&mut self, command: ServerCommand) {
         match command {
             ServerCommand::Led { subcommand, params, ..} => {
@@ -124,9 +137,40 @@ impl<'a> Server<'a> {
                         self.leds.set(u64::from_str(&params).unwrap());
                         self.leds.shift_out();
                     },
+                    "get" => {
+                        self.leds.get(u64::from_str(&params).unwrap());
+                    },
+                    "clear" => {
+                        self.leds.clear(u64::from_str(&params).unwrap());
+                        self.leds.shift_out();
+                    },
+                    "toggle" => {
+                        self.leds.toggle(u64::from_str(&params).unwrap());
+                        self.leds.shift_out();
+                    },
                     _ => {}
                 }
-            }
+            },
+            ServerCommand::Relais { subcommand, params, ..} => {
+                match subcommand.as_ref() {
+                    "set" => {
+                        self.relais.set(u64::from_str(&params).unwrap());
+                        self.relais.shift_out();
+                    },
+                    "get" => {
+                        self.relais.get(u64::from_str(&params).unwrap());
+                    },
+                    "clear" => {
+                        self.relais.clear(u64::from_str(&params).unwrap());
+                        self.relais.shift_out();
+                    },
+                    "toggle" => {
+                        self.relais.toggle(u64::from_str(&params).unwrap());
+                        self.relais.shift_out();
+                    },
+                    _ => {}
+                }
+            },
         }
     }
 }
