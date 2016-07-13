@@ -4,7 +4,8 @@ use std::str::FromStr;
 /// Mögliche Fehler die auftreten können
 #[derive (Debug, Eq, PartialEq)]
 pub enum ServerCommandError {
-    Invalid,
+    InvalidCommand,
+    InvalidSubCommand,
 }
 
 /// Liste der Befehle die der Server verarbeiten kann_module_modbus_adresse_abfragen
@@ -12,6 +13,51 @@ pub enum ServerCommandError {
 #[derive (Debug, Eq, PartialEq)]
 pub enum ServerCommand {
     Led { subcommand: String, params: String },
+}
+
+impl ServerCommand {
+    /// # Examples
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use xmz_server::server::server_command::{ServerCommand, ServerCommandError};
+    ///
+    /// let string = "led set 1";
+    /// assert_eq!(ServerCommand::from_str(string).unwrap().execute(), Ok(0));
+    /// let string = "led get 1";
+    /// assert_eq!(ServerCommand::from_str(string).unwrap().execute(), Ok(0));
+    /// ```
+    ///
+    /// Mit ungültigem SubCommand
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use xmz_server::server::server_command::{ServerCommand, ServerCommandError};
+    ///
+    /// let string = "led foo 1";
+    /// assert_eq!(ServerCommand::from_str(string).unwrap().execute(), Err(ServerCommandError::InvalidSubCommand));
+    /// ```
+    pub fn execute(self) -> Result<i32, ServerCommandError> {
+        match self {
+            ServerCommand::Led { subcommand, params, ..} => {
+                match subcommand.as_ref() {
+                    "set" => {
+                        // server.led.set(1);
+                        println!("server.led.{}({});", subcommand, params);
+                        Ok(0)
+                    },
+                    "get" => {
+                        // server.led.get(1);
+                        println!("server.led.{}({});", subcommand, params);
+                        Ok(0)
+                    },
+                    "clear" => { unimplemented!() },
+                    "toggle" => { unimplemented!() },
+                    _ => { Err(ServerCommandError::InvalidSubCommand) },
+                }
+            }
+        }
+    }
 }
 
 impl FromStr for ServerCommand {
@@ -35,7 +81,7 @@ impl FromStr for ServerCommand {
 
         match v[0] {
             "led" => Ok(ServerCommand::Led {subcommand: String::from(v[1]), params: String::from(v[2])}),
-            _ => Err(ServerCommandError::Invalid),
+            _ => Err(ServerCommandError::InvalidCommand),
         }
     }
 }
