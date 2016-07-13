@@ -26,7 +26,7 @@ cp target/release/xmz-server-bin /usr/bin/xmz-server
 ## Systemd Unit File anlegen
 
 ```bash
-cat <<EOF >/etc/systemd/system/xmz-server.service
+cat <<EOF >/etc/systemd/system/xmz-mod-touch-server.service
 [Unit]
 Description="Server Process of the 'xMZ-Mod-Touch'-Platform"
 After=multi-user.target
