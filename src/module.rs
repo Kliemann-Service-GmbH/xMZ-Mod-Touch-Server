@@ -1,4 +1,5 @@
 use sensor::{Sensor, SensorType};
+use std::fmt;
 
 /// Module Arten
 ///
@@ -17,9 +18,22 @@ pub struct Module<'a> {
     module_type: ModuleType,
     /// Vector der auf dieser Platine angeschlossenen Sensoren
     pub sensors: Vec<Sensor<'a>>,
-    pub modbus_slave_id: i32,
+    modbus_slave_id: i32,
 }
 
+
+#[derive(Debug)]
+pub enum ModuleError {
+    InvalidModbusSlaveId,
+}
+
+impl fmt::Display for ModuleError {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        fmt.write_str(match *self {
+            ModuleError::InvalidModbusSlaveId => "Invalid Modbus Slave ID",
+        })
+    }
+}
 
 
 impl<'a> Module<'a> {
@@ -50,6 +64,36 @@ impl<'a> Module<'a> {
             }
         }
     }
+
+    /// Setzt die Modbus Slave ID
+    ///
+    /// Gültige Modbus Adressen sind 0..256, wobei die Modbus Adresse 0 die Broadcast Adresse ist,
+    /// diese ist für Module nicht erlaubt.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// ```
+    pub fn set_modbus_slave_id(&mut self, slave_id: i32) -> Result<i32, ModuleError> {
+        match slave_id {
+            slave_id @ 1 ... 256 => {
+                self.modbus_slave_id = slave_id;
+                Ok(slave_id)
+            },
+            _ => { Err(ModuleError::InvalidModbusSlaveId) }
+        }
+    }
+
+    /// Liefert die Modbus Slave ID
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// ```
+    pub fn get_modbus_slave_id(&self) -> i32 {
+        self.modbus_slave_id
+    }
+
 }
 
 #[cfg(test)]
