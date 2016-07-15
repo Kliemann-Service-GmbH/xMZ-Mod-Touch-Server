@@ -41,6 +41,7 @@ impl<'a> Server<'a> {
             Zone::new(ZoneType::Schwellenwert),
             ],
             modbus_device: "/dev/ttyS1".to_string(),
+            // modbus_device: "/dev/ttyUSB0".to_string(),
             modbus_baud: 9600,
             modbus_parity: 'N',
             modbus_data_bit: 8,
@@ -60,12 +61,12 @@ impl<'a> Server<'a> {
         self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
         self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
         self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        self.modules[0].set_modbus_slave_id(1);
-        self.modules[1].set_modbus_slave_id(2);
-        self.modules[2].set_modbus_slave_id(3);
-        self.modules[3].set_modbus_slave_id(4);
-        self.modules[4].set_modbus_slave_id(5);
-        self.modules[5].set_modbus_slave_id(6);
+        self.modules[0].set_modbus_slave_id(21);
+        self.modules[1].set_modbus_slave_id(22);
+        self.modules[2].set_modbus_slave_id(23);
+        self.modules[3].set_modbus_slave_id(24);
+        self.modules[4].set_modbus_slave_id(25);
+        self.modules[5].set_modbus_slave_id(26);
     }
 
     // Public api

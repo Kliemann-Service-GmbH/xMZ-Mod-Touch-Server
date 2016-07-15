@@ -4,6 +4,11 @@
 #![feature(stmt_expr_attributes)]
 
 //! xMZ-Mod-Touch Server
+//!
+//! Server Teil der 'xMZ-Mod-Touch'-Platform
+//! 
+//! Git Repository: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
+
 
 extern crate libmodbus_rs;
 extern crate nanomsg;

@@ -1,3 +1,6 @@
+// TODO: gernerische FUnktion LED/ RELAIS reset (alles auf Null)
+// TODO: LED Lampentest
+//
 extern crate xmz_server;
 extern crate nanomsg;
 
@@ -10,6 +13,10 @@ use std::time::Duration;
 use xmz_server::nanomsg_device::NanoMsgDevice;
 use xmz_server::server::server_command::{ServerCommand};
 use xmz_server::server::server::Server;
+
+fn tick(name: &str) {
+    println!("tick from: {}", name);
+}
 
 fn main() {
     let mut server = Server::new();
@@ -36,8 +43,10 @@ fn main() {
                     Ok(mut server) => { server.update_sensors(); }
                     Err(err) => { println!("Thread Update Task: Fehler beim write lock des Servers: {}", err); }
                 };
+                tick("Thread1");
             });
             let _ = update_task.join();
+
 
             // 2. Thread zur Zeit Ausgabe der Sensorwerte
             let server2 = server2.clone();
@@ -49,13 +58,14 @@ fn main() {
                                 println!("{}: ({}) {:.2} {} [{}]", module.get_modbus_slave_id(), sensor.sensor_type, sensor.concentration().unwrap_or(0.0), sensor.si, sensor.adc_value.unwrap_or(0));
                             }
                         }
+                        thread::sleep(Duration::from_millis(1000));
                         print!("{}[2J", 27 as char);
                     }
                     Err(err) => { println!("Error while lock: {}", err) }
                 };
-                thread::sleep(Duration::from_millis(1000));
+                tick("Thread2");
             });
-            let _ = worker_task.join();
+            // let _ = worker_task.join();
 
             // 3. Task
             let server3 = server3.clone();
@@ -101,11 +111,15 @@ fn main() {
                     }
                     Err(err) => { println!("Thread Nanomsg Server: Fehler beim write lock des Servers: {}", err); }
                 };
+                tick("Thread3");
                 thread::sleep(Duration::from_millis(100));
             });
-            let _ = nanomsg_server.join();
+            // let _ = nanomsg_server.join();
 
         });
         let _ = guard.join();
+
+
+
     } // Ende loop
 }

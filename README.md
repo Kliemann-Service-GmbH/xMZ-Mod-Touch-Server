@@ -59,6 +59,8 @@ systemctl restart xmz-mod-touch-server.service
 systemctl stop xmz-mod-touch-server.service
 cd
 cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
+git pull
+cargo build --release
 cp target/release/xmz-server-bin /usr/bin/xmz-server
 
 systemctl start xmz-mod-touch-server.service
