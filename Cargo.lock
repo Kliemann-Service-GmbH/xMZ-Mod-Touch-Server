@@ -1,6 +1,6 @@
 [root]
 name = "xmz_server"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "libmodbus-rs 0.1.3 (git+https://github.com/zzeroo/libmodbus-rs.git)",
  "nanomsg 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",

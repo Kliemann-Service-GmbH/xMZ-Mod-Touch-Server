@@ -205,7 +205,7 @@ impl<'a> Sensor<'a> {
 
 #[cfg(test)]
 mod test {
-    use server::Server;
+    use server::server::Server;
     use server::zone::Zone;
     use sensor::{Alarmauswertung, Sensor, SensorType, SensorError};
 

@@ -26,7 +26,7 @@ cp target/release/xmz-server-bin /usr/bin/xmz-server
 ## Systemd Unit File anlegen
 
 ```bash
-cat <<EOF >/etc/systemd/system/xmz-server.service
+cat <<EOF >/etc/systemd/system/xmz-mod-touch-server.service
 [Unit]
 Description="Server Process of the 'xMZ-Mod-Touch'-Platform"
 After=multi-user.target
@@ -51,6 +51,21 @@ systemctl enable xmz-mod-touch-server.service
 ```bash
 systemctl restart xmz-mod-touch-server.service
 ```
+
+## Update des Entwicklungssystems
+
+```bash
+# systemctl daemon-reload # Evtl. wenn das systemd Unit File geändert wurde
+systemctl stop xmz-mod-touch-server.service
+cd
+cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
+git pull
+cargo build --release
+cp target/release/xmz-server-bin /usr/bin/xmz-server
+
+systemctl start xmz-mod-touch-server.service
+```
+
 
 
 

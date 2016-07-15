@@ -1,12 +1,12 @@
 [package]
 name = "xmz_server"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
-description = "xMZ-Mod-Touch Client Server Binaries"
+description = "xMZ-Mod-Touch Server Library and Binaries"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
 homepage = "https://gaswarnanlagen.com/xmz-mod-touch"
-repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Client-Server.git"
-license = "AGPL-3.0"
+repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git"
+license = "GPL-2.0"
 
 [[bin]]
 name = "xmz-server-bin"
@@ -14,6 +14,5 @@ path = "src/xmz-server-bin.rs"
 
 [dependencies]
 nanomsg = "0.6.0"
-# xmz_shift_register = { git = "https://github.com/zzeroo/xmz_shift_register.git" }
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
 sysfs_gpio = "*"
