@@ -21,7 +21,6 @@ fn tick(name: &str) {
 fn main() {
     let mut server = Server::new();
     let _ = server.init();
-    let _ = server.default_configuration();
 
     let _device = NanoMsgDevice::create();
 

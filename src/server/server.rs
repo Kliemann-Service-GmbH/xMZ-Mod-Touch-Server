@@ -55,10 +55,12 @@ impl<'a> Server<'a> {
         self.relais.reset();
 
         self.leds.test();
+
+        self.default_configuration();
     }
 
     /// Default Konfiguration des Servers
-    pub fn default_configuration(&mut self) {
+    fn default_configuration(&mut self) {
         self.relais.set(1);
         self.leds.set(1);
         self.leds.set(3);
