@@ -34,7 +34,7 @@ fn main() {
             let update_task = thread::spawn(move || {
                 let _ = match server1.write() {
                     Ok(mut server) => { server.update_sensors(); }
-                    Err(err) => { println!("@Update Task: Fehler beim write lock des Servers: {}", err); }
+                    Err(err) => { println!("Thread Update Task: Fehler beim write lock des Servers: {}", err); }
                 };
             });
             let _ = update_task.join();
@@ -77,6 +77,7 @@ fn main() {
                                         match socket.read_to_string(&mut request) {
                                             Ok(_) => {
                                                 println!("Server Empfang: {}", request);
+                                                // ServerCommand aus dem Request formen
                                                 match ServerCommand::from_str(&request) {
                                                     Ok(server_command) => { server.execute(server_command, &mut socket); }
                                                     Err(err) => { println!("Fehler beim Auswerten des Server Commands: {}", err); }
@@ -98,7 +99,7 @@ fn main() {
                             Err(err) => { println!("Fehler beim Erstellen des Nanomsg Sockets: {}", err); }
                         }
                     }
-                    Err(err) => { println!("@Nanomsg Server: Fehler beim write lock des Servers: {}", err); }
+                    Err(err) => { println!("Thread Nanomsg Server: Fehler beim write lock des Servers: {}", err); }
                 };
                 thread::sleep(Duration::from_millis(100));
             });

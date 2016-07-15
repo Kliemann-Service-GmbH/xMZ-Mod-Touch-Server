@@ -152,6 +152,7 @@ impl<'a> Server<'a> {
     /// ```
     pub fn execute(&mut self, command: ServerCommand, socket: &mut Socket) {
         match command {
+            // LED Befehle
             ServerCommand::Led { subcommand, params, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -176,6 +177,7 @@ impl<'a> Server<'a> {
                     _ => {}
                 }
             },
+            // RELAIS Befehle
             ServerCommand::Relais { subcommand, params, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -200,6 +202,7 @@ impl<'a> Server<'a> {
                     _ => {}
                 }
             },
+            // SERVER Befehle
             ServerCommand::Server { subcommand, config_entry, config_value, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -222,6 +225,7 @@ impl<'a> Server<'a> {
                     _ => {},
                 }
             },
+            // MODULE Befehle
             ServerCommand::Module { subcommand, config_entry, config_value, module_num, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -238,7 +242,7 @@ impl<'a> Server<'a> {
                                                         // 5. Parameter `module_num`
                                                         module_num.map(|num| {
                                                             println!("Neue Modulnummer {}", num);
-                                                            sende(socket, format!("Neue ModuleID: {}", num));
+                                                            sende(socket, format!("Module: {} neu ID: {}", num, config_value));
                                                         });
                                                         //     Some(module_num) => {
                                                         //         match i32::from_str(module_num.as_ref()) {
