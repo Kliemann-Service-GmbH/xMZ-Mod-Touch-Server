@@ -20,8 +20,10 @@ fn tick(name: &str) {
 
 fn main() {
     let mut server = Server::new();
+    let _ = server.init();
+    let _ = server.default_configuration();
+
     let _device = NanoMsgDevice::create();
-    server.default_configuration();
 
     let server = Arc::new(RwLock::new(server));
     // Verschiedene Server Instanzen erzeugen, diese werden später in den Threads erneut geklont.

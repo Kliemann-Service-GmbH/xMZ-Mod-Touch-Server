@@ -49,6 +49,14 @@ impl<'a> Server<'a> {
         }
     }
 
+    /// Wichtige Grundeinstellungen, wie das leeren der ShiftRegister Speicher
+    pub fn init(&mut self) {
+        self.leds.reset();
+        self.relais.reset();
+
+        self.leds.test();
+    }
+
     /// Default Konfiguration des Servers
     pub fn default_configuration(&mut self) {
         self.relais.set(1);

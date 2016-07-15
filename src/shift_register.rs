@@ -173,6 +173,47 @@ impl ShiftRegister {
         self.data ^= 1 << num -1;
     }
 
+    /// Reset den Datenspeicher und gleicht die  Hardware ab
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::shift_register::{ShiftRegister,ShiftRegisterType};
+    ///
+    /// let mut led = ShiftRegister::new(ShiftRegisterType::LED);
+    ///
+    /// assert_eq!(led.get(1), false);
+    /// led.set(1);
+    /// assert_eq!(led.get(1), true);
+    /// led.reset();
+    /// assert_eq!(led.get(1), false);
+    /// ```
+    pub fn reset(&mut self) {
+        self.data = 0;
+        self.latch_out();
+    }
+
+    // Test Lampentest usw.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::shift_register::{ShiftRegister,ShiftRegisterType};
+    ///
+    /// let mut led = ShiftRegister::new(ShiftRegisterType::LED);
+    ///
+    /// led.reset();
+    /// ```
+    pub fn test(&mut self) {
+        self.data = u64::max_value();
+        self.latch_out();
+        thread::sleep(Duration::new(1, 0));
+        self.reset();
+    }
+
+
+
+
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
     fn export_pins(&self) {
@@ -246,6 +287,7 @@ impl ShiftRegister {
         }
         self.latch_out();
     }
+
 
 }
 
