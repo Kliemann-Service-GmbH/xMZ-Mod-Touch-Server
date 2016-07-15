@@ -64,6 +64,8 @@ impl<'a> Server<'a> {
         self.relais.set(1);
         self.leds.set(1);
         self.leds.set(3);
+        self.leds.shift_out();
+        self.relais.shift_out();
 
         self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
         self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
