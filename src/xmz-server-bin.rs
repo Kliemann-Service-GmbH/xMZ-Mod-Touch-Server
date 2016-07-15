@@ -2,40 +2,42 @@ extern crate xmz_server;
 extern crate nanomsg;
 
 use nanomsg::{Socket, Protocol};
-use std::cell::RefCell;
-use std::io::{Read, Write};
-use std::rc::Rc;
-use std::sync::{Arc, Mutex, RwLock};
-use std::sync::mpsc::channel;
+use std::io::{Read};
+use std::str::FromStr;
+use std::sync::{Arc, RwLock};
 use std::thread;
 use std::time::Duration;
-use xmz_server::module::{Module, ModuleType};
 use xmz_server::nanomsg_device::NanoMsgDevice;
-use xmz_server::server::server::Server;
 use xmz_server::server::server_command::{ServerCommand};
-use std::str::FromStr;
+use xmz_server::server::server::Server;
 
 fn main() {
     let mut server = Server::new();
-    let device = NanoMsgDevice::create();
+    let _device = NanoMsgDevice::create();
     server.default_configuration();
 
     let server = Arc::new(RwLock::new(server));
     // Verschiedene Server Instanzen erzeugen, diese werden später in den Threads erneut geklont.
 
     loop {
+
         let server1 = server.clone();
         let server2 = server.clone();
         let server3 = server.clone();
 
+
+        // Im main loop werden verschiedene Threads gespannt die jeweils Teilaufgaben des Servers
+        // ab arbeiten.
         let guard = thread::spawn(move || {
             // 1. Task, Update Sensoren, LED und Relais
             let server1 = server1.clone();
             let update_task = thread::spawn(move || {
-                let mut server = server1.write().expect("@Update Task: Fehler beim write lock des Servers");
-                server.update_sensors();
+                let _ = match server1.write() {
+                    Ok(mut server) => { server.update_sensors(); }
+                    Err(err) => { println!("@Update Task: Fehler beim write lock des Servers: {}", err); }
+                };
             });
-            update_task.join();
+            let _ = update_task.join();
 
             // 2. Thread zur Zeit Ausgabe der Sensorwerte
             let server2 = server2.clone();
@@ -53,51 +55,56 @@ fn main() {
                 };
                 thread::sleep(Duration::from_millis(1000));
             });
-            worker_task.join();
+            let _ = worker_task.join();
 
             // 3. Task
             let server3 = server3.clone();
             let nanomsg_server = thread::spawn(move || {
-                let mut server = server3.write().expect("@Nanomsg Server: Fehler beim write lock des Servers");
-                // Erstelle Nanomsg Socket
-                match Socket::new(Protocol::Rep) {
-                    Ok(mut socket) => {
-                        // Connect Nanomsg socket (Verbindung zum Nanomsg Device siehe nanomsg_device)
-                        match socket.connect("ipc:///tmp/xmz-server.ipc") {
-                            // Wenn ein endpoint bereit ist nutze den
-                            Ok(mut endpoint) => {
-                                let mut request = String::new();
+                let _ = match server3.write() {
+                    Ok(mut server) => {
+                        // Erstelle Nanomsg Socket
+                        match Socket::new(Protocol::Rep) {
+                            Ok(mut socket) => {
+                                let _ = socket.set_send_timeout(1000);
+                                // socket.set_receive_timeout(1000);
 
-                                // loop {
-                                    match socket.read_to_string(&mut request) {
-                                        Ok(_) => {
-                                            println!("Server Empfang: {}", request);
-                                            match ServerCommand::from_str(&request) {
-                                                Ok(server_command) => { server.execute(server_command, &mut socket); }
-                                                Err(err) => {println!("Fehler beim Auswerten des Server Commands: {}", err); }
+                                // Connect Nanomsg socket (Verbindung zum Nanomsg Device siehe nanomsg_device)
+                                match socket.connect("ipc:///tmp/xmz-server.ipc") {
+                                    // Wenn ein endpoint bereit ist nutze den
+                                    Ok(mut endpoint) => {
+                                        let mut request = String::new();
+
+                                        match socket.read_to_string(&mut request) {
+                                            Ok(_) => {
+                                                println!("Server Empfang: {}", request);
+                                                match ServerCommand::from_str(&request) {
+                                                    Ok(server_command) => { server.execute(server_command, &mut socket); }
+                                                    Err(err) => { println!("Fehler beim Auswerten des Server Commands: {}", err); }
+                                                }
+                                                request.clear();
                                             }
-                                            request.clear();
+                                            Err(err) => {
+                                                println!("Server konnte Anfrage nicht verarbeiten: {}", err);
+                                            }
                                         }
-                                        Err(err) => {
-                                            println!("Server konnte Anfrage nicht verarbeiten: {}", err);
-                                        }
+                                        request.clear();
+                                        let _ = endpoint.shutdown();
                                     }
-                                    request.clear();
-                                // }
-                                let _ = endpoint.shutdown();
+                                    // Wenn kein Endpoint bereit steht gib ein Fehler aus
+                                    Err(err) => { println!("Fehler beim Erstellen des Nanomsg Endpoints: {}", err); }
+                                }
                             }
-                            // Wenn kein Endpoint bereit steht gib ein Fehler aus
-                            Err(err) => { println!("Fehler beim Erstellen des Nanomsg Endpoints: {}", err); }
+                            // Wenn beim Erstellen des Sockets ein Fehler auftritt, gib eine Meldung aus.
+                            Err(err) => { println!("Fehler beim Erstellen des Nanomsg Sockets: {}", err); }
                         }
                     }
-                    // Wenn beim Erstellen des Sockets ein Fehler auftritt, gib eine Meldung aus.
-                    Err(err) => { println!("Fehler beim Erstellen des Nanomsg Sockets: {}", err); }
-                }
+                    Err(err) => { println!("@Nanomsg Server: Fehler beim write lock des Servers: {}", err); }
+                };
                 thread::sleep(Duration::from_millis(100));
             });
-            nanomsg_server.join();
+            let _ = nanomsg_server.join();
 
         });
-        guard.join();
+        let _ = guard.join();
     } // Ende loop
 }

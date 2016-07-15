@@ -205,6 +205,8 @@ impl<'a> Server<'a> {
                     "set" => {
                         match config_entry.as_ref() {
                             "modbus_device" => {
+                                // Checke ob das Device existiert
+                                // config_value.map(|c| self.set_modbus_device(c); sende_ok(socket));
                                 self.set_modbus_device(config_value.unwrap());
                                 sende_ok(socket);
                             },
@@ -233,8 +235,11 @@ impl<'a> Server<'a> {
                                             Some(config_value) => {
                                                 match i32::from_str(config_value.as_ref()) {
                                                     Ok(config_value) => {
-                                                        // // 5. Parameter `module_num`
-                                                        // match module_num {
+                                                        // 5. Parameter `module_num`
+                                                        module_num.map(|num| {
+                                                            println!("Neue Modulnummer {}", num);
+                                                            sende(socket, format!("Neue ModuleID: {}", num));
+                                                        });
                                                         //     Some(module_num) => {
                                                         //         match i32::from_str(module_num.as_ref()) {
                                                         //             Ok(module_num) => {
