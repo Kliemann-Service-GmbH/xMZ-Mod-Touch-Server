@@ -211,9 +211,6 @@ impl ShiftRegister {
         self.reset();
     }
 
-
-
-
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
     fn export_pins(&self) {
