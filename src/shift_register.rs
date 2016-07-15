@@ -190,7 +190,7 @@ impl ShiftRegister {
     /// ```
     pub fn reset(&mut self) {
         self.data = 0;
-        self.latch_out();
+        self.shift_out();
     }
 
     // Test Lampentest usw.
@@ -206,7 +206,7 @@ impl ShiftRegister {
     /// ```
     pub fn test(&mut self) {
         self.data = u64::max_value();
-        self.latch_out();
+        self.shift_out();
         thread::sleep(Duration::new(1, 0));
         self.reset();
     }
