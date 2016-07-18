@@ -10,3 +10,6 @@ pub mod zone;
 /// ServerCommand   - Befehle die der Server verarbeiten kann_module_modbus_adresse_abfragen
 ///
 pub mod server_command;
+
+/// Fehlerbehandlung
+pub mod server_error;
