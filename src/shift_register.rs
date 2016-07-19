@@ -2,7 +2,6 @@
 use sysfs_gpio::{Direction, Pin};
 use std::thread;
 use std::time::Duration;
-use std::sync::Arc;
 
 
 /// Representiert die verschiedenen Shift Register Typen

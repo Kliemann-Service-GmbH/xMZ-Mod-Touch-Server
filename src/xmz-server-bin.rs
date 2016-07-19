@@ -10,7 +10,6 @@ use std::str::FromStr;
 use std::sync::{Arc, RwLock};
 use std::thread;
 use std::time::Duration;
-use xmz_server::nanomsg_device::NanoMsgDevice;
 use xmz_server::server::server_command::{ServerCommand};
 use xmz_server::server::server::Server;
 
@@ -21,8 +20,6 @@ fn tick(name: &str) {
 fn main() {
     let mut server = Server::new();
     let _ = server.init();
-
-    let _device = NanoMsgDevice::create();
 
     let server = Arc::new(RwLock::new(server));
     // Verschiedene Server Instanzen erzeugen, diese werden später in den Threads erneut geklont.
@@ -51,7 +48,7 @@ fn main() {
 
             // 2. Thread zur Zeit Ausgabe der Sensorwerte
             let server2 = server2.clone();
-            let worker_task = thread::spawn(move || {
+            let _worker_task = thread::spawn(move || {
                 match server2.read() {
                     Ok(server) => {
                         for module in &server.modules[..] {
@@ -66,11 +63,11 @@ fn main() {
                 };
                 tick("Thread2");
             });
-            // let _ = worker_task.join();
+            // let _ = _worker_task.join();
 
             // 3. Task
             let server3 = server3.clone();
-            let nanomsg_server = thread::spawn(move || {
+            let _nanomsg_server = thread::spawn(move || {
                 let _ = match server3.write() {
                     Ok(mut server) => {
                         // Erstelle Nanomsg Socket
@@ -115,7 +112,7 @@ fn main() {
                 tick("Thread3");
                 thread::sleep(Duration::from_millis(100));
             });
-            // let _ = nanomsg_server.join();
+            // let _ = _nanomsg_server.join();
 
         });
         let _ = guard.join();

@@ -48,13 +48,13 @@ impl NanoMsgDevice {
         let mut back_socket    = try!(Socket::new_for_device(Protocol::Req));
         let mut back_endpoint  = try!(back_socket.bind("ipc:///tmp/xmz-server.ipc"));
 
-        let device_thread = thread::spawn(move || {
+        let _device_thread = thread::spawn(move || {
             println!("Device ist bereit.");
-            Socket::device(&front_socket, &back_socket);
+            let _ = Socket::device(&front_socket, &back_socket);
             println!("Device beendet!");
 
-            front_endpoint.shutdown();
-            back_endpoint.shutdown();
+            let _ = front_endpoint.shutdown();
+            let _ = back_endpoint.shutdown();
         });
         Ok(())
     }

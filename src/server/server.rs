@@ -1,17 +1,14 @@
 use libmodbus_rs::*;
 use libmodbus_rs::modbus::{Modbus};
 use module::{Module, ModuleType};
-use nanomsg::{Socket, Protocol, Error};
+use nanomsg::{Socket};
 use server::server_command::{ServerCommand};
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
-use std::io::{Read, Write};
-use std::result::Result;
+use std::io::{Write};
 use std::str::FromStr;
-use std::sync::{Arc, Mutex};
-use std::thread;
-use std::time::Duration;
+use nanomsg_device::NanoMsgDevice;
 
 
 pub struct Server<'a> {
@@ -57,6 +54,8 @@ impl<'a> Server<'a> {
         self.leds.test();
 
         self.default_configuration();
+
+        let _device = NanoMsgDevice::create();
     }
 
     /// Default Konfiguration des Servers
@@ -73,12 +72,12 @@ impl<'a> Server<'a> {
         self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
         self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
         self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        self.modules[0].set_modbus_slave_id(21);
-        self.modules[1].set_modbus_slave_id(22);
-        self.modules[2].set_modbus_slave_id(23);
-        self.modules[3].set_modbus_slave_id(24);
-        self.modules[4].set_modbus_slave_id(25);
-        self.modules[5].set_modbus_slave_id(26);
+        let _ = self.modules[0].set_modbus_slave_id(21);
+        let _ = self.modules[1].set_modbus_slave_id(22);
+        let _ = self.modules[2].set_modbus_slave_id(23);
+        let _ = self.modules[3].set_modbus_slave_id(24);
+        let _ = self.modules[4].set_modbus_slave_id(25);
+        let _ = self.modules[5].set_modbus_slave_id(26);
     }
 
     // Public api
