@@ -16,3 +16,4 @@ path = "src/xmz-server-bin.rs"
 nanomsg = "0.6.0"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
 sysfs_gpio = "*"
+clap = {version = "2", features = ["unstable"]}

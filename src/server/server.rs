@@ -89,15 +89,11 @@ impl<'a> Server<'a> {
     pub fn handle_nanomsg_requests(&mut self) -> Result<(), ServerError> {
         let mut socket = try!(Socket::new(Protocol::Rep));
         let _ = socket.set_send_timeout(1000);
-
         let mut endpoint = try!(socket.connect("ipc:///tmp/xmz-server.ipc"));
-
         let mut request = String::new();
         let _ = try!(socket.read_to_string(&mut request));
-
         let server_command = try!(ServerCommand::from_str(&request));
-
-
+        let _ = try!(self.execute(server_command, &mut socket));
         request.clear();
         let _ = endpoint.shutdown();
 

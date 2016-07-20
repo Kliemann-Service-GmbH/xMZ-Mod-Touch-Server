@@ -1,7 +1,8 @@
 // TODO: gernerische FUnktion LED/ RELAIS reset (alles auf Null)
 //
-extern crate xmz_server;
+#[macro_use] extern crate clap;
 extern crate nanomsg;
+extern crate xmz_server;
 
 use std::str::FromStr;
 use std::sync::{Arc, RwLock};
@@ -11,11 +12,26 @@ use xmz_server::server::server_command::{ServerCommand};
 use xmz_server::server::server_error::ServerError;
 use xmz_server::server::server::Server;
 
+
 fn tick(name: &str) {
     println!("tick from: {}", name);
 }
 
 fn main() {
+    // Pull version information out of Cargo.toml
+    let version = format!("{}.{}.{}{}",
+                env!("CARGO_PKG_VERSION_MAJOR"),
+                env!("CARGO_PKG_VERSION_MINOR"),
+                env!("CARGO_PKG_VERSION_PATCH"),
+                option_env!("CARGO_PKG_VERSION_PRE").unwrap_or(""));
+
+    // Comand Line Interface
+    let matches = clap_app!(xmz_server =>
+        (version: version.as_str())
+        (author: env!("CARGO_PKG_AUTHORS"))
+        (about: env!("CARGO_PKG_DESCRIPTION"))
+    ).get_matches();
+
     let mut counter = 0;
     let mut server = Server::new();
     let _ = server.init();
