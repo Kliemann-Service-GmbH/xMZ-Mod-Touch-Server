@@ -4,6 +4,7 @@ use module::{Module, ModuleType};
 use nanomsg::{Socket};
 use server::server_command::{ServerCommand};
 use server::zone::{Zone, ZoneType};
+use server::server_error::{ServerError};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
 use std::io::{Write};
@@ -47,7 +48,7 @@ impl<'a> Server<'a> {
     }
 
     /// Wichtige Grundeinstellungen, wie das leeren der ShiftRegister Speicher
-    pub fn init(&mut self) {
+    pub fn init(&mut self) -> Result<(), ServerError> {
         self.leds.reset();
         self.relais.reset();
 
@@ -55,7 +56,8 @@ impl<'a> Server<'a> {
 
         self.default_configuration();
 
-        let _device = NanomsgDevice::create();
+        let _device = try!(NanomsgDevice::create());
+        Ok(())
     }
 
     /// Default Konfiguration des Servers
