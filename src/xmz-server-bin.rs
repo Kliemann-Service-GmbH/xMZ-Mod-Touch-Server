@@ -1,5 +1,4 @@
 // TODO: gernerische FUnktion LED/ RELAIS reset (alles auf Null)
-// TODO: LED Lampentest
 //
 extern crate xmz_server;
 extern crate nanomsg;
