@@ -3,6 +3,7 @@ use nanomsg;
 use std::error::Error;
 use std::fmt;
 use std::io;
+use server::server_command;
 
 /// Mögliche Fehler die auftreten können
 #[derive(Debug)]
@@ -11,6 +12,7 @@ pub enum ServerError {
     NanomsgDevice(nanomsg_device::DeviceError),
     Nanomsg(nanomsg::Error),
     Io(io::Error),
+    ServerCommand(server_command::ServerCommandError),
 }
 
 impl fmt::Display for ServerError {
@@ -20,6 +22,7 @@ impl fmt::Display for ServerError {
             ServerError::NanomsgDevice(ref err) => err.fmt(f),
             ServerError::Nanomsg(ref err) => err.fmt(f),
             ServerError::Io(ref err) => err.fmt(f),
+            ServerError::ServerCommand(ref err) => err.fmt(f),
         }
     }
 }
@@ -31,8 +34,9 @@ impl Error for ServerError {
             ServerError::NanomsgDevice(ref err) => err.description(),
             ServerError::Nanomsg(ref err) => err.description(),
             ServerError::Io(ref err) => err.description(),
-        }
+            ServerError::ServerCommand(ref err) => err.description(),
     }
+}
 
     fn cause(&self) -> Option<&Error> {
         match *self {
@@ -40,6 +44,7 @@ impl Error for ServerError {
             ServerError::NanomsgDevice(ref err) => Some(err),
             ServerError::Nanomsg(ref err) => Some(err),
             ServerError::Io(ref err) => Some(err),
+            ServerError::ServerCommand(ref err) => Some(err),
         }
     }
 }
@@ -59,5 +64,11 @@ impl From<nanomsg::Error> for ServerError {
 impl From<io::Error> for ServerError {
     fn from(err: io::Error) -> ServerError {
         ServerError::Io(err)
+    }
+}
+
+impl From<server_command::ServerCommandError> for ServerError {
+    fn from(err: server_command::ServerCommandError) -> ServerError {
+        ServerError::ServerCommand(err)
     }
 }

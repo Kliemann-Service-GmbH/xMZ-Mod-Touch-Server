@@ -1,4 +1,5 @@
 // Inspiration: http://cosmo0920.github.io/ruroonga_command/src/ruroonga_command/src/command.rs.html#17-63
+use std::error::Error;
 use std::fmt;
 use std::str::FromStr;
 
@@ -83,6 +84,33 @@ impl fmt::Display for ServerCommandError {
         match *self {
             ServerCommandError::InvalidCommand => write!(f, "Ungültiger Befehl"),
             ServerCommandError::InvalidSubCommand => write!(f, "Ungültiger Unterbefehl (SubCommand)"),
+        }
+    }
+}
+
+impl fmt::Display for ServerCommand {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ServerCommand::Led   {subcommand: ref subcommand, params: ref params} => write!(f, "led {:?} {:?}", subcommand, params),
+            ServerCommand::Relais{subcommand: ref subcommand, params: ref params} => write!(f, "relais {:?} {:?}", subcommand, params),
+            ServerCommand::Server{subcommand: ref subcommand, config_entry: ref config_entry, config_value: ref config_value} => write!(f, "server {:?} {:?} {:?}", subcommand, config_entry, config_value),
+            ServerCommand::Module{subcommand: ref subcommand, config_entry: ref config_entry, config_value: ref config_value, module_num: ref module_num} => write!(f, "module {:?} {:?} {:?} {:?}", subcommand, config_entry, config_value, module_num),
+        }
+    }
+}
+
+impl Error for ServerCommandError {
+    fn description(&self) -> &str {
+        match *self {
+            ServerCommandError::InvalidCommand    => "Ungültiger Server Befehl.",
+            ServerCommandError::InvalidSubCommand => "Unbekannter Unterbefehlt.",
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            ServerCommandError::InvalidCommand    => None,
+            ServerCommandError::InvalidSubCommand => None,
         }
     }
 }

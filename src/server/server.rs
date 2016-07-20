@@ -95,6 +95,9 @@ impl<'a> Server<'a> {
         let mut request = String::new();
         let _ = try!(socket.read_to_string(&mut request));
 
+        let server_command = try!(ServerCommand::from_str(&request));
+
+
         request.clear();
         let _ = endpoint.shutdown();
 
@@ -181,7 +184,7 @@ impl<'a> Server<'a> {
     ///
     /// ```
     /// ```
-    pub fn execute(&mut self, command: ServerCommand, socket: &mut Socket) {
+    pub fn execute(&mut self, command: ServerCommand, socket: &mut Socket) -> Result<(), ServerError> {
         match command {
             // LED Befehle
             ServerCommand::Led { subcommand, params, .. } => {
@@ -314,6 +317,7 @@ impl<'a> Server<'a> {
             }
             // _ => {},
         }
+        Ok(())
     }
 }
 
