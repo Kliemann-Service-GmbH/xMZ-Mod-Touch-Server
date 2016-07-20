@@ -8,7 +8,7 @@ use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
 use std::io::{Write};
 use std::str::FromStr;
-use nanomsg_device::NanoMsgDevice;
+use nanomsg_device::NanomsgDevice;
 
 
 pub struct Server<'a> {
@@ -55,7 +55,7 @@ impl<'a> Server<'a> {
 
         self.default_configuration();
 
-        let _device = NanoMsgDevice::create();
+        let _device = NanomsgDevice::create();
     }
 
     /// Default Konfiguration des Servers

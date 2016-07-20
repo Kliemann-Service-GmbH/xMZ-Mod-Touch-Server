@@ -38,9 +38,9 @@ impl From<nanomsg::Error> for DeviceError {
     }
 }
 
-pub struct NanoMsgDevice {}
+pub struct NanomsgDevice {}
 
-impl NanoMsgDevice {
+impl NanomsgDevice {
     /// Erzeugt und startet das NonoMsg Device
     pub fn create() -> Result<(), DeviceError> {
         let mut front_socket   = try!(Socket::new_for_device(Protocol::Rep));
