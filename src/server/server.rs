@@ -1,15 +1,15 @@
 use libmodbus_rs::*;
 use libmodbus_rs::modbus::{Modbus};
 use module::{Module, ModuleType};
-use nanomsg::{Socket};
+use nanomsg_device::NanomsgDevice;
+use nanomsg::{Socket, Protocol};
 use server::server_command::{ServerCommand};
-use server::zone::{Zone, ZoneType};
 use server::server_error::{ServerError};
+use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
 use std::io::{Write};
 use std::str::FromStr;
-use nanomsg_device::NanomsgDevice;
 
 
 pub struct Server<'a> {
@@ -83,6 +83,15 @@ impl<'a> Server<'a> {
     }
 
     // Public api
+    //
+
+    pub fn handle_nanomsg_requests(&mut self) -> Result<(), ServerError> {
+        let mut socket = try!(Socket::new(Protocol::Rep));
+        let _ = socket.set_send_timeout(1000);
+        
+
+        Ok(())
+    }
 
     /// `get_modbus_device` - Liefert das aktuelle Modbus Device zurück
     ///
