@@ -91,10 +91,10 @@ impl fmt::Display for ServerCommandError {
 impl fmt::Display for ServerCommand {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ServerCommand::Led   {subcommand: ref subcommand, params: ref params} => write!(f, "led {:?} {:?}", subcommand, params),
-            ServerCommand::Relais{subcommand: ref subcommand, params: ref params} => write!(f, "relais {:?} {:?}", subcommand, params),
-            ServerCommand::Server{subcommand: ref subcommand, config_entry: ref config_entry, config_value: ref config_value} => write!(f, "server {:?} {:?} {:?}", subcommand, config_entry, config_value),
-            ServerCommand::Module{subcommand: ref subcommand, config_entry: ref config_entry, config_value: ref config_value, module_num: ref module_num} => write!(f, "module {:?} {:?} {:?} {:?}", subcommand, config_entry, config_value, module_num),
+            ServerCommand::Led   {ref subcommand, ref params} => write!(f, "led {:?} {:?}", subcommand, params),
+            ServerCommand::Relais{ref subcommand, ref params} => write!(f, "relais {:?} {:?}", subcommand, params),
+            ServerCommand::Server{ref subcommand, ref config_entry, ref config_value} => write!(f, "server {:?} {:?} {:?}", subcommand, config_entry, config_value),
+            ServerCommand::Module{ref subcommand, ref config_entry, ref config_value, ref module_num} => write!(f, "module {:?} {:?} {:?} {:?}", subcommand, config_entry, config_value, module_num),
         }
     }
 }

@@ -1,7 +1,17 @@
 //! Kontrolliert die ShiftRegister Hardware der 'xMZ-Mod-Touch'-Plattform
-use sysfs_gpio::{Direction, Pin};
+
+use sysfs_gpio::{Direction, Error, Pin};
 use std::thread;
 use std::time::Duration;
+
+
+/// Mögliche Fehler die auftreten können
+#[derive(Debug)]
+pub enum ShiftRegisterError {
+    // Sysfs(sysfs_gpio::Error),
+}
+
+
 
 
 /// Representiert die verschiedenen Shift Register Typen
