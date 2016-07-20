@@ -35,8 +35,8 @@ impl Error for ServerError {
             ServerError::Nanomsg(ref err) => err.description(),
             ServerError::Io(ref err) => err.description(),
             ServerError::ServerCommand(ref err) => err.description(),
+        }
     }
-}
 
     fn cause(&self) -> Option<&Error> {
         match *self {
