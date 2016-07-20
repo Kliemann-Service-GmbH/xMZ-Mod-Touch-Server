@@ -3,12 +3,9 @@
 extern crate nanomsg;
 extern crate xmz_server;
 
-use std::str::FromStr;
 use std::sync::{Arc, RwLock};
 use std::thread;
 use std::time::Duration;
-use xmz_server::server::server_command::{ServerCommand};
-use xmz_server::server::server_error::ServerError;
 use xmz_server::server::server::Server;
 
 

@@ -282,18 +282,22 @@ impl ShiftRegister {
     fn clock_in(&self) -> Result<(), ShiftRegisterError> {
         try!(self.clock_pin.set_value(1));
         try!(self.clock_pin.set_value(0));
+
         Ok(())
     }
 
     /// Toggelt den Latch Pin pin high->low,
-    fn latch_out(&self) {
-        &self.latch_pin.set_value(1).unwrap_or(());
-        &self.latch_pin.set_value(0).unwrap_or(());
+    fn latch_out(&self) -> Result<(), ShiftRegisterError> {
+        try!(self.latch_pin.set_value(1));
+        try!(self.latch_pin.set_value(0));
+
+        Ok(())
     }
 
     /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
     /// Schiebe Register (latch out)
     pub fn shift_out(&self) {
+        // Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonnsten passiert nix
         match self.export_pins() {
             Err(_) => {},
             Ok(..) => {
