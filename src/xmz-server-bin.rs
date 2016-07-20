@@ -3,7 +3,6 @@
 extern crate xmz_server;
 extern crate nanomsg;
 
-use std::io::{Read};
 use std::str::FromStr;
 use std::sync::{Arc, RwLock};
 use std::thread;
@@ -46,23 +45,23 @@ fn main() {
             let _ = update_task.join();
 
 
-            // 2. Thread zur Zeit Ausgabe der Sensorwerte
-            let server2 = server2.clone();
-            let _worker_task = thread::spawn(move || {
-                match server2.read() {
-                    Ok(server) => {
-                        for module in &server.modules[..] {
-                            for sensor in module.sensors.iter() {
-                                println!("{}: ({}) {:.2} {} [{}]", module.get_modbus_slave_id(), sensor.sensor_type, sensor.concentration().unwrap_or(0.0), sensor.si, sensor.adc_value.unwrap_or(0));
-                            }
-                        }
-                        thread::sleep(Duration::from_millis(1000));
-                        print!("{}[2J", 27 as char);
-                    }
-                    Err(err) => { println!("Error while lock: {}", err) }
-                };
-                tick("Thread2");
-            });
+            // // 2. Thread zur Zeit Ausgabe der Sensorwerte
+            // let server2 = server2.clone();
+            // let _worker_task = thread::spawn(move || {
+            //     match server2.read() {
+            //         Ok(server) => {
+            //             for module in &server.modules[..] {
+            //                 for sensor in module.sensors.iter() {
+            //                     println!("{}: ({}) {:.2} {} [{}]", module.get_modbus_slave_id(), sensor.sensor_type, sensor.concentration().unwrap_or(0.0), sensor.si, sensor.adc_value.unwrap_or(0));
+            //                 }
+            //             }
+            //             thread::sleep(Duration::from_millis(1000));
+            //             print!("{}[2J", 27 as char);
+            //         }
+            //         Err(err) => { println!("Error while lock: {}", err) }
+            //     };
+            //     tick("Thread2");
+            // });
             // let _ = _worker_task.join();
 
             // 3. Task

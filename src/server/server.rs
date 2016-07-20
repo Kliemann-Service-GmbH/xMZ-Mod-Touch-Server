@@ -8,6 +8,7 @@ use server::server_error::{ServerError};
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
+use std::io::{Read};
 use std::io::{Write};
 use std::str::FromStr;
 
@@ -88,7 +89,14 @@ impl<'a> Server<'a> {
     pub fn handle_nanomsg_requests(&mut self) -> Result<(), ServerError> {
         let mut socket = try!(Socket::new(Protocol::Rep));
         let _ = socket.set_send_timeout(1000);
-        
+
+        let mut endpoint = try!(socket.connect("ipc:///tmp/xmz-server.ipc"));
+
+        let mut request = String::new();
+        let _ = try!(socket.read_to_string(&mut request));
+
+        request.clear();
+        let _ = endpoint.shutdown();
 
         Ok(())
     }
