@@ -31,11 +31,12 @@ fn main() {
         // ab arbeiten.
         let guard = thread::spawn(move || {
             // 1. Task, Update Sensoren, LED und Relais
-            let server1 = server1.clone();
             let update_task = thread::spawn(move || {
                 let _ = match server1.write() {
                     Ok(mut server) => { server.update_sensors(); }
-                    Err(err) => { println!("Thread Update Task: Fehler beim write lock des Servers: {}", err); }
+                    Err(err) => {
+                        //println!("Thread Update Task: Fehler beim write lock des Servers: {}", err);
+                    }
                 };
                 tick("Thread1");
             });
@@ -62,11 +63,12 @@ fn main() {
             // let _ = _worker_task.join();
 
             // 3. Task
-            let server3 = server3.clone();
             let _nanomsg_server = thread::spawn(move || {
                 let _ = match server3.write() {
                     Ok(mut server) => { server.handle_nanomsg_requests(); },
-                    Err(err) => { println!("Thread Nanomsg Server: Fehler beim write lock des Servers: {}", err); },
+                    Err(err) => {
+                        //println!("Thread Nanomsg Server: Fehler beim write lock des Servers: {}", err);
+                    },
                 };
                 tick("Thread3");
             });
