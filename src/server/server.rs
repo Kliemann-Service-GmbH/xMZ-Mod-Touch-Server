@@ -86,21 +86,6 @@ impl<'a> Server<'a> {
     // Public api
     //
 
-    pub fn handle_nanomsg_requests(&mut self) -> Result<(), Error> {
-        let mut socket = try!(Socket::new(Protocol::Rep));
-        let _ = socket.set_receive_timeout(100);
-        let _ = socket.set_send_timeout(100);
-        let mut endpoint = try!(socket.connect("ipc:///tmp/xmz-server.ipc"));
-        let mut request = String::new();
-        let _ = try!(socket.read_to_string(&mut request));
-        let server_command = try!(ServerCommand::from_str(&request));
-        let _ = try!(self.execute(server_command, &mut socket));
-        request.clear();
-        let _ = endpoint.shutdown();
-
-        Ok(())
-    }
-
     /// `get_modbus_device` - Liefert das aktuelle Modbus Device zurück
     ///
     /// # Examples
@@ -154,6 +139,29 @@ impl<'a> Server<'a> {
                 modbus_context.close();
             }
         }
+
+        Ok(())
+    }
+
+    /// Handle Client Communikation via nanomsg
+    ///
+    pub fn handle_nanomsg_requests(&mut self) -> Result<(), Error> {
+        let mut socket = try!(Socket::new(Protocol::Rep));
+        let mut endpoint = try!(socket.bind("ipc:///tmp/xmz-server.ipc"));
+
+        let _ = socket.set_receive_timeout(100);
+        let mut request = String::new();
+
+        match socket.read_to_string(&mut request) {
+            Ok(_) => {
+                let server_command = try!(ServerCommand::from_str(&request));
+                let _ = try!(self.execute(server_command, &mut socket));
+                request.clear();
+            },
+            Err(_) => {},
+        }
+        let _ = endpoint.shutdown();
+        drop(socket);
 
         Ok(())
     }

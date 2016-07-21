@@ -17,13 +17,34 @@ fn main() {
     let mut server = Server::new();
     let _ = server.init();
 
-    // let server = Arc::new(RwLock::new(server));
+    let server = Arc::new(RwLock::new(server));
     // Verschiedene Server Instanzen erzeugen, diese werden später in den Threads erneut geklont.
 
     loop {
-        tick("Update_Sensors");
-        server.update_sensors();
-        tick("Handle Request");
-        server.handle_nanomsg_requests();
+        let server_update_sensors = server.clone();
+        let server_request_handler = server.clone();
+
+        let thread_update_sensors = thread::spawn(move || {
+            server_update_sensors.write().map(|mut server| {
+                tick("thread_update_sensors");
+                server.update_sensors();
+            });
+        });
+        thread_update_sensors.join();
+
+        let thread_request_handler = thread::spawn(move || {
+            server_request_handler.write().map(|mut server| {
+                tick("thread_request_handler");
+                server.handle_nanomsg_requests();
+            });
+        });
+        // thread_request_handler.join();
+
+        // let _ = thread::spawn(move || {
+        //     server_request_handler.write().map(|mut server| {
+        //         tick("Handle Request");
+        //         server.handle_nanomsg_requests();
+        //     })
+        // });
     } // Ende loop
 }
