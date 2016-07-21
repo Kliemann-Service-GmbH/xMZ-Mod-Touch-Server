@@ -3,6 +3,7 @@ use nanomsg;
 use std::fmt;
 use std::io;
 use server::server_command;
+use libmodbus_rs::modbus;
 
 /// Mögliche Fehler die auftreten können
 #[derive(Debug)]
@@ -12,6 +13,7 @@ pub enum Error {
     Nanomsg(nanomsg::Error),
     Io(io::Error),
     ServerCommand(server_command::ServerCommandError),
+    Libmodbus(modbus::Error),
 }
 
 impl fmt::Display for Error {
@@ -22,6 +24,7 @@ impl fmt::Display for Error {
             Error::Nanomsg(ref err) => err.fmt(f),
             Error::Io(ref err) => err.fmt(f),
             Error::ServerCommand(ref err) => err.fmt(f),
+            Error::Libmodbus(ref err) => err.fmt(f),
         }
     }
 }
@@ -34,6 +37,7 @@ impl ::std::error::Error for Error {
             Error::Nanomsg(ref err) => err.description(),
             Error::Io(ref err) => err.description(),
             Error::ServerCommand(ref err) => err.description(),
+            Error::Libmodbus(ref err) => err.description(),
         }
     }
 
@@ -44,6 +48,7 @@ impl ::std::error::Error for Error {
             Error::Nanomsg(ref err) => Some(err),
             Error::Io(ref err) => Some(err),
             Error::ServerCommand(ref err) => Some(err),
+            Error::Libmodbus(ref err) => Some(err),
         }
     }
 }
@@ -69,5 +74,11 @@ impl From<io::Error> for Error {
 impl From<server_command::ServerCommandError> for Error {
     fn from(err: server_command::ServerCommandError) -> Error {
         Error::ServerCommand(err)
+    }
+}
+
+impl From<modbus::Error> for Error {
+    fn from(err: modbus::Error) -> Error {
+        Error::Libmodbus(err)
     }
 }
