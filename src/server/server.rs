@@ -57,7 +57,7 @@ impl<'a> Server<'a> {
 
         self.default_configuration();
 
-        let _device = try!(NanomsgDevice::create());
+        // let _device = try!(NanomsgDevice::create());
         Ok(())
     }
 
@@ -88,7 +88,8 @@ impl<'a> Server<'a> {
 
     pub fn handle_nanomsg_requests(&mut self) -> Result<(), Error> {
         let mut socket = try!(Socket::new(Protocol::Rep));
-        let _ = socket.set_send_timeout(1000);
+        let _ = socket.set_receive_timeout(100);
+        let _ = socket.set_send_timeout(100);
         let mut endpoint = try!(socket.connect("ipc:///tmp/xmz-server.ipc"));
         let mut request = String::new();
         let _ = try!(socket.read_to_string(&mut request));
