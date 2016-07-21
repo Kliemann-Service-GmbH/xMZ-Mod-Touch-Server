@@ -4,7 +4,7 @@ use module::{Module, ModuleType};
 use nanomsg_device::NanomsgDevice;
 use nanomsg::{Socket, Protocol};
 use server::server_command::{ServerCommand};
-use server::server_error::{ServerError};
+use server::server_error::{Error};
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
@@ -49,7 +49,7 @@ impl<'a> Server<'a> {
     }
 
     /// Wichtige Grundeinstellungen, wie das leeren der ShiftRegister Speicher
-    pub fn init(&mut self) -> Result<(), ServerError> {
+    pub fn init(&mut self) -> Result<(), Error> {
         self.leds.reset();
         self.relais.reset();
 
@@ -86,7 +86,7 @@ impl<'a> Server<'a> {
     // Public api
     //
 
-    pub fn handle_nanomsg_requests(&mut self) -> Result<(), ServerError> {
+    pub fn handle_nanomsg_requests(&mut self) -> Result<(), Error> {
         let mut socket = try!(Socket::new(Protocol::Rep));
         let _ = socket.set_send_timeout(1000);
         let mut endpoint = try!(socket.connect("ipc:///tmp/xmz-server.ipc"));
@@ -135,43 +135,11 @@ impl<'a> Server<'a> {
     /// Wenn das Device nicht existiert, oder die Berechtigungen des Users nicht ausreichen wird ein Fehler
     /// ausgegeben.
     ///
-    pub fn update_sensors(&mut self) {
-        match fs::metadata(&self.modbus_device){
-            Ok(_) => {
-                // Modbus Kontext erzeugen
-                let mut modbus_context = Modbus::new_rtu(self.modbus_device.as_ref(), self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
-                for modul in &mut self.modules {
-                    // Modbus Slave ID festlegen
-                    match modbus_context.set_slave(modul.get_modbus_slave_id()) {
-                        Ok(_) => {
-                            // let _ = modbus_context.set_debug(true);
-                            match modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN) {
-                                Ok(_) => {
-                                    let mut tab_reg: Vec<u16> = Vec::new();
+    pub fn update_sensors(&mut self) -> Result<(), Error> {
+        // Test ob das Serielle Interface existiert und die Berechtigungen für ein Zugriff ausreichen
+        let _ = try!(fs::metadata(&self.modbus_device));
 
-                                    for sensor in &mut modul.sensors {
-                                        match modbus_context.connect() {
-                                            Ok(_) => {
-                                                tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
-                                                tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
-                                                modbus_context.close();
-                                            }
-                                            Err(err) => {
-                                                println!("Modbus Connect ist fehlgeschlagen: {}", err);
-                                            }
-                                        }
-                                    }
-                                }
-                                Err(err) => { println!("Konnte MODBUS_RTU_RTS_DOWN nicht setzen: {}", err); }
-                            }
-                        }
-                        Err(err) => { println!("Modbus Context konnte nicht erzeugt werden: {}", err); }
-                    }
-                };
-                modbus_context.free();
-            },
-            Err(err) => { println!("Modbus Device: '{}' ist nicht verfügbar: {}", self.modbus_device, err); }
-        }
+        Ok(())
     }
 
     /// Führt ein Befehl ausgegeben
@@ -180,7 +148,7 @@ impl<'a> Server<'a> {
     ///
     /// ```
     /// ```
-    pub fn execute(&mut self, command: ServerCommand, socket: &mut Socket) -> Result<(), ServerError> {
+    pub fn execute(&mut self, command: ServerCommand, socket: &mut Socket) -> Result<(), Error> {
         match command {
             // LED Befehle
             ServerCommand::Led { subcommand, params, .. } => {
