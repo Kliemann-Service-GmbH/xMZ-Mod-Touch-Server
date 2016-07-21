@@ -24,7 +24,6 @@ fn main() {
 
         let server1 = server.clone();
         let server2 = server.clone();
-        let server3 = server.clone();
 
 
         // Im main loop werden verschiedene Threads gespannt die jeweils Teilaufgaben des Servers
@@ -43,34 +42,15 @@ fn main() {
             let _ = update_task.join();
 
 
-            // // 2. Thread zur Zeit Ausgabe der Sensorwerte
-            // let server2 = server2.clone();
-            // let _worker_task = thread::spawn(move || {
-            //     match server2.read() {
-            //         Ok(server) => {
-            //             for module in &server.modules[..] {
-            //                 for sensor in module.sensors.iter() {
-            //                     println!("{}: ({}) {:.2} {} [{}]", module.get_modbus_slave_id(), sensor.sensor_type, sensor.concentration().unwrap_or(0.0), sensor.si, sensor.adc_value.unwrap_or(0));
-            //                 }
-            //             }
-            //             thread::sleep(Duration::from_millis(1000));
-            //             print!("{}[2J", 27 as char);
-            //         }
-            //         Err(err) => { println!("Error while lock: {}", err) }
-            //     };
-            //     tick("Thread2");
-            // });
-            // let _ = _worker_task.join();
-
-            // 3. Task
+            // 2. Task
             let _nanomsg_server = thread::spawn(move || {
-                let _ = match server3.write() {
+                let _ = match server2.write() {
                     Ok(mut server) => { server.handle_nanomsg_requests(); },
                     Err(err) => {
                         //println!("Thread Nanomsg Server: Fehler beim write lock des Servers: {}", err);
                     },
                 };
-                tick("Thread3");
+                tick("Thread2");
             });
             let _ = _nanomsg_server.join();
 
