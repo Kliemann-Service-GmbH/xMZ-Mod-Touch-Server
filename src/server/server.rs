@@ -4,7 +4,7 @@ use module::{Module, ModuleType};
 use nanomsg_device::NanomsgDevice;
 use nanomsg::{Socket, Protocol};
 use server::server_command::{ServerCommand};
-use server::server_error::{Error};
+use server::error::{Error};
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
@@ -138,6 +138,21 @@ impl<'a> Server<'a> {
     pub fn update_sensors(&mut self) -> Result<(), Error> {
         // Test ob das Serielle Interface existiert und die Berechtigungen für ein Zugriff ausreichen
         let _ = try!(fs::metadata(&self.modbus_device));
+        // Modbus Kontext erzeugen
+        let mut modbus_context = Modbus::new_rtu(self.modbus_device.as_ref(), self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
+
+        for modul in &mut self.modules {
+            try!(modbus_context.set_slave(modul.get_modbus_slave_id()));
+            // try!(modbus_context.set_debug(true));
+            try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
+            let mut tab_reg: Vec<u16> = Vec::new();
+
+            for sensor in &mut modul.sensors {
+                tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
+                tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
+                modbus_context.close();
+            }
+        }
 
         Ok(())
     }

@@ -68,8 +68,9 @@ fn main() {
                     Ok(mut server) => { server.handle_nanomsg_requests(); },
                     Err(err) => { println!("Thread Nanomsg Server: Fehler beim write lock des Servers: {}", err); },
                 };
+                tick("Thread3");
             });
-            // let _ = _nanomsg_server.join();
+            let _ = _nanomsg_server.join();
 
         });
         let _ = guard.join();
