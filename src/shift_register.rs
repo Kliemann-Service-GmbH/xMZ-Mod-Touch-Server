@@ -177,14 +177,17 @@ impl ShiftRegister {
     /// let mut led = ShiftRegister::new(ShiftRegisterType::LED);
     /// assert_eq!(led.data, 0b0);
     ///
+    /// led.set(1);
     /// led.set(3);
+    /// assert_eq!(led.get(1), true);
     /// assert_eq!(led.get(3), true);
     ///
     /// led.clear(3);
+    /// assert_eq!(led.get(1), true);
     /// assert_eq!(led.get(3), false);
     /// ```
     pub fn clear(&mut self, num: u64) {
-        self.data &= 1 << num;
+        self.data &= !(1 << num - 1);
     }
 
     /// Schaltet das übergebene Bit um, war es Null dann wird es Eins und umgekehrt
@@ -212,13 +215,12 @@ impl ShiftRegister {
         self.data ^= 1 << num -1;
     }
 
-    /// Reset den Datenspeicher und gleicht die  Hardware ab
+    /// Reset nullt den Datenspeicher und gleicht ihn mit der Hardware ab.
     ///
     /// # Examples
     ///
     /// ```
     /// use xmz_server::shift_register::{ShiftRegister,ShiftRegisterType};
-    ///
     /// let mut led = ShiftRegister::new(ShiftRegisterType::LED);
     ///
     /// assert_eq!(led.get(1), false);
@@ -232,22 +234,37 @@ impl ShiftRegister {
         self.shift_out();
     }
 
-    // Test Lampentest usw.
+    /// Test Lampentest usw.
+    ///
+    /// Diese Funktion schaltet alle Ausgänge high, wartet eine Sekunde und schaltet danach alle
+    /// Ausgänge wieder aus.
     ///
     /// # Examples
     ///
     /// ```
-    /// use xmz_server::shift_register::{ShiftRegister,ShiftRegisterType};
+    /// use std::time::Duration;
     ///
+    /// use xmz_server::shift_register::{ShiftRegister,ShiftRegisterType};
     /// let mut led = ShiftRegister::new(ShiftRegisterType::LED);
     ///
-    /// led.reset();
+    /// led.set(1);
+    /// led.clear(10);
+    /// led.test();
+    /// assert_eq!(led.get(1), true);
+    /// assert_eq!(led.get(10), false);
     /// ```
     pub fn test(&mut self) {
+        // Alten Stand speichern
+        let alter_stand = self.data;
+
         self.data = u64::max_value();
         self.shift_out();
         thread::sleep(Duration::new(1, 0));
         self.reset();
+
+        // alten Stand wieder herstellen
+        self.data = alter_stand;
+        self.shift_out();
     }
 
 
