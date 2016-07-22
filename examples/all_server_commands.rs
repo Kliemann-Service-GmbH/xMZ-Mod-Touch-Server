@@ -29,12 +29,22 @@ fn run() -> Result<(), Box<Error + Send + Sync>> {
         try!(ServerCommand::from_str("relais get 1")),
         try!(ServerCommand::from_str("relais toggle 1")),
         try!(ServerCommand::from_str("relais clear 1")),
+
+        try!(ServerCommand::from_str("server get modbus_device")),
+        try!(ServerCommand::from_str("server set modbus_device /dev/ttyUSB0")),
+        try!(ServerCommand::from_str("server get modbus_device")),
+
+        try!(ServerCommand::from_str("module new")),
+        try!(ServerCommand::from_str("module list")),
+        try!(ServerCommand::from_str("module show 1")),
+        try!(ServerCommand::from_str("module get modbus_slave_id 1")),
+        try!(ServerCommand::from_str("module set modbus_slave_id 100 1")),
     ];
 
     for command in commands {
-        // println!("Call: {:?}", command);
+        println!(">> {:?}", command);
         server.execute(command, &mut socket);
-        ::std::thread::sleep(Duration::from_millis(500));
+        ::std::thread::sleep(Duration::from_millis(100));
     }
 
 

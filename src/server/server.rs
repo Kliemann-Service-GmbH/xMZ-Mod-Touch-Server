@@ -182,6 +182,7 @@ impl<'a> Server<'a> {
 
                 match subcommand.as_ref() {
                     "list" => {
+                        sende_fehler(socket, "Noch nicht implementiert".to_string());
                     },
                     "test" => {
                         self.leds.test();
@@ -222,6 +223,7 @@ impl<'a> Server<'a> {
 
                 match subcommand.as_ref() {
                     "list" => {
+                        sende_fehler(socket, "Noch nicht implementiert".to_string());
                     },
                     "test" => {
                         self.relais.test();
@@ -254,8 +256,6 @@ impl<'a> Server<'a> {
                 }
             },
             // SERVER Befehle
-            // server set modbus_device /dev/ttyUSB0
-            // server get modbus_device
             ServerCommand::Server { subcommand, config_entry, config_value, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -286,17 +286,23 @@ impl<'a> Server<'a> {
                 }
             },
             // MODULE Befehle
-            // # server subcommand config_entry config_value module_num
-            // server set modbus_slave_id 100 1
-            //
-            // # server subcommand config_entry module_num
-            // server get modbus_slave_id 1
             ServerCommand::Module { subcommand, config_entry, config_value, module_num, .. } => {
                 match subcommand.as_ref() {
-                    "set" => {},
-                    "list" => {},
-                    "add" => {},
-                    "delete" => {},
+                    "new" => {
+                        sende_fehler(socket, "Noch nicht implementiert".to_string());
+                    },
+                    "list" => {
+                        sende_fehler(socket, "Noch nicht implementiert".to_string());
+                    },
+                    "show" => {
+                        sende_fehler(socket, "Noch nicht implementiert".to_string());
+                    },
+                    "get" => {
+                        sende_fehler(socket, "Noch nicht implementiert".to_string());
+                    },
+                    "set" => {
+                        sende_fehler(socket, "Noch nicht implementiert".to_string());
+                    },
                     _ => {},
                 }
             }
