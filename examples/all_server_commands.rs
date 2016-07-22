@@ -17,12 +17,14 @@ fn run() -> Result<(), Box<Error + Send + Sync>> {
     // Liste alle möglichen Befehle
     let commands: Vec<_> = vec![
         try!(ServerCommand::from_str("led list")),
+        try!(ServerCommand::from_str("led test")),
         try!(ServerCommand::from_str("led set 1")),
         try!(ServerCommand::from_str("led get 1")),
         try!(ServerCommand::from_str("led toggle 1")),
         try!(ServerCommand::from_str("led clear 1")),
 
         try!(ServerCommand::from_str("relais list")),
+        try!(ServerCommand::from_str("relais test")),
         try!(ServerCommand::from_str("relais set 1")),
         try!(ServerCommand::from_str("relais get 1")),
         try!(ServerCommand::from_str("relais toggle 1")),
@@ -32,6 +34,7 @@ fn run() -> Result<(), Box<Error + Send + Sync>> {
     for command in commands {
         // println!("Call: {:?}", command);
         server.execute(command, &mut socket);
+        ::std::thread::sleep(Duration::from_millis(500));
     }
 
 

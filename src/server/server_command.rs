@@ -38,7 +38,7 @@ impl FromStr for ServerCommand {
 
         match v[0] {
             "led" if v.len() == 2
-            && v[1] == "list" => Ok( // list
+            && (v[1] == "list" || v[1] == "test") => Ok(
                 ServerCommand::Led {
                     subcommand: String::from(v[1]),
                     params: None,
@@ -51,7 +51,7 @@ impl FromStr for ServerCommand {
                 }),
 
             "relais" if v.len() == 2
-                && v[1] == "list" => Ok( // list
+            && (v[1] == "list" || v[1] == "test") => Ok(
                 ServerCommand::Relais {
                     subcommand: String::from(v[1]),
                     params: None,
@@ -160,11 +160,13 @@ mod tests {
     #[test]
     fn led() {
         let cmd_list    = ServerCommand::from_str("led list");
+        let cmd_test    = ServerCommand::from_str("led test");
         let cmd_get     = ServerCommand::from_str("led get 1");
         let cmd_set     = ServerCommand::from_str("led set 1");
         let cmd_toggle  = ServerCommand::from_str("led toggle 1");
         let cmd_clear   = ServerCommand::from_str("led clear 1");
         assert_eq!(cmd_list,    Ok(ServerCommand::Led { subcommand: "list".to_string(), params: None }));
+        assert_eq!(cmd_test,    Ok(ServerCommand::Led { subcommand: "test".to_string(), params: None }));
         assert_eq!(cmd_get,     Ok(ServerCommand::Led { subcommand: "get".to_string(), params: Some("1".to_string()) }));
         assert_eq!(cmd_set,     Ok(ServerCommand::Led { subcommand: "set".to_string(), params: Some("1".to_string()) }));
         assert_eq!(cmd_toggle,  Ok(ServerCommand::Led { subcommand: "toggle".to_string(), params: Some("1".to_string()) }));
@@ -185,11 +187,13 @@ mod tests {
     #[test]
     fn relais() {
         let cmd_list    = ServerCommand::from_str("relais list");
+        let cmd_test    = ServerCommand::from_str("relais test");
         let cmd_get     = ServerCommand::from_str("relais get 1");
         let cmd_set     = ServerCommand::from_str("relais set 1");
         let cmd_toggle  = ServerCommand::from_str("relais toggle 1");
         let cmd_clear   = ServerCommand::from_str("relais clear 1");
         assert_eq!(cmd_list,    Ok(ServerCommand::Relais { subcommand: "list".to_string(), params: None }));
+        assert_eq!(cmd_test,    Ok(ServerCommand::Relais { subcommand: "test".to_string(), params: None }));
         assert_eq!(cmd_get,     Ok(ServerCommand::Relais { subcommand: "get".to_string(), params: Some("1".to_string()) }));
         assert_eq!(cmd_set,     Ok(ServerCommand::Relais { subcommand: "set".to_string(), params: Some("1".to_string()) }));
         assert_eq!(cmd_toggle,  Ok(ServerCommand::Relais { subcommand: "toggle".to_string(), params: Some("1".to_string()) }));

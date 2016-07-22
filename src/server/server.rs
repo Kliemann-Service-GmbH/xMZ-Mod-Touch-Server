@@ -183,6 +183,10 @@ impl<'a> Server<'a> {
                 match subcommand.as_ref() {
                     "list" => {
                     },
+                    "test" => {
+                        self.leds.test();
+                        sende_ok(socket);
+                    },
                     "set" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.leds.set(num);
@@ -218,6 +222,10 @@ impl<'a> Server<'a> {
 
                 match subcommand.as_ref() {
                     "list" => {
+                    },
+                    "test" => {
+                        self.relais.test();
+                        sende_ok(socket);
                     },
                     "set" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
