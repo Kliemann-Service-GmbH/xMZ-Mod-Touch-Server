@@ -123,7 +123,7 @@ impl<'a> Server<'a> {
     ///
     pub fn update_sensors(&mut self) -> Result<(), Error> {
         // Test ob das Serielle Interface existiert und die Berechtigungen für ein Zugriff ausreichen
-        let _ = try!(fs::metadata(&self.modbus_device));
+        try!(fs::metadata(&self.modbus_device));
         // Modbus Kontext erzeugen
         let mut modbus_context = Modbus::new_rtu(self.modbus_device.as_ref(), self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
 
@@ -175,6 +175,10 @@ impl<'a> Server<'a> {
     pub fn execute(&mut self, command: ServerCommand, socket: &mut Socket) -> Result<(), Error> {
         match command {
             // LED Befehle
+            // led set 1
+            // led get 1
+            // led clear 1
+            // led toggle 1
             ServerCommand::Led { subcommand, params, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -183,8 +187,8 @@ impl<'a> Server<'a> {
                         sende_ok(socket);
                     },
                     "get" => {
-                        self.leds.get(u64::from_str(&params).unwrap());
-                        sende_ok(socket);
+                        let result = self.leds.get(u64::from_str(&params).unwrap());
+                        sende(socket, result.to_string());
                     },
                     "clear" => {
                         self.leds.clear(u64::from_str(&params).unwrap());
@@ -200,6 +204,10 @@ impl<'a> Server<'a> {
                 }
             },
             // RELAIS Befehle
+            // relais set 1
+            // relais get 1
+            // relais clear 1
+            // relais toggle 1
             ServerCommand::Relais { subcommand, params, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -208,8 +216,8 @@ impl<'a> Server<'a> {
                         sende_ok(socket);
                     },
                     "get" => {
-                        self.relais.get(u64::from_str(&params).unwrap());
-                        sende_ok(socket);
+                        let result = self.relais.get(u64::from_str(&params).unwrap());
+                        sende(socket, result.to_string());
                     },
                     "clear" => {
                         self.relais.clear(u64::from_str(&params).unwrap());
@@ -225,6 +233,8 @@ impl<'a> Server<'a> {
                 }
             },
             // SERVER Befehle
+            // server set modbus_device /dev/ttyUSB0
+            // server get modbus_device
             ServerCommand::Server { subcommand, config_entry, config_value, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -248,55 +258,14 @@ impl<'a> Server<'a> {
                 }
             },
             // MODULE Befehle
+            // # server subcommand config_entry config_value module_num
+            // server set modbus_slave_id 100 1
+            //
+            // # server subcommand config_entry module_num
+            // server get modbus_slave_id 1
             ServerCommand::Module { subcommand, config_entry, config_value, module_num, .. } => {
                 match subcommand.as_ref() {
-                    "set" => {
-                        // 3. Parameter `config_entry`
-                        match config_entry {
-                            Some(config_entry) => {
-                                match config_entry.as_ref() {
-                                    "modbus_slave_id" => {
-                                        // 4. Parameter `config_value`
-                                        match config_value {
-                                            Some(config_value) => {
-                                                match i32::from_str(config_value.as_ref()) {
-                                                    Ok(config_value) => {
-                                                        // 5. Parameter `module_num`
-                                                        module_num.map(|num| {
-                                                            println!("Neue Modulnummer {}", num);
-                                                            sende(socket, format!("Module: {} neu ID: {}", num, config_value));
-                                                        });
-                                                        //     Some(module_num) => {
-                                                        //         match i32::from_str(module_num.as_ref()) {
-                                                        //             Ok(module_num) => {
-                                                        //
-                                                        //                 // self.modules.get(module_num as usize).map(|mut module| {
-                                                        //                 //     match module.set_modbus_slave_id(config_value) {
-                                                        //                 //         Ok(_) => {}
-                                                        //                 //         Err(err) => { sende_fehler(socket, format!("'{}' ist keine gültige Modbus Slave ID: {}", config_value, err)) }
-                                                        //                 //     }
-                                                        //                 // });
-                                                        //
-                                                        //             }
-                                                        //             None => { sende_fehler(socket, format!("Module '{}' nicht vorhanden", module_num)) }
-                                                        //         },
-                                                        //         Err(err) => { sende_fehler(socket, format!("'{}' ist keine 32Bit Integer: {}", config_value, err)); }
-                                                        //     }
-                                                        //     None => {},
-                                                        // }
-                                                    },
-                                                    Err(err) => { sende_fehler(socket, format!("'{}' ist keine 32Bit Integer: {}", config_value, err)); }
-                                                }
-                                            },
-                                            None => {},
-                                        }
-                                    },
-                                    _ => { sende_fehler(socket, format!("Unbekannter Konfigurationswert: {}", config_entry)) }
-                                }
-                            },
-                            None => {},
-                        }
-                    },
+                    "set" => {},
                     "list" => {},
                     "add" => {},
                     "delete" => {},
@@ -311,17 +280,23 @@ impl<'a> Server<'a> {
 
 /// Nanomsg Helper Sende String
 ///
-fn sende(socket: &mut Socket, msg: String) {
-    match socket.write_all(msg.as_bytes()) {
-        Ok(..) => { println!("SENDE: {}", msg); }
-        Err(err) => { println!("FEHLER: Konnte folgende Nachricht nicht senden: {}", msg); }
+fn sende<T: AsRef<str>>(socket: &mut Socket, msg: T) {
+    match socket.write_all(msg.as_ref().as_bytes()) {
+        Ok(..) => {
+            println!("SENDE: {}", msg.as_ref());
+        }
+        Err(err) => {
+            println!("FEHLER: Konnte folgende Nachricht nicht senden: {}", msg.as_ref());
+        }
     }
 }
 
 /// Helper sende OK über den Socket
 fn sende_ok(socket: &mut Socket) {
     match socket.write_all("OK".as_bytes()) {
-        Ok(..) => { println!("OK"); }
+        Ok(..) => {
+            // println!("OK");
+        }
         Err(err) => {
             println!("FEHLER: Konnte nicht OK senden");
         }
@@ -337,6 +312,7 @@ fn sende_fehler(socket: &mut Socket, msg: String) {
         }
     }
 }
+
 
 
 
