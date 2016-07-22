@@ -319,7 +319,7 @@ mod test {
 
     #[test]
     fn concentration_no2() {
-        let mut sensor = default_no2_sensor();
+        let sensor = default_no2_sensor();
         assert_eq!(sensor.concentration().unwrap(), 10.000001);
     }
 

@@ -318,7 +318,7 @@ impl ShiftRegister {
         match self.export_pins() {
             Err(_) => {},
             Ok(..) => {
-                self.set_pin_direction_output();
+                let _ = self.set_pin_direction_output();
 
                 // Daten einclocken
                 for i in (0..64).rev() {
@@ -326,9 +326,9 @@ impl ShiftRegister {
                         1 => { self.ds_pin.set_value(1).unwrap_or(()); },
                         _ => { self.ds_pin.set_value(0).unwrap_or(()); },
                     }
-                    self.clock_in();
+                    let _ = self.clock_in();
                 }
-                self.latch_out();
+                let _ = self.latch_out();
             }
         }
     }

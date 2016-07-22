@@ -1,10 +1,9 @@
 use libmodbus_rs::*;
 use libmodbus_rs::modbus::{Modbus};
 use module::{Module, ModuleType};
-use nanomsg_device::NanomsgDevice;
 use nanomsg::{Socket, Protocol};
-use server::server_command::{ServerCommand};
 use server::error::{Error};
+use server::server_command::{ServerCommand};
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
@@ -180,23 +179,25 @@ impl<'a> Server<'a> {
             // led clear 1
             // led toggle 1
             ServerCommand::Led { subcommand, params, .. } => {
+                let num = u64::from_str(&params.unwrap()).unwrap_or(0);
+
                 match subcommand.as_ref() {
                     "set" => {
-                        self.leds.set(u64::from_str(&params).unwrap());
+                        self.leds.set(num);
                         self.leds.shift_out();
                         sende_ok(socket);
                     },
                     "get" => {
-                        let result = self.leds.get(u64::from_str(&params).unwrap());
+                        let result = self.leds.get(num);
                         sende(socket, result.to_string());
                     },
                     "clear" => {
-                        self.leds.clear(u64::from_str(&params).unwrap());
+                        self.leds.clear(num);
                         self.leds.shift_out();
                         sende_ok(socket);
                     },
                     "toggle" => {
-                        self.leds.toggle(u64::from_str(&params).unwrap());
+                        self.leds.toggle(num);
                         self.leds.shift_out();
                         sende_ok(socket);
                     },
@@ -209,23 +210,25 @@ impl<'a> Server<'a> {
             // relais clear 1
             // relais toggle 1
             ServerCommand::Relais { subcommand, params, .. } => {
+                let num = u64::from_str(&params.unwrap()).unwrap_or(0);
+
                 match subcommand.as_ref() {
                     "set" => {
-                        self.relais.set(u64::from_str(&params).unwrap());
+                        self.relais.set(num);
                         self.relais.shift_out();
                         sende_ok(socket);
                     },
                     "get" => {
-                        let result = self.relais.get(u64::from_str(&params).unwrap());
+                        let result = self.relais.get(num);
                         sende(socket, result.to_string());
                     },
                     "clear" => {
-                        self.relais.clear(u64::from_str(&params).unwrap());
+                        self.relais.clear(num);
                         self.relais.shift_out();
                         sende_ok(socket);
                     },
                     "toggle" => {
-                        self.relais.toggle(u64::from_str(&params).unwrap());
+                        self.relais.toggle(num);
                         self.relais.shift_out();
                         sende_ok(socket);
                     },
@@ -286,7 +289,7 @@ fn sende<T: AsRef<str>>(socket: &mut Socket, msg: T) {
             println!("SENDE: {}", msg.as_ref());
         }
         Err(err) => {
-            println!("FEHLER: Konnte folgende Nachricht nicht senden: {}", msg.as_ref());
+            println!("FEHLER: Konnte Nachricht: {} nicht senden: {}", msg.as_ref(), err);
         }
     }
 }
@@ -298,7 +301,7 @@ fn sende_ok(socket: &mut Socket) {
             // println!("OK");
         }
         Err(err) => {
-            println!("FEHLER: Konnte nicht OK senden");
+            println!("FEHLER: {}", err);
         }
     }
 }
@@ -308,7 +311,7 @@ fn sende_fehler(socket: &mut Socket, msg: String) {
     match socket.write_all(format!("FEHLER: {}", msg).as_bytes()) {
         Ok(..) => { println!("FEHLER: {}", msg); }
         Err(err) => {
-            println!("Konnte FEHLER nicht senden");
+            println!("Konnte FEHLER nicht senden: {}", err);
         }
     }
 }
