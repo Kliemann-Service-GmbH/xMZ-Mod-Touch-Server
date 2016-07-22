@@ -179,24 +179,29 @@ impl<'a> Server<'a> {
             // led clear 1
             // led toggle 1
             ServerCommand::Led { subcommand, params, .. } => {
-                let num = u64::from_str(&params.unwrap()).unwrap_or(0);
 
                 match subcommand.as_ref() {
+                    "list" => {
+                    },
                     "set" => {
+                        let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.leds.set(num);
                         self.leds.shift_out();
                         sende_ok(socket);
                     },
                     "get" => {
+                        let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         let result = self.leds.get(num);
                         sende(socket, result.to_string());
                     },
                     "clear" => {
+                        let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.leds.clear(num);
                         self.leds.shift_out();
                         sende_ok(socket);
                     },
                     "toggle" => {
+                        let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.leds.toggle(num);
                         self.leds.shift_out();
                         sende_ok(socket);
@@ -210,24 +215,29 @@ impl<'a> Server<'a> {
             // relais clear 1
             // relais toggle 1
             ServerCommand::Relais { subcommand, params, .. } => {
-                let num = u64::from_str(&params.unwrap()).unwrap_or(0);
 
                 match subcommand.as_ref() {
+                    "list" => {
+                    },
                     "set" => {
+                        let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.relais.set(num);
                         self.relais.shift_out();
                         sende_ok(socket);
                     },
                     "get" => {
+                        let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         let result = self.relais.get(num);
                         sende(socket, result.to_string());
                     },
                     "clear" => {
+                        let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.relais.clear(num);
                         self.relais.shift_out();
                         sende_ok(socket);
                     },
                     "toggle" => {
+                        let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.relais.toggle(num);
                         self.relais.shift_out();
                         sende_ok(socket);
@@ -254,8 +264,15 @@ impl<'a> Server<'a> {
                         }
                     },
                     "get" => {
-                        let modbus_device = self.get_modbus_device();
-                        sende(socket, modbus_device);
+                        match config_entry.as_ref() {
+                            "modbus_device" => {
+                                let modbus_device = self.get_modbus_device();
+                                sende(socket, modbus_device);
+                            },
+                            _ => {
+                                sende_fehler(socket, "Unbekannter Konfigurationswert".to_string());
+                            },
+                        }
                     },
                     _ => {},
                 }
