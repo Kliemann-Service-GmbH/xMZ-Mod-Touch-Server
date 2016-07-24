@@ -2,6 +2,7 @@ use libmodbus_rs::*;
 use libmodbus_rs::modbus::{Modbus};
 use module::{Module, ModuleType};
 use nanomsg::{Socket, Protocol};
+use rustc_serialize::json;
 use server::error::{Error};
 use server::server_command::{ServerCommand};
 use server::zone::{Zone, ZoneType};
@@ -130,6 +131,7 @@ impl Server {
             try!(modbus_context.set_slave(modul.get_modbus_slave_id()));
             // try!(modbus_context.set_debug(true));
             try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
+            try!(modbus_context.connect());
             let mut tab_reg: Vec<u16> = Vec::new();
 
             for sensor in &mut modul.sensors {
@@ -291,8 +293,10 @@ impl Server {
                     "new" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
                     },
+                    // Serialized Module und Sensoren
                     "list" => {
-                        sende_fehler(socket, "Noch nicht implementiert".to_string());
+                        let serialized = json::encode(&self.modules).unwrap();
+                        sende(socket, serialized);
                     },
                     "show" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
