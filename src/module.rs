@@ -13,11 +13,11 @@ pub enum ModuleType {
 
 /// Sensorplatine mit einem oder mehreren Messzellen
 #[derive(Debug)]
-pub struct Module<'a> {
+pub struct Module {
     /// Typ des Sensor Moduls
     module_type: ModuleType,
     /// Vector der auf dieser Platine angeschlossenen Sensoren
-    pub sensors: Vec<Sensor<'a>>,
+    pub sensors: Vec<Sensor>,
     modbus_slave_id: i32,
 }
 
@@ -36,7 +36,7 @@ impl fmt::Display for ModuleError {
 }
 
 
-impl<'a> Module<'a> {
+impl Module {
     /// Erzeugt ein neue Sensorplatine
     ///
     /// # Attribute

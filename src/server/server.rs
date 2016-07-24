@@ -12,11 +12,11 @@ use std::io::{Write};
 use std::str::FromStr;
 
 
-pub struct Server<'a> {
+pub struct Server {
     pub leds: ShiftRegister,
     pub relais: ShiftRegister,
     // Sensor Module des Servers
-    pub modules: Vec<Module<'a>>,
+    pub modules: Vec<Module>,
     // Alarm/ Störzonen des Servers
     pub zones: Vec<Zone>,
     modbus_device: String,
@@ -26,7 +26,7 @@ pub struct Server<'a> {
     pub modbus_stop_bit: i32,
 }
 
-impl<'a> Server<'a> {
+impl Server {
     /// Erzeugt eine neue Server Instanz
     ///
     pub fn new() -> Self {
