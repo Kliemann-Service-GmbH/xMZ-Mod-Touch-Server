@@ -1,7 +1,47 @@
 //! Kontrolliert die ShiftRegister Hardware der 'xMZ-Mod-Touch'-Plattform
-use sysfs_gpio::{Direction, Pin};
+
 use std::thread;
 use std::time::Duration;
+use sysfs_gpio;
+use sysfs_gpio::{Direction, Pin};
+use std::error::Error;
+use std::fmt;
+
+/// Mögliche Fehler die auftreten können
+#[derive(Debug)]
+pub enum ShiftRegisterError {
+    Sysfs(sysfs_gpio::Error),
+}
+
+impl fmt::Display for ShiftRegisterError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ShiftRegisterError::Sysfs(ref err) => err.fmt(f),
+        }
+    }
+}
+
+impl Error for ShiftRegisterError {
+    fn description(&self) -> &str {
+        match *self {
+            ShiftRegisterError::Sysfs(ref err) => err.description(),
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            ShiftRegisterError::Sysfs(ref err) => Some(err),
+        }
+    }
+}
+
+impl From<sysfs_gpio::Error> for ShiftRegisterError {
+    fn from(err: sysfs_gpio::Error) -> ShiftRegisterError {
+        ShiftRegisterError::Sysfs(err)
+    }
+}
+
+
 
 
 /// Representiert die verschiedenen Shift Register Typen
@@ -137,14 +177,17 @@ impl ShiftRegister {
     /// let mut led = ShiftRegister::new(ShiftRegisterType::LED);
     /// assert_eq!(led.data, 0b0);
     ///
+    /// led.set(1);
     /// led.set(3);
+    /// assert_eq!(led.get(1), true);
     /// assert_eq!(led.get(3), true);
     ///
     /// led.clear(3);
+    /// assert_eq!(led.get(1), true);
     /// assert_eq!(led.get(3), false);
     /// ```
     pub fn clear(&mut self, num: u64) {
-        self.data &= 1 << num;
+        self.data &= !(1 << num - 1);
     }
 
     /// Schaltet das übergebene Bit um, war es Null dann wird es Eins und umgekehrt
@@ -172,13 +215,12 @@ impl ShiftRegister {
         self.data ^= 1 << num -1;
     }
 
-    /// Reset den Datenspeicher und gleicht die  Hardware ab
+    /// Reset nullt den Datenspeicher und gleicht ihn mit der Hardware ab.
     ///
     /// # Examples
     ///
     /// ```
     /// use xmz_server::shift_register::{ShiftRegister,ShiftRegisterType};
-    ///
     /// let mut led = ShiftRegister::new(ShiftRegisterType::LED);
     ///
     /// assert_eq!(led.get(1), false);
@@ -192,96 +234,103 @@ impl ShiftRegister {
         self.shift_out();
     }
 
-    // Test Lampentest usw.
+    /// Test Lampentest usw.
+    ///
+    /// Diese Funktion schaltet alle Ausgänge high, wartet eine Sekunde und schaltet danach alle
+    /// Ausgänge wieder aus.
     ///
     /// # Examples
     ///
     /// ```
-    /// use xmz_server::shift_register::{ShiftRegister,ShiftRegisterType};
+    /// use std::time::Duration;
     ///
+    /// use xmz_server::shift_register::{ShiftRegister,ShiftRegisterType};
     /// let mut led = ShiftRegister::new(ShiftRegisterType::LED);
     ///
-    /// led.reset();
+    /// led.set(1);
+    /// led.clear(10);
+    /// led.test();
+    /// assert_eq!(led.get(1), true);
+    /// assert_eq!(led.get(10), false);
     /// ```
     pub fn test(&mut self) {
+        // Alten Stand speichern
+        let alter_stand = self.data;
+
         self.data = u64::max_value();
         self.shift_out();
         thread::sleep(Duration::new(1, 0));
         self.reset();
+
+        // alten Stand wieder herstellen
+        self.data = alter_stand;
+        self.shift_out();
     }
+
+
 
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
-    fn export_pins(&self) {
-        match self.oe_pin.export() {
-            Ok(_) => {},
-            Err(err) => { println!("!OE (output enabled) Pin konnte nicht exportiert werden: {}", err) },
-        }
-        match self.ds_pin.export() {
-            Ok(_) => {},
-            Err(err) => { println!("DATA Pin konnte nicht exportiert werden: {}", err) },
-        }
-        match self.clock_pin.export() {
-            Ok(_) => {},
-            Err(err) => { println!("CLOCK Pin konnte nicht exportiert werden: {}", err) },
-        }
-        match self.latch_pin.export() {
-            Ok(_) => {},
-            Err(err) => { println!("LATCH Pin konnte nicht exportiert werden: {}", err) },
-        }
+    pub fn export_pins(&self) -> Result<(), ShiftRegisterError> {
+        try!(self.oe_pin.export());
+        try!(self.ds_pin.export());
+        try!(self.clock_pin.export());
+        try!(self.latch_pin.export());
+
+        Ok(())
     }
 
     /// Schaltet die Pins in den OUTPUT Pin Modus
     ///
-    fn set_pin_direction_output(&self) {
-        match self.oe_pin.set_direction(Direction::Out) {
-            Ok(_) => { let _ = self.oe_pin.set_value(0); }, // !OE pin low == Shift register enabled.
-            Err(err) => { println!("DATA Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
-        }
+    fn set_pin_direction_output(&self) -> Result<(), ShiftRegisterError> {
+        try!(self.oe_pin.set_direction(Direction::Out));
+        let _ = self.oe_pin.set_value(0); // !OE pin low == Shift register enabled.
+        try!(self.ds_pin.set_direction(Direction::Out));
+        let _ = self.ds_pin.set_value(0);
+        try!(self.clock_pin.set_direction(Direction::Out));
+        let _ = self.clock_pin.set_value(0);
+        try!(self.latch_pin.set_direction(Direction::Out));
+        let _ = self.latch_pin.set_value(0);
 
-        match self.ds_pin.set_direction(Direction::Out) {
-            Ok(_) => { let _ = self.ds_pin.set_value(0); },
-            Err(err) => { println!("DATA Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
-        }
-
-        match self.clock_pin.set_direction(Direction::Out) {
-            Ok(_) => { let _ = self.clock_pin.set_value(0); },
-            Err(err) => { println!("CLOCK Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
-        }
-
-        match self.latch_pin.set_direction(Direction::Out) {
-            Ok(_) => { let _ = self.latch_pin.set_value(0); },
-            Err(err) => { println!("LATCH Pin konnte nicht als OUTPUT Pin konfiguriert werden: {}", err) },
-        }
+        Ok(())
     }
 
     /// Toogelt den Clock Pin high->low
-    fn clock_in(&self) {
-        &self.clock_pin.set_value(1).unwrap_or(());
-        &self.clock_pin.set_value(0).unwrap_or(());
+    fn clock_in(&self) -> Result<(), ShiftRegisterError> {
+        try!(self.clock_pin.set_value(1));
+        try!(self.clock_pin.set_value(0));
+
+        Ok(())
     }
 
     /// Toggelt den Latch Pin pin high->low,
-    fn latch_out(&self) {
-        &self.latch_pin.set_value(1).unwrap_or(());
-        &self.latch_pin.set_value(0).unwrap_or(());
+    fn latch_out(&self) -> Result<(), ShiftRegisterError> {
+        try!(self.latch_pin.set_value(1));
+        try!(self.latch_pin.set_value(0));
+
+        Ok(())
     }
 
     /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
     /// Schiebe Register (latch out)
     pub fn shift_out(&self) {
-        self.export_pins();
-        self.set_pin_direction_output();
+        // Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonnsten passiert nix
+        match self.export_pins() {
+            Err(_) => {},
+            Ok(..) => {
+                let _ = self.set_pin_direction_output();
 
-        // Daten einclocken
-        for i in (0..64).rev() {
-            match (self.data >> i) & 1 {
-                1 => { self.ds_pin.set_value(1).unwrap_or(()); },
-                _ => { self.ds_pin.set_value(0).unwrap_or(()); },
+                // Daten einclocken
+                for i in (0..64).rev() {
+                    match (self.data >> i) & 1 {
+                        1 => { self.ds_pin.set_value(1).unwrap_or(()); },
+                        _ => { self.ds_pin.set_value(0).unwrap_or(()); },
+                    }
+                    let _ = self.clock_in();
+                }
+                let _ = self.latch_out();
             }
-            self.clock_in();
         }
-        self.latch_out();
     }
 
 

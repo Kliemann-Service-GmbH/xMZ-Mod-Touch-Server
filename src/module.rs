@@ -1,25 +1,28 @@
 use sensor::{Sensor, SensorType};
 use std::fmt;
 
+
+/// Sensorplatine mit einem oder mehreren Messzellen
+#[derive(Debug)]
+#[derive(RustcEncodable)]
+pub struct Module {
+    /// Typ des Sensor Moduls
+    module_type: ModuleType,
+    /// Vector der auf dieser Platine angeschlossenen Sensoren
+    pub sensors: Vec<Sensor>,
+    modbus_slave_id: i32,
+}
+
 /// Module Arten
 ///
 /// Zur Zeit wird nur eine Art Modul unterstützt
 #[derive(Debug, Eq, PartialEq)]
+#[derive(RustcEncodable)]
 pub enum ModuleType {
     /// * RAGAS_CO_NO2       - RA-GAS GmbH Kombisensor mit CO und NO Messzelle
     RAGAS_CO_NO2,
 }
 
-
-/// Sensorplatine mit einem oder mehreren Messzellen
-#[derive(Debug)]
-pub struct Module<'a> {
-    /// Typ des Sensor Moduls
-    module_type: ModuleType,
-    /// Vector der auf dieser Platine angeschlossenen Sensoren
-    pub sensors: Vec<Sensor<'a>>,
-    modbus_slave_id: i32,
-}
 
 
 #[derive(Debug)]
@@ -36,7 +39,7 @@ impl fmt::Display for ModuleError {
 }
 
 
-impl<'a> Module<'a> {
+impl Module {
     /// Erzeugt ein neue Sensorplatine
     ///
     /// # Attribute

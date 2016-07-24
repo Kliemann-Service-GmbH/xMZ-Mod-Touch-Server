@@ -1,4 +1,8 @@
-use std::sync::{Arc, RwLock};
+// TODO: Neue Idee 2016-07-24 12:35 Funktion der Zonen
+/// Der Server erzeugt die konfigurierten Zonen beim Start (liest diese aus der Konfig aus),
+/// dann werden der Zone die konfigurierten Sensoren zugeweisen.
+/// Die Alarmauswertung durchläut Zyklisch alle Zonen, und die darin enthaltenen Sensoren, prüft
+/// die in den Zonen definierten Max Werte und löst je nach Bedaft die Alarmpunkte aus.
 
 /// Zonentypen
 #[derive(Debug, Eq, PartialEq)]
@@ -27,7 +31,7 @@ struct Alarmpunkt(bool);
 pub struct Zone {
     pub zone_type: ZoneType,
     // alarmpunkte: Arc<RwLock<Vec<Alarmpunkt>>>,
-    alarmpunkte: Arc<RwLock<Vec<bool>>>,
+    alarmpunkte: Vec<bool>,
     direction: Direction,
 }
 
@@ -52,12 +56,12 @@ impl Zone {
         match zone_type {
             ZoneType::Stoerung => Zone {
                 zone_type: ZoneType::Stoerung,
-                alarmpunkte: Arc::new(RwLock::new(vec![false])),
+                alarmpunkte: vec![false],
                 direction: Direction::Nc,
             },
             ZoneType::Schwellenwert => Zone {
                 zone_type: ZoneType::Schwellenwert,
-                alarmpunkte: Arc::new(RwLock::new(vec![false; 4])),
+                alarmpunkte: vec![false; 4],
                 direction: Direction::No,
             }
         }
@@ -73,16 +77,19 @@ impl Zone {
     /// ```
     /// use xmz_server::server::zone::{Zone, ZoneType};
     ///
-    /// let stoerung = Zone::new(ZoneType::Stoerung);
+    /// let mut schwellenwert = Zone::new(ZoneType::Schwellenwert);
+    /// schwellenwert.alarmpunkt_set(0, true);
     ///
-    /// assert_eq!(stoerung.alarmpunkt(0), Some(false));
-    /// assert_eq!(stoerung.alarmpunkt(99), None);
+    /// assert_eq!(schwellenwert.alarmpunkt(0), Some(true));
+    /// assert_eq!(schwellenwert.alarmpunkt(1), Some(false));
+    /// assert_eq!(schwellenwert.alarmpunkt(99), None);
     /// ```
     pub fn alarmpunkt(&self, id: usize) -> Option<bool> {
-        match self.alarmpunkte.read().unwrap().len() > id {
-            true => Some(self.alarmpunkte.read().unwrap()[id]),
-            _ => None,
-        }
+        if self.alarmpunkte.len() - 1 >= id {
+            return Some(self.alarmpunkte[id]);
+        } else {
+            return None;
+        };
     }
 
     /// `alarmunkt_get`     - Alias for `alarmpunkt()`
@@ -101,7 +108,7 @@ impl Zone {
     /// assert_eq!(stoerung.alarmpunkt_get(99), None);
     /// ```
     pub fn alarmpunkt_get(&self, id: usize) -> Option<bool> {
-        self.alarmpunkt(id)
+        self.alarmpunkt(id) // ALIAS for alarmpunkt_get()
     }
 
     /// `alarmunkt_set`     - Fragt ein Alarmpunkt ab
@@ -115,14 +122,14 @@ impl Zone {
     /// ```
     /// use xmz_server::server::zone::{Zone, ZoneType};
     ///
-    /// let stoerung = Zone::new(ZoneType::Stoerung);
+    /// let mut stoerung = Zone::new(ZoneType::Stoerung);
     ///
     /// stoerung.alarmpunkt_set(0, true);
     /// assert_eq!(stoerung.alarmpunkt(0), Some(true));
     /// ```
-    pub fn alarmpunkt_set(&self, id: usize, value: bool) {
+    pub fn alarmpunkt_set(&mut self, id: usize, value: bool) {
         match self.alarmpunkt(id) {
-            Some(_) => { self.alarmpunkte.write().unwrap()[id] = value; },
+            Some(_) => { self.alarmpunkte[id] = value; },
             None => {},
         }
     }
@@ -166,7 +173,7 @@ mod tests {
 
     #[test]
     fn alarmpunkt_kann_gesetzt_werden() {
-        let zone = Zone::new(ZoneType::Stoerung);
+        let mut zone = Zone::new(ZoneType::Stoerung);
         assert_eq!(zone.alarmpunkt(0), Some(false));
         zone.alarmpunkt_set(0, true);
         assert_eq!(zone.alarmpunkt(0), Some(true));

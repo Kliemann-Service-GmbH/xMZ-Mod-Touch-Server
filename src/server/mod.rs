@@ -12,4 +12,4 @@ pub mod zone;
 pub mod server_command;
 
 /// Fehlerbehandlung
-pub mod server_error;
+pub mod error;

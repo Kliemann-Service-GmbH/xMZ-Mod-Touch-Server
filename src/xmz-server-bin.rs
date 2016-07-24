@@ -3,18 +3,10 @@
 extern crate nanomsg;
 extern crate xmz_server;
 
-use std::str::FromStr;
 use std::sync::{Arc, RwLock};
 use std::thread;
-use std::time::Duration;
-use xmz_server::server::server_command::{ServerCommand};
-use xmz_server::server::server_error::ServerError;
 use xmz_server::server::server::Server;
 
-
-fn tick(name: &str) {
-    println!("tick from: {}", name);
-}
 
 fn main() {
     let mut server = Server::new();
@@ -24,60 +16,36 @@ fn main() {
     // Verschiedene Server Instanzen erzeugen, diese werden später in den Threads erneut geklont.
 
     loop {
+        let server_update_sensors = server.clone();
+        let server_request_handler = server.clone();
 
-        let server1 = server.clone();
-        let server2 = server.clone();
-        let server3 = server.clone();
-
-
-        // Im main loop werden verschiedene Threads gespannt die jeweils Teilaufgaben des Servers
-        // ab arbeiten.
-        let guard = thread::spawn(move || {
-            // 1. Task, Update Sensoren, LED und Relais
-            let server1 = server1.clone();
-            let update_task = thread::spawn(move || {
-                let _ = match server1.write() {
-                    Ok(mut server) => { server.update_sensors(); }
-                    Err(err) => { println!("Thread Update Task: Fehler beim write lock des Servers: {}", err); }
-                };
-                tick("Thread1");
+        // 1. Thread zum Update der Sensoren via modbus_stop_bit
+        //
+        // Dieser Thread muss mindestens einmal durchlauden werden pro loop Zyklus, desshalb
+        // hat dieser Thread einen Namen `thread_update_sensors` und desshalb wird der Thread
+        // am Ende gejoint `thread_update_sensors.join()`
+        let thread_update_sensors = thread::spawn(move || {
+            let _ = server_update_sensors.write().map(|mut server| {
+                // tick("thread_update_sensors");
+                let _ = server.update_sensors();
             });
-            let _ = update_task.join();
-
-
-            // // 2. Thread zur Zeit Ausgabe der Sensorwerte
-            // let server2 = server2.clone();
-            // let _worker_task = thread::spawn(move || {
-            //     match server2.read() {
-            //         Ok(server) => {
-            //             for module in &server.modules[..] {
-            //                 for sensor in module.sensors.iter() {
-            //                     println!("{}: ({}) {:.2} {} [{}]", module.get_modbus_slave_id(), sensor.sensor_type, sensor.concentration().unwrap_or(0.0), sensor.si, sensor.adc_value.unwrap_or(0));
-            //                 }
-            //             }
-            //             thread::sleep(Duration::from_millis(1000));
-            //             print!("{}[2J", 27 as char);
-            //         }
-            //         Err(err) => { println!("Error while lock: {}", err) }
-            //     };
-            //     tick("Thread2");
-            // });
-            // let _ = _worker_task.join();
-
-            // 3. Task
-            let server3 = server3.clone();
-            let _nanomsg_server = thread::spawn(move || {
-                let _ = match server3.write() {
-                    Ok(mut server) => { server.handle_nanomsg_requests(); },
-                    Err(err) => { println!("Thread Nanomsg Server: Fehler beim write lock des Servers: {}", err); },
-                };
-            });
-            // let _ = _nanomsg_server.join();
-
         });
-        let _ = guard.join();
+        let _ = thread_update_sensors.join();
 
-
+        let _thread_request_handler = thread::spawn(move || {
+            let _ = server_request_handler.write().map(|mut server| {
+                // tick("thread_request_handler");
+                let _ = server.handle_nanomsg_requests();
+            });
+        });
 
     } // Ende loop
+}
+
+
+// Kleiner Helper für eine Statusmeldung aus einem Thread.
+//
+#[allow(dead_code)]
+fn tick(name: &str) {
+    println!("tick from: {}", name);
 }

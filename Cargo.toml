@@ -13,6 +13,7 @@ name = "xmz-server-bin"
 path = "src/xmz-server-bin.rs"
 
 [dependencies]
-nanomsg = "0.6.0"
+nanomsg = { git = "https://github.com/thehydroimpulse/nanomsg.rs.git" }
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
 sysfs_gpio = "*"
+rustc-serialize = "0.3"

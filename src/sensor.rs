@@ -1,6 +1,32 @@
-use server::zone::Zone;
 use std::result;
 use std::fmt;
+
+
+#[derive(Debug)]
+#[derive(RustcEncodable)]
+pub struct Sensor {
+    /// Sensor Typ
+    pub sensor_type: SensorType,
+    /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
+    pub adc_value: Option<u16>,
+    /// SI Einheit des Sensors (ppm, %UEG, Vol %)
+    pub si: String,
+    adc_value_at_nullgas: Option<u32>,
+    adc_value_at_messgas: Option<u32>,
+    concentration_nullgas: Option<u32>,
+    concentration_messgas: Option<u32>,
+    /// Adresse des Modbus Registers für den ADC Wert
+    pub modbus_register_address: u32,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+#[derive(RustcEncodable)]
+pub enum SensorType {
+    /// Nemoto NO² Messzelle, EC NAP-550 https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
+    NemotoNO2,
+    /// Nemote CO Messzelle, EC NAP-505 https://www.nemoto.co.jp/nse/sensor-search/use/gas-alarm/nap-505.html?lang=en
+    NemotoCO,
+}
 
 /// Mögliche Fehler die auftreten können
 #[derive(Debug, Eq, PartialEq)]
@@ -16,14 +42,6 @@ pub enum SensorError {
 // Rust Type Alias
 pub type Result<T> = result::Result<T, SensorError>;
 
-#[derive(Debug, Eq, PartialEq)]
-pub enum SensorType {
-    /// Nemoto NO² Messzelle, EC NAP-550 https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
-    NemotoNO2,
-    /// Nemote CO Messzelle, EC NAP-505 https://www.nemoto.co.jp/nse/sensor-search/use/gas-alarm/nap-505.html?lang=en
-    NemotoCO,
-}
-
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
@@ -33,32 +51,7 @@ impl fmt::Display for SensorType {
     }
 }
 
-#[derive(Debug, Eq, PartialEq)]
-enum Alarmauswertung {
-    On,
-    Off,
-    Simulation,
-}
-
-#[derive(Debug)]
-pub struct Sensor<'a> {
-    /// Sensor Typ
-    pub sensor_type: SensorType,
-    /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
-    pub adc_value: Option<u16>,
-    /// SI Einheit des Sensors (ppm, %UEG, Vol %)
-    pub si: String,
-    adc_value_at_nullgas: Option<u32>,
-    adc_value_at_messgas: Option<u32>,
-    concentration_nullgas: Option<u32>,
-    concentration_messgas: Option<u32>,
-    /// Adresse des Modbus Registers für den ADC Wert
-    pub modbus_register_address: u32,
-    alarmauswertung: Alarmauswertung,
-    zones: Vec<&'a Zone>,
-}
-
-impl<'a> Sensor<'a> {
+impl Sensor {
     /// Erzeugt eine neue Sensor Instanz
     ///
     /// # Attributes
@@ -76,8 +69,6 @@ impl<'a> Sensor<'a> {
                     concentration_nullgas: Some(0),  // TODO: Read in sensor calibration data
                     concentration_messgas: Some(20),  // TODO: Read in sensor calibration data
                     modbus_register_address: 1,
-                    alarmauswertung: Alarmauswertung::Simulation,
-                    zones: vec!(),
                 }
             },
             SensorType::NemotoCO => {
@@ -90,8 +81,6 @@ impl<'a> Sensor<'a> {
                     concentration_nullgas: Some(0),  // TODO: Read in sensor calibration data
                     concentration_messgas: Some(280),  // TODO: Read in sensor calibration data
                     modbus_register_address: 11,
-                    alarmauswertung: Alarmauswertung::Simulation,
-                    zones: vec!(),
                 }
             },
         }
@@ -206,11 +195,10 @@ impl<'a> Sensor<'a> {
 #[cfg(test)]
 mod test {
     use server::server::Server;
-    use server::zone::Zone;
-    use sensor::{Alarmauswertung, Sensor, SensorType, SensorError};
+    use sensor::{Sensor, SensorType, SensorError};
 
     // Helper Funktion die ein NO2 Sensor zurück Liefert
-    fn default_no2_sensor<'a>() -> Sensor<'a> {
+    fn default_no2_sensor() -> Sensor {
         let mut sensor = Sensor::new(SensorType::NemotoNO2);
         sensor.adc_value = Some(772);
         sensor.adc_value_at_nullgas = Some(922);
@@ -230,61 +218,6 @@ mod test {
     fn modbus_register_address_nemoto_co() {
         let sensor = Sensor::new(SensorType::NemotoCO);
         assert_eq!(sensor.modbus_register_address, 11);
-    }
-
-    #[test]
-    fn alarmauswertung() {
-        let sensor1 = Sensor::new(SensorType::NemotoCO);
-        let sensor2 = Sensor::new(SensorType::NemotoNO2);
-        assert_eq!(sensor1.alarmauswertung, Alarmauswertung::Simulation);
-        assert_eq!(sensor2.alarmauswertung, Alarmauswertung::Simulation);
-    }
-
-    #[test]
-    fn sensor_ohne_zone() {
-        let sensor = Sensor::new(SensorType::NemotoNO2);
-        assert_eq!(sensor.zones.len(), 0);
-    }
-
-    #[test]
-    fn sensor_mit_einer_zone() {
-        let server = Server::new();
-        let mut sensor = Sensor::new(SensorType::NemotoNO2);
-        sensor.zones.push(&server.zones[0]);
-        assert_eq!(sensor.zones.len(), 1);
-    }
-
-    #[test]
-    fn sensor_mit_mehr_als_einer_zone() {
-        let server = Server::new();
-        let mut sensor = Sensor::new(SensorType::NemotoNO2);
-        sensor.zones.push(&server.zones[0]);
-        sensor.zones.push(&server.zones[1]);
-        assert_eq!(sensor.zones.len(), 2);
-    }
-
-    #[test]
-    fn sensor_mit_einer_zone_kann_alarmpunkt_setzen() {
-        let server = Server::new();
-        let mut sensor = Sensor::new(SensorType::NemotoNO2);
-        sensor.zones.push(&server.zones[0]);
-        assert_eq!(sensor.zones[0].alarmpunkt(0).unwrap(), false);
-        sensor.zones[0].alarmpunkt_set(0, true);
-        assert_eq!(sensor.zones[0].alarmpunkt(0).unwrap(), true);
-    }
-
-    #[test]
-    fn sensor_mit_mehr_als_einer_zone_kann_alarmpunkt_setzen() {
-        let server = Server::new();
-        let mut sensor = Sensor::new(SensorType::NemotoNO2);
-        sensor.zones.push(&server.zones[0]);
-        sensor.zones.push(&server.zones[1]);
-        assert_eq!(sensor.zones[0].alarmpunkt(0).unwrap(), false);
-        assert_eq!(sensor.zones[1].alarmpunkt(0).unwrap(), false);
-        sensor.zones[0].alarmpunkt_set(0, true);
-        sensor.zones[1].alarmpunkt_set(3, true);
-        assert_eq!(sensor.zones[0].alarmpunkt(0).unwrap(), true);
-        assert_eq!(sensor.zones[1].alarmpunkt(3).unwrap(), true);
     }
 
 
@@ -319,7 +252,7 @@ mod test {
 
     #[test]
     fn concentration_no2() {
-        let mut sensor = default_no2_sensor();
+        let sensor = default_no2_sensor();
         assert_eq!(sensor.concentration().unwrap(), 10.000001);
     }
 

@@ -6,12 +6,13 @@
 //! xMZ-Mod-Touch Server
 //!
 //! Server Teil der 'xMZ-Mod-Touch'-Platform
-//! 
+//!
 //! Git Repository: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
 
 
 extern crate libmodbus_rs;
 extern crate nanomsg;
+extern crate rustc_serialize;
 extern crate sysfs_gpio;
 
 //extern crate xmz_shift_register;
@@ -33,7 +34,6 @@ pub mod module;
 /// Also die Umwandlung des Analog Signals in ein Wert, die Mittelwert Bildung und in Teilen auch die Störungsüberwachung.
 pub mod sensor;
 
-pub mod nanomsg_device;
 
 #[cfg(test)]
 mod tests {
