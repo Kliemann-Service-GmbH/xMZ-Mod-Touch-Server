@@ -4,6 +4,7 @@ version = "0.4.1"
 dependencies = [
  "libmodbus-rs 0.1.5 (git+https://github.com/zzeroo/libmodbus-rs.git)",
  "nanomsg 0.7.0 (git+https://github.com/thehydroimpulse/nanomsg.rs.git)",
+ "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "sysfs_gpio 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -138,6 +139,11 @@ dependencies = [
 [[package]]
 name = "regex-syntax"
 version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "rustc-serialize"
+version = "0.3.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]

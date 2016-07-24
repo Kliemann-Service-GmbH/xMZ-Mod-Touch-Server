@@ -12,6 +12,7 @@
 
 extern crate libmodbus_rs;
 extern crate nanomsg;
+extern crate rustc_serialize;
 extern crate sysfs_gpio;
 
 //extern crate xmz_shift_register;

@@ -3,6 +3,7 @@ use std::fmt;
 
 
 #[derive(Debug)]
+#[derive(RustcEncodable)]
 pub struct Sensor {
     /// Sensor Typ
     pub sensor_type: SensorType,
@@ -18,6 +19,15 @@ pub struct Sensor {
     pub modbus_register_address: u32,
 }
 
+#[derive(Debug, Eq, PartialEq)]
+#[derive(RustcEncodable)]
+pub enum SensorType {
+    /// Nemoto NO² Messzelle, EC NAP-550 https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
+    NemotoNO2,
+    /// Nemote CO Messzelle, EC NAP-505 https://www.nemoto.co.jp/nse/sensor-search/use/gas-alarm/nap-505.html?lang=en
+    NemotoCO,
+}
+
 /// Mögliche Fehler die auftreten können
 #[derive(Debug, Eq, PartialEq)]
 pub enum SensorError {
@@ -31,14 +41,6 @@ pub enum SensorError {
 
 // Rust Type Alias
 pub type Result<T> = result::Result<T, SensorError>;
-
-#[derive(Debug, Eq, PartialEq)]
-pub enum SensorType {
-    /// Nemoto NO² Messzelle, EC NAP-550 https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
-    NemotoNO2,
-    /// Nemote CO Messzelle, EC NAP-505 https://www.nemoto.co.jp/nse/sensor-search/use/gas-alarm/nap-505.html?lang=en
-    NemotoCO,
-}
 
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
