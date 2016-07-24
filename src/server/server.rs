@@ -295,8 +295,14 @@ impl Server {
                     },
                     // Serialized Module und Sensoren
                     "list" => {
-                        let serialized = json::encode(&self.modules).unwrap();
-                        sende(socket, serialized);
+                        match json::encode(&self.modules) {
+                            Ok(serialized) => {
+                                sende(socket, serialized);
+                            },
+                            Err(err) => {
+                                sende_fehler(socket, err.to_string());
+                            }
+                        }
                     },
                     "show" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
