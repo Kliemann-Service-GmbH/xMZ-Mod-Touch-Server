@@ -3,7 +3,7 @@ use std::fmt;
 
 
 #[derive(Debug)]
-#[derive(RustcEncodable)]
+#[derive(RustcDecodable, RustcEncodable)]
 pub struct Sensor {
     /// Sensor Typ
     pub sensor_type: SensorType,
@@ -20,7 +20,7 @@ pub struct Sensor {
 }
 
 #[derive(Debug, Eq, PartialEq)]
-#[derive(RustcEncodable)]
+#[derive(RustcDecodable, RustcEncodable)]
 pub enum SensorType {
     /// Nemoto NO² Messzelle, EC NAP-550 https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
     NemotoNO2,
