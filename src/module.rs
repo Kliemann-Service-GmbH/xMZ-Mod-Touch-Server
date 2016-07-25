@@ -93,10 +93,9 @@ impl Module {
     ///
     /// ```
     /// ```
-    pub fn get_modbus_slave_id(&self) -> i32 {
+    pub fn modbus_slave_id(&self) -> i32 {
         self.modbus_slave_id
     }
-
 }
 
 #[cfg(test)]

@@ -128,7 +128,7 @@ impl Server {
         let mut modbus_context = Modbus::new_rtu(self.modbus_device.as_ref(), self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
 
         for modul in &mut self.modules {
-            try!(modbus_context.set_slave(modul.get_modbus_slave_id()));
+            try!(modbus_context.set_slave(modul.modbus_slave_id()));
             // try!(modbus_context.set_debug(true));
             try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
             try!(modbus_context.connect());
@@ -385,7 +385,7 @@ mod test {
         let mut server = Server::new();
         let module = Module::new(ModuleType::RAGAS_CO_NO2);
         server.modules.push(module);
-        assert_eq!(server.modules.get(0).unwrap().get_modbus_slave_id(), 1);
+        assert_eq!(server.modules.get(0).unwrap().modbus_slave_id(), 1);
     }
 
     #[test]
