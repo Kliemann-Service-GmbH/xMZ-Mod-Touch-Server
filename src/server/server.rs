@@ -2,6 +2,7 @@ use libmodbus_rs::*;
 use libmodbus_rs::modbus::{Modbus};
 use module::{Module, ModuleType};
 use nanomsg::{Socket, Protocol};
+use rustc_serialize::json;
 use server::error::{Error};
 use server::server_command::{ServerCommand};
 use server::zone::{Zone, ZoneType};
@@ -127,9 +128,10 @@ impl Server {
         let mut modbus_context = Modbus::new_rtu(self.modbus_device.as_ref(), self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
 
         for modul in &mut self.modules {
-            try!(modbus_context.set_slave(modul.get_modbus_slave_id()));
+            try!(modbus_context.set_slave(modul.modbus_slave_id()));
             // try!(modbus_context.set_debug(true));
             try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
+            try!(modbus_context.connect());
             let mut tab_reg: Vec<u16> = Vec::new();
 
             for sensor in &mut modul.sensors {
@@ -291,8 +293,16 @@ impl Server {
                     "new" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
                     },
+                    // Serialized Module und Sensoren
                     "list" => {
-                        sende_fehler(socket, "Noch nicht implementiert".to_string());
+                        match json::encode(&self.modules) {
+                            Ok(serialized) => {
+                                sende(socket, serialized);
+                            },
+                            Err(err) => {
+                                sende_fehler(socket, err.to_string());
+                            }
+                        }
                     },
                     "show" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
@@ -375,7 +385,7 @@ mod test {
         let mut server = Server::new();
         let module = Module::new(ModuleType::RAGAS_CO_NO2);
         server.modules.push(module);
-        assert_eq!(server.modules.get(0).unwrap().get_modbus_slave_id(), 1);
+        assert_eq!(server.modules.get(0).unwrap().modbus_slave_id(), 1);
     }
 
     #[test]

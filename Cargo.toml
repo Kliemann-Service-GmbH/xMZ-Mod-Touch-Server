@@ -1,6 +1,6 @@
 [package]
 name = "xmz_server"
-version = "0.4.1"
+version = "0.5.0"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "xMZ-Mod-Touch Server Library and Binaries"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
@@ -13,7 +13,7 @@ name = "xmz-server-bin"
 path = "src/xmz-server-bin.rs"
 
 [dependencies]
-nanomsg = { git = "https://github.com/thehydroimpulse/nanomsg.rs.git" }
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
-sysfs_gpio = "*"
+nanomsg = { git = "https://github.com/thehydroimpulse/nanomsg.rs.git" }
 rustc-serialize = "0.3"
+sysfs_gpio = "*"

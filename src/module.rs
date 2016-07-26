@@ -4,7 +4,7 @@ use std::fmt;
 
 /// Sensorplatine mit einem oder mehreren Messzellen
 #[derive(Debug)]
-#[derive(RustcEncodable)]
+#[derive(RustcDecodable, RustcEncodable)]
 pub struct Module {
     /// Typ des Sensor Moduls
     module_type: ModuleType,
@@ -17,7 +17,7 @@ pub struct Module {
 ///
 /// Zur Zeit wird nur eine Art Modul unterstützt
 #[derive(Debug, Eq, PartialEq)]
-#[derive(RustcEncodable)]
+#[derive(RustcDecodable, RustcEncodable)]
 pub enum ModuleType {
     /// * RAGAS_CO_NO2       - RA-GAS GmbH Kombisensor mit CO und NO Messzelle
     RAGAS_CO_NO2,
@@ -93,10 +93,9 @@ impl Module {
     ///
     /// ```
     /// ```
-    pub fn get_modbus_slave_id(&self) -> i32 {
+    pub fn modbus_slave_id(&self) -> i32 {
         self.modbus_slave_id
     }
-
 }
 
 #[cfg(test)]
