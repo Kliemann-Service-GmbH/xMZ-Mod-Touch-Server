@@ -24,8 +24,7 @@ pub enum ModuleType {
 }
 
 
-
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum ModuleError {
     InvalidModbusSlaveId,
 }
@@ -76,6 +75,27 @@ impl Module {
     /// # Examples
     ///
     /// ```
+    /// use xmz_server::module::{Module, ModuleType};
+    ///
+    /// let mut module = Module::new(ModuleType::RAGAS_CO_NO2);
+    /// assert_eq!(module.modbus_slave_id(), 1);
+    /// module.set_modbus_slave_id(256);
+    /// assert_eq!(module.modbus_slave_id(), 256);
+    /// ```
+    ///
+    /// Erlaubte Modbus Slave ID's liegen zwischen 1 und 256 (inclusive 256).
+    /// Unerlaubte Werte werden einfach nicht geschrieben.
+    ///
+    /// ```
+    /// use xmz_server::module::{Module, ModuleType, ModuleError};
+    ///
+    /// let mut module = Module::new(ModuleType::RAGAS_CO_NO2);
+    /// assert_eq!(module.modbus_slave_id(), 1);
+    /// assert_eq!(module.set_modbus_slave_id(0), Err(ModuleError::InvalidModbusSlaveId));
+    /// assert_eq!(module.modbus_slave_id(), 1);
+    ///
+    /// assert_eq!(module.set_modbus_slave_id(257), Err(ModuleError::InvalidModbusSlaveId));
+    /// assert_eq!(module.modbus_slave_id(), 1);
     /// ```
     pub fn set_modbus_slave_id(&mut self, slave_id: i32) -> Result<i32, ModuleError> {
         match slave_id {
@@ -92,9 +112,28 @@ impl Module {
     /// # Examples
     ///
     /// ```
+    /// use xmz_server::module::{Module, ModuleType};
+    ///
+    /// let module = Module::new(ModuleType::RAGAS_CO_NO2);
+    /// assert_eq!(module.modbus_slave_id(), 1);
     /// ```
     pub fn modbus_slave_id(&self) -> i32 {
         self.modbus_slave_id
+    }
+
+
+    /// Liefert den Module Type als String
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::module::{Module, ModuleType};
+    ///
+    /// let module = Module::new(ModuleType::RAGAS_CO_NO2);
+    /// assert_eq!(module.module_type(), "RAGAS_CO_NO2".to_string());
+    /// ```
+    pub fn module_type(&self) -> String {
+        format!("{:?}", self.module_type)
     }
 }
 
