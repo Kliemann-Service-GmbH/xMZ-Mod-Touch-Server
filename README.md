@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)&nbsp;[Projektseite][homepage]&nbsp;[Dokumentation][doku]&nbsp;[Repo auf Github.com][repo]
+[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)&nbsp;[Projektseite |][homepage]&nbsp;[Dokumentation |][doku]&nbsp;[Repo auf Github.com |][repo]
 
 Serverteil der 'xMZ-Mod-Touch'-Platform
 
