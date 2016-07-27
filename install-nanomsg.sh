@@ -1,4 +1,4 @@
-#!/bin/sg
+#!/bin/sh
 set -ex
 
 wget https://github.com/nanomsg/nanomsg/archive/1.0.0.tar.gz -O /tmp/nanomsg-.0.0.tar.gz
