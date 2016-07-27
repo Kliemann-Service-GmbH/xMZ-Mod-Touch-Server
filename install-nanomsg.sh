@@ -10,8 +10,7 @@ mkdir -p /tmp/nanomsg-1.0.0/build
 tar xfvz /tmp/nanomsg-1.0.0.tar.gz -C /tmp/
 
 cd /tmp/nanomsg-1.0.0/build && \
-    cmake .. && cmake --build .
-
-sudo -C "cd /tmp/nanomsg-1.0.0/build && cmake --build . --target install"
+    cmake .. && cmake --build . && \
+    sudo cmake --build . --target install
 
 sudo ldconfig
