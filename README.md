@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)
+
 Serverteil der 'xMZ-Mod-Touch'-Platform
 
 Dies ist der Hauptprozess der sehr früh, noch vor der GUI, gestartet wird.
