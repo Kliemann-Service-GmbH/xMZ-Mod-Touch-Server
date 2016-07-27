@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server) [Dokumentation](http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/target/doc/xmz_server/index.html)
+[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)&nbsp;[Projektseite][homepage]&nbsp;[Dokumentation][doku]&nbsp;[Repo auf Github.com][repo]
 
 Serverteil der 'xMZ-Mod-Touch'-Platform
 
@@ -96,6 +96,10 @@ cargo test
 # Links
 
 * https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
+* Dokumentation http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/target/doc/xmz_server/index.html
 * Command Line Parser https://github.com/kbknapp/clap-rs
 
 [1]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
+[homepage]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server
+[repo]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
+[doku]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/target/doc/xmz_server/index.html
