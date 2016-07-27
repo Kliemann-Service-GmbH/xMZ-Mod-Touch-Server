@@ -131,13 +131,20 @@ impl Server {
             try!(modbus_context.set_slave(modul.modbus_slave_id()));
             // try!(modbus_context.set_debug(true));
             try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
-            try!(modbus_context.connect());
             let mut tab_reg: Vec<u16> = Vec::new();
 
             for sensor in &mut modul.sensors {
-                tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
-                tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
-                modbus_context.close();
+                match modbus_context.connect() {
+                    Ok(..) => {
+                        println!("Modbus Register: {}", sensor.modbus_register_address as i32);
+                        tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
+                        println!("ADC: {:?}", sensor.adc_value);
+                        tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
+                        modbus_context.close();
+                        println!("{:?}", sensor.concentration());
+                    }
+                    Err(_) => {}
+                }
             }
         }
 
