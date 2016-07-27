@@ -1,6 +1,6 @@
 [root]
 name = "xmz_server"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "libmodbus-rs 0.1.5 (git+https://github.com/zzeroo/libmodbus-rs.git)",
  "nanomsg 0.7.0 (git+https://github.com/thehydroimpulse/nanomsg.rs.git)",

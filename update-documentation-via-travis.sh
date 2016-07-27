@@ -20,7 +20,7 @@ git config user.email "s.mueller@it.kls-glt.de"
 
 git remote add upstream "https://$GH_TOKEN@github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git"
 git fetch upstream
-git checkout upstream/gh-pages
+git checkout upstream/gh-pages -b gh-pages
 
 git checkout upstream/master README.md
 echo -e "\nLast Update: **`date +%F-%T-%N`** Version: **${rev}**" >> README.md
