@@ -4,6 +4,7 @@ rust:
 # - beta
 - nightly
 before_install:
+  - chmod +x ./install-nanomsg.sh
   - ./install-nanomsg.sh
 env:
   global:
