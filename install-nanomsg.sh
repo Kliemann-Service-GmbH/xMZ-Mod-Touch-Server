@@ -7,7 +7,7 @@ wget https://github.com/nanomsg/nanomsg/archive/1.0.0.tar.gz -O /tmp/nanomsg-1.0
 
 mkdir -p /tmp/nanomsg-1.0.0/build
 
-tar xfvz /tmp/nanomsg-1.0.0.tar.gz -C /tmp/nanomsg-1.0.0
+tar xfvz /tmp/nanomsg-1.0.0.tar.gz -C /tmp/
 
 cd /tmp/nanomsg-1.0.0/build && \
     cmake .. && cmake --build .
