@@ -10,7 +10,7 @@ pub struct Sensor {
     /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
     pub adc_value: Option<u16>,
     /// SI Einheit des Sensors (ppm, %UEG, Vol %)
-    pub si: String,
+    si: String,
     adc_value_at_nullgas: Option<u32>,
     adc_value_at_messgas: Option<u32>,
     concentration_nullgas: Option<u32>,
@@ -188,6 +188,20 @@ impl Sensor {
             self.adc_value = Some(i);
             println!("ADC Wert: [{}] entspricht einer Konzentration von: {} {}", i, self.concentration().unwrap(), self.si);
         }
+    }
+
+    /// Liefert die SI Einheit des Sensors
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::sensor::{Sensor, SensorType};
+    ///
+    /// let mut sensor = Sensor::new(SensorType::NemotoNO2);
+    /// assert_eq!(sensor.si(), "ppm");
+    /// ```
+    pub fn si(&self) -> String {
+        format!("{}", self.si)
     }
 }
 
