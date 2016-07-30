@@ -136,12 +136,9 @@ impl Server {
             for sensor in &mut modul.sensors {
                 match modbus_context.connect() {
                     Ok(..) => {
-                        println!("Modbus Register: {}", sensor.modbus_register_address as i32);
                         tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
-                        println!("ADC: {:?}", sensor.adc_value);
                         tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
                         modbus_context.close();
-                        println!("{:?}", sensor.concentration());
                     }
                     Err(_) => {}
                 }
@@ -334,7 +331,7 @@ impl Server {
 fn sende<T: AsRef<str>>(socket: &mut Socket, msg: T) {
     match socket.write_all(msg.as_ref().as_bytes()) {
         Ok(..) => {
-            println!("SENDE: {}", msg.as_ref());
+            // println!("SENDE: {}", msg.as_ref());
         }
         Err(err) => {
             println!("FEHLER: Konnte Nachricht: {} nicht senden: {}", msg.as_ref(), err);
@@ -357,7 +354,9 @@ fn sende_ok(socket: &mut Socket) {
 /// Helper sende Fehler und Fehlermeldung über den Socket
 fn sende_fehler(socket: &mut Socket, msg: String) {
     match socket.write_all(format!("FEHLER: {}", msg).as_bytes()) {
-        Ok(..) => { println!("FEHLER: {}", msg); }
+        Ok(..) => {
+            // println!("FEHLER: {}", msg); 
+        }
         Err(err) => {
             println!("Konnte FEHLER nicht senden: {}", err);
         }
