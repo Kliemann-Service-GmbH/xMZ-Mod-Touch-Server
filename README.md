@@ -25,6 +25,13 @@ cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
 cp target/release/xmz-server-bin /usr/bin/xmz-server
 ```
 
+## Bibliotheken installieren
+
+```bash
+cd
+cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
+cp -rv target/release/build/libmodbus-sys-*/out/lib/* /usr/lib
+```
 
 ## Systemd Unit File anlegen
 Dieser Schritt muss nur ein mal ausgeführt werden. Im Zweifel kann der Befehl aber
