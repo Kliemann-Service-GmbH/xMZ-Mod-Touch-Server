@@ -117,12 +117,13 @@ impl Server {
 
     /// Sensor Update Task
     ///
-    /// Dieser Task checkt zu Begin ob das konfigurierte Modbus Interface `modbus_device` erreichbar ist.
-    /// Wenn das Device nicht existiert, oder die Berechtigungen des Users nicht ausreichen wird ein Fehler
-    /// ausgegeben.
+    /// Dieser Task checkt zu Begin ob das konfigurierte Modbus Interface `modbus_device`
+    /// erreichbar ist. Wenn das Device nicht existiert, oder die Berechtigungen
+    /// des Users nicht ausreichen wird ein Fehler ausgegeben.
     ///
     pub fn update_sensors(&mut self) -> Result<(), Error> {
-        // Test ob das Serielle Interface existiert und die Berechtigungen für ein Zugriff ausreichen
+        // Test ob das Serielle Interface existiert
+        // und die Berechtigungen für ein Zugriff ausreichen
         try!(fs::metadata(&self.modbus_device));
         // Modbus Kontext erzeugen
         let mut modbus_context = Modbus::new_rtu(self.modbus_device.as_ref(), self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
@@ -355,7 +356,7 @@ fn sende_ok(socket: &mut Socket) {
 fn sende_fehler(socket: &mut Socket, msg: String) {
     match socket.write_all(format!("FEHLER: {}", msg).as_bytes()) {
         Ok(..) => {
-            // println!("FEHLER: {}", msg); 
+            // println!("FEHLER: {}", msg);
         }
         Err(err) => {
             println!("Konnte FEHLER nicht senden: {}", err);
@@ -394,13 +395,4 @@ mod test {
         assert_eq!(server.modules.get(0).unwrap().modbus_slave_id(), 1);
     }
 
-    #[test]
-    fn kann_module_sensor1_modbus_register_address_abfragen() {
-        let mut server = Server::new();
-        let module = Module::new(ModuleType::RAGAS_CO_NO2);
-        server.modules.push(module);
-        assert_eq!(server.modules.get(0).unwrap().sensors.get(0).unwrap().modbus_register_address, 1);
-        // Der zweite Sensor des Ersten Moduls (CO) hat die Modbus Register Adress
-        assert_eq!(server.modules.get(0).unwrap().sensors.get(1).unwrap().modbus_register_address, 11);
-    }
 }
