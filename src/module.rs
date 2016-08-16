@@ -50,17 +50,14 @@ impl Module {
     /// use xmz_server::module::{Module, ModuleType};
     ///
     /// let module1 = Module::new(ModuleType::RAGAS_CO_NO2);
-    /// assert_eq!(module1.sensors.len(), 2);
+    /// assert_eq!(module1.sensors.len(), 0);
     /// ```
     pub fn new(module_type: ModuleType) -> Self {
         match module_type {
             ModuleType::RAGAS_CO_NO2 => {
                 Module {
                     module_type: ModuleType::RAGAS_CO_NO2,
-                    sensors: vec![
-                        Sensor::new(SensorType::NemotoNO2),
-                        Sensor::new(SensorType::NemotoCO),
-                    ],
+                    sensors: vec![],
                     modbus_slave_id: 1,
                 }
             }
@@ -99,11 +96,11 @@ impl Module {
     /// ```
     pub fn set_modbus_slave_id(&mut self, slave_id: i32) -> Result<i32, ModuleError> {
         match slave_id {
-            slave_id @ 1 ... 256 => {
+            slave_id @ 1...256 => {
                 self.modbus_slave_id = slave_id;
                 Ok(slave_id)
-            },
-            _ => { Err(ModuleError::InvalidModbusSlaveId) }
+            }
+            _ => Err(ModuleError::InvalidModbusSlaveId),
         }
     }
 
@@ -120,7 +117,6 @@ impl Module {
     pub fn modbus_slave_id(&self) -> i32 {
         self.modbus_slave_id
     }
-
 
     /// Liefert den Module Type als String
     ///
@@ -140,7 +136,7 @@ impl Module {
 #[cfg(test)]
 mod test {
     use super::*;
-    use sensor::{SensorType};
+    use sensor::SensorType;
 
     #[test]
     fn defaults() {
@@ -149,15 +145,8 @@ mod test {
     }
 
     #[test]
-    fn default_module_has_2_sensors() {
+    fn default_module_has_0_sensors() {
         let module = Module::new(ModuleType::RAGAS_CO_NO2);
-        assert_eq!(module.sensors.len(), 2);
-    }
-
-    #[test]
-    fn default_module_sensor_config() {
-        let module = Module::new(ModuleType::RAGAS_CO_NO2);
-        assert_eq!(module.sensors[0].sensor_type(), "NemotoNO2");
-        assert_eq!(module.sensors[1].sensor_type(), "NemotoCO");
+        assert_eq!(module.sensors.len(), 0);
     }
 }
