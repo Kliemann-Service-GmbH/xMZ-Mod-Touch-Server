@@ -24,15 +24,19 @@ pub mod shift_register;
 pub mod server;
 /// Module  - Sensorplatinen mit Modbus Transceiver und ein oder mehr Sensor Messzellen
 ///
-/// Eine Sensorplatine verfügt immer über ein Modbus Transceiver (Sender/ Empfänger). Auf der Platine oder an
-/// der Platine sind Sensormesszellen angeschlossen. Diese haben entsprechende Register (Speicherbereiche) die
-/// dann über das Modbus Protokoll abgefragt werden konnen.
+/// Eine Sensorplatine verfügt immer über ein Modbus Transceiver (Sender/ Empfänger). Auf der
+/// Platine oder an der Platine sind Sensormesszellen angeschlossen. Diese haben entsprechende
+/// Register (Speicherbereiche) die dann über das Modbus Protokoll abgefragt werden konnen.
 pub mod module;
 /// Sensore     - Einzellne Messzelle
 ///
-/// Dieses Modul beinhaltet alle Funktionen und Datenstrukturen die zur Sensorauswertung nötig sind.
-/// Also die Umwandlung des Analog Signals in ein Wert, die Mittelwert Bildung und in Teilen auch die Störungsüberwachung.
+/// Dieses Modul beinhaltet alle Funktionen und Datenstrukturen die zur Sensorauswertung nötig
+/// sind. Also die Umwandlung des Analog Signals in ein Wert,
+/// die Mittelwert Bildung und in Teilen auch die Störungsüberwachung.
 pub mod sensor;
+
+/// System Infos
+pub mod sysinfo;
 
 
 #[cfg(test)]
