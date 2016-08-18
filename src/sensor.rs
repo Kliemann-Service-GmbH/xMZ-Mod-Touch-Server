@@ -250,7 +250,6 @@ impl Sensor {
 
 #[cfg(test)]
 mod test {
-    use server::server::Server;
     use sensor::{Sensor, SensorType, SensorError};
 
     // Helper Funktion die ein NO2 Sensor zurück Liefert

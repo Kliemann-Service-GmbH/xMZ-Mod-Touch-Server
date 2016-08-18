@@ -48,9 +48,9 @@ impl From<sysfs_gpio::Error> for ShiftRegisterError {
 ///
 /// Zur Zeit gibt es 2 verschiedene Shift Register Typen
 ///
-/// * LED       - Led Shift Register sind drei 8bit, serial in, paralel out, Shift Register, daisy chained
+/// * LED       - Led Shift Register 3x 8bit, serial in, paralel out, Shift Register, daisy chained
 ///             - Nur die ersten 24 Ausgänge sind verbunden
-/// * RELAIS    - Die Relais Shift Register sind zwei 8bit, serial in, paralel out, Shift Register, daisy chained
+/// * RELAIS    - Relais Shift Register 2x 8bit, serial in, paralel out, ebenfalls daisy chained
 ///             - Nur die ersten 9 Ausgänge sind verbunden
 #[derive(Debug, Eq, PartialEq)]
 pub enum ShiftRegisterType {
@@ -138,7 +138,7 @@ impl ShiftRegister {
     /// # Arguments
     /// * `num`     - Nummer des abzufragenden Bits **Diese Nummer ist Eins basiert!**
     ///
-    /// Der Parameter ist nicht Null basiert. Das bedeutet `get(1)` fragt das erste Bit(0) im `data`
+    /// Der Parameter ist nicht Null basiert. D.h. `get(1)` fragt das erste Bit(0) im `data`
     /// Buffer ab.
     ///
     /// # Examples
@@ -166,7 +166,7 @@ impl ShiftRegister {
     /// # Arguments
     /// * `num`     - Nummer des zu löschenden Bits **Diese Nummer ist Eins basiert!**
     ///
-    /// Der Parameter ist nicht Null basiert. Das bedeutet `clear(1)` löscht das erste Bit(0) im `data`
+    /// Der Parameter ist nicht Null basiert. D.h. `clear(1)` löscht das erste Bit(0) im `data`
     /// Buffer.
     ///
     /// # Examples
@@ -195,7 +195,7 @@ impl ShiftRegister {
     /// # Arguments
     /// * `num`     - Nummer des zu wechselnden Bits **Diese Nummer ist Eins basiert!**
     ///
-    /// Der Parameter ist nicht Null basiert. Das bedeutet `toggle(1)` schaltet das erste Bit(0) im `data`
+    /// Der Parameter ist nicht Null basiert. D.h. `toggle(1)` schaltet das erste Bit(0) im `data`
     /// Buffer um.
     ///
     /// # Examples
@@ -382,13 +382,13 @@ mod tests {
     #[test]
     fn export_pins() {
         let led = ShiftRegister::new(ShiftRegisterType::LED);
-        led.export_pins();
+        let _ = led.export_pins();
     }
 
     #[test]
     fn  set_pin_direction_output() {
         let led = ShiftRegister::new(ShiftRegisterType::LED);
-        led.set_pin_direction_output();
+        let _ = led.set_pin_direction_output();
     }
 
     #[test]

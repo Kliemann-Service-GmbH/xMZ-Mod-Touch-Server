@@ -1,18 +1,19 @@
 use libmodbus_rs::*;
-use libmodbus_rs::modbus::{Modbus};
+use libmodbus_rs::modbus::Modbus;
 use module::{Module, ModuleType};
 use nanomsg::{Socket, Protocol};
 use rustc_serialize::json;
-use server::error::{Error};
-use server::server_command::{ServerCommand};
+use server::error::Error;
+use server::server_command::ServerCommand;
 use server::zone::{Zone, ZoneType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
-use std::io::{Read};
-use std::io::{Write};
+use std::io::Read;
+use std::io::Write;
 use std::str::FromStr;
 
 
+#[derive(Debug)]
 pub struct Server {
     pub leds: ShiftRegister,
     pub relais: ShiftRegister,
@@ -126,19 +127,24 @@ impl Server {
         // und die Berechtigungen für ein Zugriff ausreichen
         try!(fs::metadata(&self.modbus_device));
         // Modbus Kontext erzeugen
-        let mut modbus_context = Modbus::new_rtu(self.modbus_device.as_ref(), self.modbus_baud, self.modbus_parity, self.modbus_data_bit, self.modbus_stop_bit);
+        let mut modbus_context = Modbus::new_rtu(self.modbus_device.as_ref(),
+                                                 self.modbus_baud,
+                                                 self.modbus_parity,
+                                                 self.modbus_data_bit,
+                                                 self.modbus_stop_bit);
 
         for modul in &mut self.modules {
             try!(modbus_context.set_slave(modul.modbus_slave_id()));
             // try!(modbus_context.set_debug(true));
             try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
-            let mut tab_reg: Vec<u16> = Vec::new();
+            let mut _tab_reg: Vec<u16> = Vec::new();
 
             for sensor in &mut modul.sensors {
                 match modbus_context.connect() {
                     Ok(..) => {
-                        tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
-                        tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
+                        _tab_reg =
+                            modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
+                        _tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
                         modbus_context.close();
                     }
                     Err(_) => {}
@@ -163,8 +169,8 @@ impl Server {
                 let server_command = try!(ServerCommand::from_str(&request));
                 let _ = try!(self.execute(server_command, &mut socket));
                 request.clear();
-            },
-            Err(_) => {},
+            }
+            Err(_) => {}
         }
         let _ = endpoint.shutdown();
         drop(socket);
@@ -186,82 +192,80 @@ impl Server {
             // led clear 1
             // led toggle 1
             ServerCommand::Led { subcommand, params, .. } => {
-
                 match subcommand.as_ref() {
                     "list" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
-                    },
+                    }
                     "test" => {
                         self.leds.test();
                         sende_ok(socket);
-                    },
+                    }
                     "set" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.leds.set(num);
                         self.leds.shift_out();
                         sende_ok(socket);
-                    },
+                    }
                     "get" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         let result = self.leds.get(num);
                         sende(socket, result.to_string());
-                    },
+                    }
                     "clear" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.leds.clear(num);
                         self.leds.shift_out();
                         sende_ok(socket);
-                    },
+                    }
                     "toggle" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.leds.toggle(num);
                         self.leds.shift_out();
                         sende_ok(socket);
-                    },
+                    }
                     _ => {}
                 }
-            },
+            }
             // RELAIS Befehle
             // relais set 1
             // relais get 1
             // relais clear 1
             // relais toggle 1
             ServerCommand::Relais { subcommand, params, .. } => {
-
                 match subcommand.as_ref() {
                     "list" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
-                    },
+                    }
                     "test" => {
                         self.relais.test();
                         sende_ok(socket);
-                    },
+                    }
                     "set" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.relais.set(num);
                         self.relais.shift_out();
                         sende_ok(socket);
-                    },
+                    }
                     "get" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         let result = self.relais.get(num);
                         sende(socket, result.to_string());
-                    },
+                    }
                     "clear" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.relais.clear(num);
                         self.relais.shift_out();
                         sende_ok(socket);
-                    },
+                    }
                     "toggle" => {
                         let num = u64::from_str(&params.unwrap()).unwrap_or(0);
                         self.relais.toggle(num);
                         self.relais.shift_out();
                         sende_ok(socket);
-                    },
+                    }
                     _ => {}
                 }
-            },
+            }
             // SERVER Befehle
             ServerCommand::Server { subcommand, config_entry, config_value, .. } => {
                 match subcommand.as_ref() {
@@ -269,56 +273,55 @@ impl Server {
                         match config_entry.as_ref() {
                             "modbus_device" => {
                                 // Checke ob das Device existiert
-                                // config_value.map(|c| self.set_modbus_device(c); sende_ok(socket));
                                 self.set_modbus_device(config_value.unwrap());
                                 sende_ok(socket);
-                            },
+                            }
                             _ => {
                                 sende_fehler(socket, "Unbekannter Konfigurationswert".to_string());
-                            },
+                            }
                         }
-                    },
+                    }
                     "get" => {
                         match config_entry.as_ref() {
                             "modbus_device" => {
                                 let modbus_device = self.get_modbus_device();
                                 sende(socket, modbus_device);
-                            },
+                            }
                             _ => {
                                 sende_fehler(socket, "Unbekannter Konfigurationswert".to_string());
-                            },
+                            }
                         }
-                    },
-                    _ => {},
+                    }
+                    _ => {}
                 }
-            },
+            }
             // MODULE Befehle
             ServerCommand::Module { subcommand, config_entry, config_value, module_num, .. } => {
                 match subcommand.as_ref() {
                     "new" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
-                    },
+                    }
                     // Serialized Module und Sensoren
                     "list" => {
                         match json::encode(&self.modules) {
                             Ok(serialized) => {
                                 sende(socket, serialized);
-                            },
+                            }
                             Err(err) => {
                                 sende_fehler(socket, err.to_string());
                             }
                         }
-                    },
+                    }
                     "show" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
-                    },
+                    }
                     "get" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
-                    },
+                    }
                     "set" => {
                         sende_fehler(socket, "Noch nicht implementiert".to_string());
-                    },
-                    _ => {},
+                    }
+                    _ => {}
                 }
             }
             // _ => {},
@@ -335,7 +338,9 @@ fn sende<T: AsRef<str>>(socket: &mut Socket, msg: T) {
             // println!("SENDE: {}", msg.as_ref());
         }
         Err(err) => {
-            println!("FEHLER: Konnte Nachricht: {} nicht senden: {}", msg.as_ref(), err);
+            println!("FEHLER: Konnte Nachricht: {} nicht senden: {}",
+                     msg.as_ref(),
+                     err);
         }
     }
 }
