@@ -22,7 +22,7 @@ cargo build --release
 ```bash
 cd
 cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
-cp target/release/xmz-server-bin /usr/bin/xmz-server
+cp -v ./target/release/xmz-server-bin /usr/bin/xmz-server
 ```
 
 ## Bibliotheken installieren
@@ -30,7 +30,7 @@ cp target/release/xmz-server-bin /usr/bin/xmz-server
 ```bash
 cd
 cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
-cp -rv target/release/build/libmodbus-sys-*/out/lib/* /usr/lib
+cp -rv ./target/release/build/libmodbus-sys-*/out/lib/* /usr/lib/
 ```
 
 ## Systemd Unit File anlegen
@@ -84,7 +84,7 @@ cd
 cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
 git pull
 cargo build --release
-cp target/release/xmz-server-bin /usr/bin/xmz-server
+cp -v ./target/release/xmz-server-bin /usr/bin/xmz-server
 
 systemctl start xmz-mod-touch-server.service
 ```
