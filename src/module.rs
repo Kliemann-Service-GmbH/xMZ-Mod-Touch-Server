@@ -129,8 +129,7 @@ impl Module {
     /// assert_eq!(module.module_type(), "RA-GAS™ CO/NO2 Messzelle".to_string());
     /// ```
     pub fn module_type(&self) -> String {
-        // format!("{:?}", self.module_type)
-        format!("RA-GAS™ CO/NO2 Messzelle")
+        format!("RA-GAS CO/NO2 Messzelle")
     }
 }
 
