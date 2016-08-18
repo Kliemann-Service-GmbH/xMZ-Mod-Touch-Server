@@ -19,7 +19,7 @@ pub struct Module {
 #[derive(Debug, Eq, PartialEq)]
 #[derive(RustcDecodable, RustcEncodable)]
 pub enum ModuleType {
-    /// * RAGAS_CO_NO2       - RA-GAS GmbH Kombisensor mit CO und NO Messzelle
+    /// * RAGAS_CO_NO2       - RA-GAS GmbH Kombisensor mit CO und NO2 Messzelle
     RAGAS_CO_NO2,
 }
 
@@ -126,10 +126,11 @@ impl Module {
     /// use xmz_server::module::{Module, ModuleType};
     ///
     /// let module = Module::new(ModuleType::RAGAS_CO_NO2);
-    /// assert_eq!(module.module_type(), "RAGAS_CO_NO2".to_string());
+    /// assert_eq!(module.module_type(), "RA-GAS™ CO/NO2 Messzelle".to_string());
     /// ```
     pub fn module_type(&self) -> String {
-        format!("{:?}", self.module_type)
+        // format!("{:?}", self.module_type)
+        format!("RA-GAS™ CO/NO2 Messzelle")
     }
 }
 
