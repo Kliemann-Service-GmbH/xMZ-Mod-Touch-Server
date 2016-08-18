@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 /// IP Konfiguration der Hardware Platform
 pub fn ifconfig<'a>() -> String {
     match ::std::process::Command::new("ifconfig").output() {

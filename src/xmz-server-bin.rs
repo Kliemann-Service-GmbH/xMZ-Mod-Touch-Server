@@ -27,7 +27,6 @@ fn main() {
         let thread_update_sensors = thread::spawn(move || {
             let _ = server_update_sensors.write().map(|mut server| {
                 // tick("thread_update_sensors");
-                // println!("{:?}", server.get_modbus_device());
                 let _ = server.update_sensors();
             });
         });

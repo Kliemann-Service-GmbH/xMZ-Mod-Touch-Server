@@ -3,8 +3,8 @@ extern crate xmz_server;
 
 use std::str::FromStr;
 use std::time::Duration;
-use xmz_server::server::server_command::{ServerCommand, ServerCommandError};
-use xmz_server::server::server::{Server};
+use xmz_server::server::server_command::ServerCommand;
+use xmz_server::server::server::Server;
 use std::error::Error;
 use nanomsg::{Socket, Protocol};
 
@@ -43,7 +43,7 @@ fn run() -> Result<(), Box<Error + Send + Sync>> {
 
     for command in commands {
         println!(">> {:?}", command);
-        server.execute(command, &mut socket);
+        let _ = server.execute(command, &mut socket);
         ::std::thread::sleep(Duration::from_millis(100));
     }
 

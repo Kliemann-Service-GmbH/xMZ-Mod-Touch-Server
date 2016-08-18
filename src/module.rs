@@ -1,4 +1,5 @@
-use sensor::{Sensor, SensorType};
+
+use sensor::Sensor;
 use std::fmt;
 
 
@@ -16,6 +17,7 @@ pub struct Module {
 /// Module Arten
 ///
 /// Zur Zeit wird nur eine Art Modul unterstützt
+#[allow(non_camel_case_types)]
 #[derive(Debug, Eq, PartialEq)]
 #[derive(RustcDecodable, RustcEncodable)]
 pub enum ModuleType {
@@ -126,18 +128,16 @@ impl Module {
     /// use xmz_server::module::{Module, ModuleType};
     ///
     /// let module = Module::new(ModuleType::RAGAS_CO_NO2);
-    /// assert_eq!(module.module_type(), "RA-GAS™ CO/NO2 Messzelle".to_string());
+    /// assert_eq!(module.module_type(), "RA-GAS CO/NO2 Messzelle".to_string());
     /// ```
     pub fn module_type(&self) -> String {
-        // format!("{:?}", self.module_type)
-        format!("RA-GAS™ CO/NO2 Messzelle")
+        format!("RA-GAS CO/NO2 Messzelle")
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use sensor::SensorType;
 
     #[test]
     fn defaults() {
