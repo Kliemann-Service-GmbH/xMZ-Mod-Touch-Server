@@ -10,7 +10,7 @@
 set -o errexit -o nounset
 
 # Stop laufende Instanz
-systemctl stop xmz-mod-touch-server
+systemctl stop xmz-mod-touch-server.service
 # Bilde neues Release
 cargo build --release
 # Kopiere neu erstellte Binaries und Assets in das Dateisystem
