@@ -267,8 +267,6 @@ impl ShiftRegister {
         self.shift_out();
     }
 
-
-
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
     pub fn export_pins(&self) -> Result<(), ShiftRegisterError> {
@@ -279,6 +277,29 @@ impl ShiftRegister {
 
         Ok(())
     }
+
+    /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
+    /// Schiebe Register (latch out)
+    pub fn shift_out(&self) {
+        // Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonnsten passiert nix
+        match self.export_pins() {
+            Err(_) => {},
+            Ok(..) => {
+                let _ = self.set_pin_direction_output();
+
+                // Daten einclocken
+                for i in (0..64).rev() {
+                    match (self.data >> i) & 1 {
+                        1 => { self.ds_pin.set_value(1).unwrap_or(()); },
+                        _ => { self.ds_pin.set_value(0).unwrap_or(()); },
+                    }
+                    let _ = self.clock_in();
+                }
+                let _ = self.latch_out();
+            }
+        }
+    }
+
 
     /// Schaltet die Pins in den OUTPUT Pin Modus
     ///
@@ -310,30 +331,6 @@ impl ShiftRegister {
 
         Ok(())
     }
-
-    /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
-    /// Schiebe Register (latch out)
-    pub fn shift_out(&self) {
-        // Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonnsten passiert nix
-        match self.export_pins() {
-            Err(_) => {},
-            Ok(..) => {
-                let _ = self.set_pin_direction_output();
-
-                // Daten einclocken
-                for i in (0..64).rev() {
-                    match (self.data >> i) & 1 {
-                        1 => { self.ds_pin.set_value(1).unwrap_or(()); },
-                        _ => { self.ds_pin.set_value(0).unwrap_or(()); },
-                    }
-                    let _ = self.clock_in();
-                }
-                let _ = self.latch_out();
-            }
-        }
-    }
-
-
 }
 
 

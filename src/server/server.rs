@@ -1,6 +1,7 @@
 use libmodbus_rs::*;
 use libmodbus_rs::modbus::Modbus;
 use module::{Module, ModuleType};
+use sensor::{Sensor, SensorType};
 use nanomsg::{Socket, Protocol};
 use rustc_serialize::json;
 use server::error::Error;
@@ -51,9 +52,11 @@ impl Server {
 
     /// Wichtige Grundeinstellungen, wie das leeren der ShiftRegister Speicher
     pub fn init(&mut self) -> Result<(), Error> {
+        // LEDs auf Null ziehen
         self.leds.reset();
+        // RELAIS auf Null ziehen
         self.relais.reset();
-
+        // Lampentest
         self.leds.test();
 
         self.default_configuration();
@@ -70,18 +73,16 @@ impl Server {
         self.leds.shift_out();
         self.relais.shift_out();
 
-        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        self.modules.push(Module::new(ModuleType::RAGAS_CO_NO2));
-        let _ = self.modules[0].set_modbus_slave_id(21);
-        let _ = self.modules[1].set_modbus_slave_id(22);
-        let _ = self.modules[2].set_modbus_slave_id(23);
-        let _ = self.modules[3].set_modbus_slave_id(24);
-        let _ = self.modules[4].set_modbus_slave_id(25);
-        let _ = self.modules[5].set_modbus_slave_id(26);
+        for i in 24..28 {
+            let mut module = Module::new(ModuleType::RAGAS_CO_NO2);
+            let sensor1 = Sensor::new(SensorType::NemotoNO2);
+            let sensor2 = Sensor::new(SensorType::NemotoCO);
+
+            module.sensors.push(sensor1);
+            module.sensors.push(sensor2);
+            module.set_modbus_slave_id(i).unwrap();
+            self.modules.push(module);
+        }
     }
 
     // Public api
@@ -267,6 +268,9 @@ impl Server {
                 }
             }
             // SERVER Befehle
+            // server set modbus_device /dev/ttyUSB0
+            // server get modbus_device => /dev/ttyUSB0
+            //
             ServerCommand::Server { subcommand, config_entry, config_value, .. } => {
                 match subcommand.as_ref() {
                     "set" => {
@@ -274,6 +278,15 @@ impl Server {
                             "modbus_device" => {
                                 // Checke ob das Device existiert
                                 self.set_modbus_device(config_value.unwrap());
+                                sende_ok(socket);
+                            }
+                            "interface_config" => {
+                                let server_settings_interface = json::decode::<Vec<String>>(&config_value.unwrap()).unwrap();
+                                self.modbus_device = server_settings_interface[0].to_owned();
+                                self.modbus_baud = server_settings_interface[1].parse().unwrap();
+                                self.modbus_data_bit = server_settings_interface[2].parse().unwrap();
+                                self.modbus_parity = server_settings_interface[3].chars().nth(0).unwrap();
+                                self.modbus_stop_bit = server_settings_interface[4].parse().unwrap();
                                 sende_ok(socket);
                             }
                             _ => {
@@ -295,6 +308,7 @@ impl Server {
                     _ => {}
                 }
             }
+
             // MODULE Befehle
             ServerCommand::Module { subcommand, config_entry, config_value, module_num, .. } => {
                 match subcommand.as_ref() {
