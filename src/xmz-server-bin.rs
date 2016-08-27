@@ -27,7 +27,10 @@ fn main() {
         let thread_update_sensors = thread::spawn(move || {
             server_update_sensors.write().map(|mut server| {
                 tick("thread_update_sensors");
-                server.update_sensors();
+                match server.update_sensors() {
+                    Ok(_) => println!("Update Server OK"),
+                    Err(err) => println!("Update Server FEHLER: {}", err),
+                }
             });
         });
         let _ = thread_update_sensors.join();
