@@ -23,18 +23,19 @@ fn main() {
         //
         // Dieser Thread muss mindestens einmal durchlauden werden pro loop Zyklus, desshalb
         // hat dieser Thread einen Namen `thread_update_sensors` und desshalb wird der Thread
-        // am Ende gejoint `thread_update_sensors.join()`
+        // am Ende gejoined `thread_update_sensors.join()`
         let thread_update_sensors = thread::spawn(move || {
-            let _ = server_update_sensors.write().map(|mut server| {
-                // tick("thread_update_sensors");
-                let _ = server.update_sensors();
+            server_update_sensors.write().map(|mut server| {
+                tick("thread_update_sensors");
+                server.update_sensors();
             });
         });
         let _ = thread_update_sensors.join();
 
+        // 2. Thread für die Client Server Kommunikation
         let _thread_request_handler = thread::spawn(move || {
             let _ = server_request_handler.write().map(|mut server| {
-                // tick("thread_request_handler");
+                tick("thread_request_handler");
                 let _ = server.handle_nanomsg_requests();
             });
         });
