@@ -13,12 +13,13 @@ name = "xmz-server-bin"
 path = "src/xmz-server-bin.rs"
 
 [dependencies]
+env_logger = "0.3"
+error-chain = "0.4"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
+log = "0.3"
 nanomsg = { git = "https://github.com/thehydroimpulse/nanomsg.rs.git" }
 rustc-serialize = "0.3"
 sysfs_gpio = "*"
-log = "0.3"
-env_logger = "0.3"
 
 # Aktiviere Log in Tests: https://github.com/rust-lang-nursery/log#in-tests
 [dev-dependencies]
