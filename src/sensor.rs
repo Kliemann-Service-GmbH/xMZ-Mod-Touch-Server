@@ -211,7 +211,7 @@ impl Sensor {
     pub fn list_all_concentrations(&mut self) {
         for i in 0..1024 {
             self.adc_value = Some(i);
-            println!("ADC Wert: [{}] entspricht einer Konzentration von: {} {}",
+            info!("ADC Wert: [{}] entspricht einer Konzentration von: {} {}",
                      i,
                      self.concentration().unwrap(),
                      self.si);

@@ -148,15 +148,19 @@ impl Server {
                     match modbus_context.connect() {
                         Ok(_) => {
                             // Reset Error Counter
+                            info!("Reset Sensor.error_count");
                             sensor.error_count = 0;
                             _tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
                             _tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
                             modbus_context.close();
                         }
                         Err(_) => {
+                            debug!("modbus_connect() fehlgeschlagen, erhöhe Sensor.error_count: {} um eins", sensor.error_count);
                             sensor.error_count += 1;
                         }
                     }
+                } else {
+                    debug!("Sensor.error_count ist 5. Es wird kein modbus_connect() mehr versucht!");
                 }
             }
         }
