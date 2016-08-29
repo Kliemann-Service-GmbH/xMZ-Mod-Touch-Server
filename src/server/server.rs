@@ -134,20 +134,29 @@ impl Server {
                                                  self.modbus_data_bit,
                                                  self.modbus_stop_bit);
 
-        for modul in &mut self.modules {
-            try!(modbus_context.set_slave(modul.modbus_slave_id()));
-            try!(modbus_context.set_debug(true));
+        for module in &mut self.modules {
+            try!(modbus_context.set_slave(module.modbus_slave_id()));
+            // try!(modbus_context.set_debug(true));
             try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
             let mut _tab_reg: Vec<u16> = Vec::new();
 
-            for sensor in &mut modul.sensors {
-                try!(modbus_context.connect());
-                _tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
-                _tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
-                modbus_context.close();
+            for sensor in &mut module.sensors {
+                if sensor.error_count <= 5 {
+                    match modbus_context.connect() {
+                        Ok(_) => {
+                            // Reset Error Counter
+                            sensor.error_count = 0;
+                            _tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
+                            _tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
+                            modbus_context.close();
+                        }
+                        Err(_) => {
+                            sensor.error_count += 1;
+                        }
+                    }
+                }
             }
         }
-
         Ok(())
     }
 

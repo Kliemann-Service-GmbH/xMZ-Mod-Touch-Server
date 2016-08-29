@@ -9,7 +9,7 @@
 //!
 //! Git Repository: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
 
-
+#[macro_use] extern crate log;
 extern crate libmodbus_rs;
 extern crate nanomsg;
 extern crate rustc_serialize;

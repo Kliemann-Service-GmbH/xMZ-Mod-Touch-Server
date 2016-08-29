@@ -1,5 +1,7 @@
 // TODO: gernerische FUnktion LED/ RELAIS reset (alles auf Null)
 //
+#[macro_use] extern crate log;
+extern crate env_logger;
 extern crate nanomsg;
 extern crate xmz_server;
 
@@ -26,11 +28,8 @@ fn main() {
         // am Ende gejoined `thread_update_sensors.join()`
         let thread_update_sensors = thread::spawn(move || {
             server_update_sensors.write().map(|mut server| {
-                tick("thread_update_sensors");
-                match server.update_sensors() {
-                    Ok(_) => println!("Update Server OK"),
-                    Err(err) => println!("Update Server FEHLER: {}", err),
-                }
+                // tick("thread_update_sensors");
+                server.update_sensors();
             });
         });
         let _ = thread_update_sensors.join();
@@ -38,7 +37,7 @@ fn main() {
         // 2. Thread für die Client Server Kommunikation
         let _thread_request_handler = thread::spawn(move || {
             let _ = server_request_handler.write().map(|mut server| {
-                tick("thread_request_handler");
+                // tick("thread_request_handler");
                 let _ = server.handle_nanomsg_requests();
             });
         });
