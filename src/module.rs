@@ -1,4 +1,3 @@
-
 use sensor::Sensor;
 use std::fmt;
 

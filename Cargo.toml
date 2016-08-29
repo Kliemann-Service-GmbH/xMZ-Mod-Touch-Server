@@ -19,3 +19,7 @@ rustc-serialize = "0.3"
 sysfs_gpio = "*"
 log = "0.3"
 env_logger = "0.3"
+
+# Aktiviere Log in Tests: https://github.com/rust-lang-nursery/log#in-tests
+[dev-dependencies]
+env_logger = "0.3"

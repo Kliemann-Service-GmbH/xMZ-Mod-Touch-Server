@@ -1,3 +1,5 @@
+#[macro_use] extern crate log;
+extern crate env_logger;
 extern crate nanomsg;
 extern crate xmz_server;
 
@@ -7,7 +9,6 @@ use xmz_server::server::server_command::ServerCommand;
 use xmz_server::server::server::Server;
 use std::error::Error;
 use nanomsg::{Socket, Protocol};
-
 
 
 fn run() -> Result<(), Box<Error + Send + Sync>> {
@@ -53,6 +54,9 @@ fn run() -> Result<(), Box<Error + Send + Sync>> {
 
 
 fn main() {
+    trace!("Initialisiere den Logger");
+    env_logger::init().unwrap();
+
     match run() {
         Ok(_) => println!("OK"),
         Err(err) => println!("FEHLER: {}", err),

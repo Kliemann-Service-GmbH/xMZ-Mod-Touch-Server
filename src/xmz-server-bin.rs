@@ -11,6 +11,9 @@ use xmz_server::server::server::Server;
 
 
 fn main() {
+    trace!("Initialisiere den Logger");
+    env_logger::init().unwrap();
+
     let mut server = Server::new();
     let _ = server.init();
 
@@ -28,7 +31,7 @@ fn main() {
         // am Ende gejoined `thread_update_sensors.join()`
         let thread_update_sensors = thread::spawn(move || {
             server_update_sensors.write().map(|mut server| {
-                // tick("thread_update_sensors");
+                debug!("thread_update_sensors");
                 server.update_sensors();
             });
         });
@@ -37,18 +40,10 @@ fn main() {
         // 2. Thread für die Client Server Kommunikation
         let _thread_request_handler = thread::spawn(move || {
             let _ = server_request_handler.write().map(|mut server| {
-                // tick("thread_request_handler");
+                debug!("thread_request_handler");
                 let _ = server.handle_nanomsg_requests();
             });
         });
 
     } // Ende loop
-}
-
-
-// Kleiner Helper für eine Statusmeldung aus einem Thread.
-//
-#[allow(dead_code)]
-fn tick(name: &str) {
-    println!("tick from: {}", name);
 }

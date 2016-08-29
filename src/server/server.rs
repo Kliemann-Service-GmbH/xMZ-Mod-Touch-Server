@@ -1,9 +1,10 @@
 use libmodbus_rs::*;
 use libmodbus_rs::modbus::Modbus;
+use log::LogLevel;
 use module::{Module, ModuleType};
-use sensor::{Sensor, SensorType};
 use nanomsg::{Socket, Protocol};
 use rustc_serialize::json;
+use sensor::{Sensor, SensorType};
 use server::error::Error;
 use server::server_command::ServerCommand;
 use server::zone::{Zone, ZoneType};
@@ -61,7 +62,6 @@ impl Server {
 
         self.default_configuration();
 
-        // let _device = try!(NanomsgDevice::create());
         Ok(())
     }
 
@@ -136,7 +136,10 @@ impl Server {
 
         for module in &mut self.modules {
             try!(modbus_context.set_slave(module.modbus_slave_id()));
-            // try!(modbus_context.set_debug(true));
+            // Modbus Debug wenn das Programm im Debug Mode läuft
+            if log_enabled!(LogLevel::Debug) {
+                try!(modbus_context.set_debug(true));
+            }
             try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
             let mut _tab_reg: Vec<u16> = Vec::new();
 
@@ -353,7 +356,7 @@ impl Server {
 fn sende<T: AsRef<str>>(socket: &mut Socket, msg: T) {
     match socket.write_all(msg.as_ref().as_bytes()) {
         Ok(..) => {
-            // println!("SENDE: {}", msg.as_ref());
+            debug!("sende(socket, {})", msg.as_ref());
         }
         Err(err) => {
             println!("FEHLER: Konnte Nachricht: {} nicht senden: {}",
@@ -367,7 +370,7 @@ fn sende<T: AsRef<str>>(socket: &mut Socket, msg: T) {
 fn sende_ok(socket: &mut Socket) {
     match socket.write_all("OK".as_bytes()) {
         Ok(..) => {
-            // println!("OK");
+            debug!("OK");
         }
         Err(err) => {
             println!("FEHLER: {}", err);
@@ -379,7 +382,7 @@ fn sende_ok(socket: &mut Socket) {
 fn sende_fehler(socket: &mut Socket, msg: String) {
     match socket.write_all(format!("FEHLER: {}", msg).as_bytes()) {
         Ok(..) => {
-            // println!("FEHLER: {}", msg);
+            debug!("FEHLER: {}", msg);
         }
         Err(err) => {
             println!("Konnte FEHLER nicht senden: {}", err);
@@ -392,8 +395,16 @@ fn sende_fehler(socket: &mut Socket, msg: String) {
 
 #[cfg(test)]
 mod test {
-    use server::server::Server;
+    use super::*;
     use module::{Module, ModuleType};
+
+    extern crate env_logger;
+
+    #[test]
+    fn logger() {
+        let _ = env_logger::init();
+        info!("can log from the test too");
+    }
 
     #[test]
     fn default_werte() {
