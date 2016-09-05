@@ -6,23 +6,14 @@
 set -o errexit -o nounset
 
 
-Programmdateien installieren
-
-cd
-cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
+# Programmdateien installieren
 cp -v ./target/release/xmz-server-bin /usr/bin/xmz-server
 
-Bibliotheken installieren
-
-cd
-cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
+# Bibliotheken installieren
 cp -rv ./target/release/build/libmodbus-sys-*/out/lib/* /usr/lib/
 
-Systemd Unit File anlegen
-
-Dieser Schritt muss nur ein mal ausgeführt werden. Im Zweifel kann der Befehl aber immer wieder aufgerufen werden (zum Beispiel im Update Fall).
-
-cat <<EOF >/etc/systemd/system/xmz-mod-touch-server.service
+# Systemd Unit File anlegen
+cat <<EOF | tee /etc/systemd/system/xmz-mod-touch-server.service
 #
 # xMZ-Mod-Touch-Server systemd unit file
 #
@@ -38,11 +29,8 @@ Alias=xmz-server.service
 WantedBy=multi-user.target
 EOF
 
-Danach muss der service noch aktiviert ...
-
+# Unit aktivieren ...
 systemctl enable xmz-mod-touch-server.service
-# systemctl daemon-reload # Dieser Befehl ist nur bei nachträglichen Änderungen am Unit File nötig!
 
-... und gestartet werden.
-
+# Unit starten
 systemctl restart xmz-mod-touch-server.service
