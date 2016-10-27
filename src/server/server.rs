@@ -1,4 +1,3 @@
-use libmodbus_rs::*;
 use libmodbus_rs::modbus::Modbus;
 use log::LogLevel;
 use module::{Module, ModuleType};
@@ -51,7 +50,9 @@ impl Server {
         }
     }
 
-    /// Wichtige Grundeinstellungen, wie das leeren der ShiftRegister Speicher
+    /// Wichtige Grundeinstellungen an der Hardware vornehmen
+    ///
+    /// Dazu gehören z.B. das leeren der ShiftRegister Speicher und laden der Default Konfiguration.
     pub fn init(&mut self) -> Result<(), Error> {
         // LEDs auf Null ziehen
         self.leds.reset();
@@ -140,7 +141,7 @@ impl Server {
             if log_enabled!(LogLevel::Debug) {
                 try!(modbus_context.set_debug(true));
             }
-            try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
+            // try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
             let mut _tab_reg: Vec<u16> = Vec::new();
 
             for sensor in &mut module.sensors {
