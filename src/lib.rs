@@ -29,7 +29,7 @@ pub mod server;
 /// Platine oder an der Platine sind Sensormesszellen angeschlossen. Diese haben entsprechende
 /// Register (Speicherbereiche) die dann über das Modbus Protokoll abgefragt werden konnen.
 pub mod module;
-/// Sensore     - Einzellne Messzelle
+/// Sensor     - Einzelne Messzelle
 ///
 /// Dieses Modul beinhaltet alle Funktionen und Datenstrukturen die zur Sensorauswertung nötig
 /// sind. Also die Umwandlung des Analog Signals in ein Wert,

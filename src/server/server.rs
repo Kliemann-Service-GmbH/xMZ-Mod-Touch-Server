@@ -150,7 +150,7 @@ impl Server {
                             // Reset Error Counter
                             info!("Reset Sensor.error_count");
                             sensor.error_count = 0;
-                            _tab_reg = modbus_context.read_registers(sensor.modbus_register_address as i32, 1);
+                            try!(modbus_context.read_registers(sensor.modbus_register_address as i32, 1));
                             _tab_reg.get(0).map(|var| sensor.adc_value = Some(*var));
                             modbus_context.close();
                         }
