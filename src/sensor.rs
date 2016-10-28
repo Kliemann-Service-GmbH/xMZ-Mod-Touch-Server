@@ -17,6 +17,7 @@ pub struct Sensor {
     concentration_messgas: Option<u32>,
     /// Adresse des Modbus Registers für den ADC Wert
     pub modbus_register_address: u32,
+    pub error_count: u32,
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -71,6 +72,7 @@ impl Sensor {
                     concentration_nullgas: Some(0), // TODO: Read in sensor calibration data
                     concentration_messgas: Some(20), // TODO: Read in sensor calibration data
                     modbus_register_address: 1,
+                    error_count: 0,
                 }
             }
             SensorType::NemotoCO => {
@@ -83,6 +85,7 @@ impl Sensor {
                     concentration_nullgas: Some(0), // TODO: Read in sensor calibration data
                     concentration_messgas: Some(280), // TODO: Read in sensor calibration data
                     modbus_register_address: 11,
+                    error_count: 0,
                 }
             }
         }
@@ -208,7 +211,7 @@ impl Sensor {
     pub fn list_all_concentrations(&mut self) {
         for i in 0..1024 {
             self.adc_value = Some(i);
-            println!("ADC Wert: [{}] entspricht einer Konzentration von: {} {}",
+            info!("ADC Wert: [{}] entspricht einer Konzentration von: {} {}",
                      i,
                      self.concentration().unwrap(),
                      self.si);
@@ -244,6 +247,22 @@ impl Sensor {
             SensorType::NemotoNO2 => format!("Nemoto™ NO2"),
             SensorType::NemotoCO => format!("Nemoto™ CO"),
         }
+    }
+
+    /// Setzt den Error Counter wieder auf Null zurück
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::sensor::{Sensor, SensorType};
+    ///
+    /// let mut sensor = Sensor::new(SensorType::NemotoNO2);
+    /// sensor.error_count = 5;
+    /// sensor.reset_error_count();
+    /// assert_eq!(sensor.error_count,  0);
+    /// ```
+    pub fn reset_error_count(&mut self) {
+        self.error_count = 0;
     }
 }
 

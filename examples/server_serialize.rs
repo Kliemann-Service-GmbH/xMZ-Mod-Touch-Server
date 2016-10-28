@@ -1,3 +1,5 @@
+#[macro_use] extern crate log;
+extern crate env_logger;
 extern crate rustc_serialize;
 extern crate xmz_server;
 
@@ -5,8 +7,10 @@ use rustc_serialize::json;
 use xmz_server::server::server::Server;
 
 
-
 fn main() {
+    trace!("Initialisiere den Logger");
+    env_logger::init().unwrap();
+
     let mut server = Server::new();
     let _ = server.init();
 
