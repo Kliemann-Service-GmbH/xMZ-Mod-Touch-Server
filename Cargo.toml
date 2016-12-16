@@ -11,6 +11,7 @@ license = "GPL-2.0"
 
 [dependencies]
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
+error-chain = "^0.7.1"
 
 [dev-dependencies]
 env_logger = "0.3"
