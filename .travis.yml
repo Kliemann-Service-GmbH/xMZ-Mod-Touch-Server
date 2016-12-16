@@ -2,12 +2,12 @@ sudo: required
 language: rust
 rust:
 - nightly
-before_install:
-  - chmod +x ./install-nanomsg.sh
-  - ./install-nanomsg.sh
-after_success:
-  - chmod +x ./update-documentation-via-travis.sh
-  - ./update-documentation-via-travis.sh
+# before_install:
+#   - chmod +x ./install-nanomsg.sh
+#   - ./install-nanomsg.sh
+# after_success:
+#   - chmod +x ./update-documentation-via-travis.sh
+#   - ./update-documentation-via-travis.sh
 addons:
   apt_packages:
     - pandoc
