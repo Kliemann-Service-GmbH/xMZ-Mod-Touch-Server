@@ -1,6 +1,13 @@
 extern crate xmz_server;
 
 use xmz_server::errors::*;
+use xmz_server::configuration;
+
+fn run() -> Result<()> {
+    try!(configuration::read_in());
+
+    Ok(())
+}
 
 fn main() {
     if let Err(ref e) = run() {
@@ -18,14 +25,4 @@ fn main() {
         ::std::process::exit(1);
     }
     println!("xMZ-Mod-Touch-Server is running...");
-}
-
-fn run() -> Result<()> {
-    use std::fs::File;
-
-    // This operation will fail
-    File::open("xMZ-Mod-Touch-configuration.toml")
-        .chain_err(|| "unable to open the configuration file.")?;
-
-    Ok(())
 }
