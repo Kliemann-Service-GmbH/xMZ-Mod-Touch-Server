@@ -1,30 +1,9 @@
-// `error_chain!` can recurse deeply
-#![recursion_limit = "1024"]
-
-#![feature(proc_macro)]
-
-#[macro_use] extern crate error_chain;
-#[macro_use] extern crate serde_derive;
-extern crate serde_json;
 extern crate xmz_server;
+extern crate serde_json;
 
 use xmz_server::errors::*;
 use xmz_server::system_commands;
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Server {
-    serial_interface: String,
-    baud: i32,
-}
-
-impl Server {
-    pub fn new() -> Server {
-        Server {
-            serial_interface: "/dev/ttyS1".to_string(),
-            baud: 9600,
-        }
-    }
-}
+use xmz_server::server::Server;
 
 fn run() -> Result<()> {
     // /boot mounten
