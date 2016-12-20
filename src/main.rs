@@ -1,10 +1,16 @@
+// `error_chain!` can recurse deeply
+#![recursion_limit = "1024"]
+
+#[macro_use] extern crate error_chain;
 extern crate xmz_server;
 
 use xmz_server::errors::*;
-use xmz_server::configuration;
+use xmz_server::system_commands;
+
 
 fn run() -> Result<()> {
-    try!(configuration::read_in());
+    system_commands::mount()?;
+    system_commands::umount()?;
 
     Ok(())
 }
@@ -24,5 +30,4 @@ fn main() {
 
         ::std::process::exit(1);
     }
-    println!("xMZ-Mod-Touch-Server is running...");
 }

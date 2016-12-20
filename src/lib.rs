@@ -2,4 +2,4 @@
 extern crate error_chain;
 
 pub mod errors;
-pub mod configuration;
+pub mod system_commands;
