@@ -23,6 +23,8 @@ fn run() -> Result<()> {
 }
 
 fn main() {
+    println!("xMZ-Mod-Touch-Server Version: {}\n", env!("CARGO_PKG_VERSION"));
+
     if let Err(ref e) = run() {
         println!("error: {}", e);
 
