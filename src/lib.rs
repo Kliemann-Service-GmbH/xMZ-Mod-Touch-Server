@@ -7,7 +7,10 @@
 #[macro_use] extern crate serde_derive;
 extern crate serde_json;
 
-
 pub mod errors;
-pub mod server;
+mod server;
 pub mod system_commands;
+mod configuration;
+
+pub use self::configuration::*;
+pub use self::server::*;

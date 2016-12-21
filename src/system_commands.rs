@@ -7,7 +7,7 @@ pub fn mount() -> Result<()> {
         .arg("/dev/mmcblk0p1")
         .arg("/boot")
         .spawn()
-        .chain_err(|| "/dev/mmcblk0p1 konnte nicht gemounted werden.")?;
+        .chain_err(|| "Partition /dev/mmcblk0p1 konnte nicht gemounted werden.")?;
 
     Ok(())
 }

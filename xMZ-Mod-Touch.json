@@ -1,0 +1,6 @@
+serialized Server: {
+    "serial_interface": "/dev/ttyS1",
+      "baud": 9600
+
+}
+
