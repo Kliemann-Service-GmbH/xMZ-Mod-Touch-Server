@@ -1,26 +1,19 @@
 [package]
 name = "xmz_server"
-version = "0.14.1"
+version = "0.20.2"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
-description = "xMZ-Mod-Touch Server Library and Binaries"
+description = "xMZ-Mod-Touch Server"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
 homepage = "https://gaswarnanlagen.com/xmz-mod-touch"
 repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git"
 license = "GPL-2.0"
 
-[[bin]]
-name = "xmz-server-bin"
-path = "src/xmz-server-bin.rs"
-
-[dependencies]
-env_logger = "0.3"
-error-chain = "0.4"
-libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
-log = "0.3"
-nanomsg = { git = "https://github.com/thehydroimpulse/nanomsg.rs.git" }
-rustc-serialize = "0.3"
-sysfs_gpio = "*"
-
-# Aktiviere Log in Tests: https://github.com/rust-lang-nursery/log#in-tests
 [dev-dependencies]
 env_logger = "0.3"
+
+[dependencies]
+error-chain = "^0.7.1"
+libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
+serde = "0.8"
+serde_derive = "0.8"
+serde_json = "0.8"
