@@ -6,6 +6,7 @@ use std::{io, result, fmt};
 pub enum XMZError {
     Io(io::Error),
     NotAllowed,
+    SystemCommandFailed,
 }
 
 pub type Result<T> = result::Result<T, XMZError>;
@@ -15,6 +16,9 @@ impl fmt::Display for XMZError {
         match *self {
             XMZError::Io(ref err) => write!(f, "IO error: {}", err),
             XMZError::NotAllowed => write!(f, "Operation nicht erlaubt."),
+            XMZError::SystemCommandFailed => {
+                write!(f, "System Command konnte nicht ausgeführt werden.")
+            }
         }
     }
 }
@@ -24,6 +28,7 @@ impl Error for XMZError {
         match *self {
             XMZError::Io(ref err) => err.description(),
             XMZError::NotAllowed => "Nicht erlaubt",
+            XMZError::SystemCommandFailed => "System Command fehlerhaft",
         }
     }
 
@@ -31,6 +36,7 @@ impl Error for XMZError {
         match *self {
             XMZError::Io(ref err) => Some(err),
             XMZError::NotAllowed => None,
+            XMZError::SystemCommandFailed => None,
         }
     }
 }
