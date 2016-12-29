@@ -1,22 +1,33 @@
-use errors::*;
-use std::process::Command;
-
+use error::*;
+use std::process::{Command, ExitStatus};
+use std;
 
 pub fn mount() -> Result<()> {
-    Command::new("mount")
-        .arg("/dev/mmcblk0p1")
-        .arg("/boot")
-        .spawn()
-        .chain_err(|| "Partition /dev/mmcblk0p1 konnte nicht gemounted werden.")?;
+    call("mount /boot")?;
 
     Ok(())
 }
 
 pub fn umount() -> Result<()> {
-    Command::new("umount")
-        .arg("/boot")
-        .spawn()
-        .chain_err(|| "/dev/mmcblk0p1 konnte nicht unmounted werden.")?;
+    call("umount /boot")?;
 
     Ok(())
+}
+
+fn call<C: AsRef<str>>(command: C) -> Result<()>
+    where C: std::convert::AsRef<std::ffi::OsStr>
+{
+    match Command::new("sh")
+        .arg("-c")
+        .arg(command)
+        .status() {
+        Ok(status) => {
+            if status.success() {
+                Ok(())
+            } else {
+                Err(XMZError::NotAllowed)
+            }
+        }
+        Err(err) => return Err(err.into()),
+    }
 }

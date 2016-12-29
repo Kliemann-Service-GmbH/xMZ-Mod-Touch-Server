@@ -1,5 +1,5 @@
 
-use errors::*;
+use error::*;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Server {
