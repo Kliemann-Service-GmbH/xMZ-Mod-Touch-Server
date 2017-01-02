@@ -3,6 +3,8 @@ use std::process::{Command, ExitStatus};
 use std;
 
 
+/// Führt den als Parameter `command` übergebenen Befehl in einer `sh -c` aus, oder wirft ein
+/// `XMZError::SystemCommandFailed` Fehler aus.
 pub fn call<C: AsRef<str>>(command: C) -> Result<()>
     where C: std::convert::AsRef<std::ffi::OsStr>
 {

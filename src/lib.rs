@@ -4,9 +4,9 @@
 extern crate serde_derive;
 extern crate serde_json;
 
-pub mod error;
+mod error;
 mod server;
-pub mod system_commands;
+mod system_commands;
 mod configuration;
 
 pub use self::configuration::*;
