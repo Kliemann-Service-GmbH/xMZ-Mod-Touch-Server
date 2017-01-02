@@ -33,7 +33,9 @@ impl Configuration {
     /// };
     /// println!("{}", configuration.as_str());
     /// ```
-    pub fn as_str(&self) -> String {
-        serde_json::to_string(self).unwrap()
+    pub fn as_str(&self) -> Result<String> {
+        let s: String = try!(serde_json::to_string(self));
+
+        Ok(s)
     }
 }
