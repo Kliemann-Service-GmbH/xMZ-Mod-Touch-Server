@@ -1,6 +1,6 @@
 {
   "server": {
-    "serial_interface": "/dev/ttyUSB0",
+    "serial_interface": "/dev/ttyS1",
     "baud": 9600
   },
   "sensors": [

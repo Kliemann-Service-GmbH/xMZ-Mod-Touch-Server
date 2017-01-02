@@ -1,22 +1,37 @@
-use errors::*;
+use error::*;
+use std;
+use std::fs::File;
+use std::io::prelude::*;
 use std::process::Command;
 
 
-pub fn mount() -> Result<()> {
-    Command::new("mount")
-        .arg("/dev/mmcblk0p1")
-        .arg("/boot")
-        .spawn()
-        .chain_err(|| "Partition /dev/mmcblk0p1 konnte nicht gemounted werden.")?;
-
-    Ok(())
+/// Führt den als Parameter `command` übergebenen Befehl in einer `sh -c` aus, oder wirft ein
+/// `XMZError::SystemCommandFailed` Fehler aus.
+pub fn call<C: AsRef<str>>(command: C) -> Result<()>
+    where C: std::convert::AsRef<std::ffi::OsStr>
+{
+    match Command::new("sh")
+        .arg("-c")
+        .arg(command)
+        .status() {
+        Ok(status) => {
+            if status.success() {
+                Ok(())
+            } else {
+                Err(XMZError::SystemCommandFailed)
+            }
+        }
+        Err(err) => return Err(err.into()),
+    }
 }
 
-pub fn umount() -> Result<()> {
-    Command::new("umount")
-        .arg("/boot")
-        .spawn()
-        .chain_err(|| "/dev/mmcblk0p1 konnte nicht unmounted werden.")?;
+/// Liest eine Text Datei ein und liefert ein String Result
+pub fn readin<P: AsRef<str>>(path: P) -> Result<String>
+    where P: std::convert::AsRef<std::path::Path> + std::fmt::Debug
+{
+    let mut f = try!(File::open(path));
+    let mut s = String::new();
+    try!(f.read_to_string(&mut s));
 
-    Ok(())
+    Ok(s)
 }

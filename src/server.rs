@@ -1,10 +1,9 @@
-
-use errors::*;
+// use error::*;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Server {
-    serial_interface: String,
-    baud: i32,
+    pub serial_interface: String,
+    pub baud: i32,
 }
 
 impl Server {

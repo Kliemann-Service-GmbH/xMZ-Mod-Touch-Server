@@ -1,17 +1,41 @@
-use errors::*;
+use error::*;
+use sensor::Sensor;
+use serde_json;
 use server::Server;
 
-// Read: xMZ-Mod-Touch.json
-pub fn new_from_config_file(server: &Server) {
-    //
-    //let deserialized: Server = serde_json::from_str(&serialized).chain_err(|| "Deserialize config failed.")?;
-    //println!("deserialized Server: {:?}", deserialized);
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Configuration {
+    pub server: Server,
+    pub sensors: Vec<Sensor>,
 }
 
-pub fn save_config_file() {
-    //let serialized = serde_json::to_string_pretty(&server).chain_err(|| "Server serialisation failed.")?;
-    //println!("serialized Server: {}", serialized);
-    //
-    //let deserialized: Server = serde_json::from_str(&serialized).chain_err(|| "Deserialize config failed.")?;
-    //println!("deserialized Server: {:?}", deserialized);
+#[allow(dead_code)]
+impl Configuration {
+    pub fn from_config(config: String) -> Configuration {
+        match serde_json::from_str(&config) {
+            Ok(c) => c,
+            Err(_) => Configuration { server: Server::new(), sensors: vec![] }
+        }
+    }
+
+    /// Configuration als JSON codierter String
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let configuration = Configuration {
+    /// server: Server {
+    /// serial_interface: "/dev/ttyS1".to_string(),
+    /// baud: 9600,
+    /// },
+    /// sensors: vec![Sensor::new(), Sensor::new(), Sensor::new(), Sensor::new(), ]
+    /// };
+    /// println!("{}", configuration.as_str());
+    /// ```
+    pub fn as_str(&self) -> Result<String> {
+        let s: String = try!(serde_json::to_string(self));
+
+        Ok(s)
+    }
 }
