@@ -1,6 +1,36 @@
-serialized Server: {
+{
+  "server": {
     "serial_interface": "/dev/ttyS1",
-      "baud": 9600
-
+    "baud": 9600
+  },
+  "sensors": [
+    {
+      "adc_value": 0,
+      "adc_at_nullgas": 0,
+      "adc_at_messgas": 0,
+      "value_at_nullgas": 0,
+      "value_at_messgas": 0
+    },
+    {
+      "adc_value": 0,
+      "adc_at_nullgas": 0,
+      "adc_at_messgas": 0,
+      "value_at_nullgas": 0,
+      "value_at_messgas": 0
+    },
+    {
+      "adc_value": 0,
+      "adc_at_nullgas": 0,
+      "adc_at_messgas": 0,
+      "value_at_nullgas": 0,
+      "value_at_messgas": 0
+    },
+    {
+      "adc_value": 0,
+      "adc_at_nullgas": 0,
+      "adc_at_messgas": 0,
+      "value_at_nullgas": 0,
+      "value_at_messgas": 0
+    }
+  ]
 }
-
