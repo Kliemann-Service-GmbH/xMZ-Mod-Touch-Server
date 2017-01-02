@@ -33,22 +33,21 @@ pub fn run() -> Result<()> {
     #[cfg(feature = "development")]
     {
         println!("Development System");
-        let configuration = Configuration {
-            server: Server {
-                serial_interface: "/dev/ttyS1".to_string(),
-                baud: 9600,
-            },
-            sensors: vec![Sensor::new(), Sensor::new(), Sensor::new(), Sensor::new(), ]
-        };
-        println!("{}", configuration.as_str());
+        let config = try!(system_commands::readin("xMZ-Mod-Touch.json"));
+        let configuration = Configuration::from_config(config);
+        println!("{:?}", configuration)
     }
 
     #[cfg(not(feature = "development"))]
     {
         println!("Produktiv System");
-        try!(mount_boot().map(|_| {
-            println!("Lese nun Configuration");
-        }));
+        try!(mount_boot());
+
+        let config = try!(system_commands::readin("/boot/xMZ-Mod-Touch.json"));
+        let configuration = Configuration::from_config(config);
+        println!("{:?}", configuration);
+
+        try!(umount_boot());
     }
 
     Ok(())

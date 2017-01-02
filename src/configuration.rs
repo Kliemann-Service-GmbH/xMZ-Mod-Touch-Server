@@ -12,20 +12,27 @@ pub struct Configuration {
 
 #[allow(dead_code)]
 impl Configuration {
-    fn from_config(&mut self, config_file: &'static str) {
-        let _deserialized_configuration: Result<Configuration> = match serde_json::from_str(config_file) {
-            Ok(deserialized_configuration) => {
-                println!("{:#?}", deserialized_configuration);
-                Ok(deserialized_configuration)
-            },
-            Err(err) => {
-                println!("error: {}", err);
-                Err(XMZError::Serde(err))
-            },
-        };
-
+    pub fn from_config(config: String) -> Configuration {
+        match serde_json::from_str(&config) {
+            Ok(c) => c,
+            Err(_) => Configuration { server: Server::new(), sensors: vec![] }
+        }
     }
 
+    /// Configuration als JSON codierter String
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let configuration = Configuration {
+    /// server: Server {
+    /// serial_interface: "/dev/ttyS1".to_string(),
+    /// baud: 9600,
+    /// },
+    /// sensors: vec![Sensor::new(), Sensor::new(), Sensor::new(), Sensor::new(), ]
+    /// };
+    /// println!("{}", configuration.as_str());
+    /// ```
     pub fn as_str(&self) -> String {
         serde_json::to_string(self).unwrap()
     }
