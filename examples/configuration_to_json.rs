@@ -1,5 +1,9 @@
 /// Dieses Beispiel dient auch dazu eine valide Konfiguration aus den einzelenen Modulen der
 /// Software zu erstellen.
+///
+/// Hier wird eine Konfiguration erstellt. Die Kombisensoren werden wie der Server von Hand
+/// initalisiert, anschließend wird das Configuration Objekt in JSON kodiert in
+/// eine Datei (Configuration.json) geschrieben.
 
 extern crate xmz_server;
 
