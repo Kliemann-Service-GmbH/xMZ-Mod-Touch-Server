@@ -5,32 +5,48 @@
   },
   "sensors": [
     {
-      "adc_value": 0,
-      "adc_at_nullgas": 0,
-      "adc_at_messgas": 0,
-      "value_at_nullgas": 0,
-      "value_at_messgas": 0
+      "sensor_type": "NemotoNO2",
+      "si": "ppm",
+      "adc_value": null,
+      "adc_value_at_nullgas": 922,
+      "adc_value_at_messgas": 622,
+      "concentration_nullgas": 0,
+      "concentration_messgas": 20,
+      "modbus_register_address": 1,
+      "error_count": 0
     },
     {
-      "adc_value": 0,
-      "adc_at_nullgas": 0,
-      "adc_at_messgas": 0,
-      "value_at_nullgas": 0,
-      "value_at_messgas": 0
+      "sensor_type": "NemotoCO",
+      "si": "ppm",
+      "adc_value": null,
+      "adc_value_at_nullgas": 107,
+      "adc_value_at_messgas": 888,
+      "concentration_nullgas": 0,
+      "concentration_messgas": 280,
+      "modbus_register_address": 11,
+      "error_count": 0
     },
     {
-      "adc_value": 0,
-      "adc_at_nullgas": 0,
-      "adc_at_messgas": 0,
-      "value_at_nullgas": 0,
-      "value_at_messgas": 0
+      "sensor_type": "NemotoNO2",
+      "si": "ppm",
+      "adc_value": null,
+      "adc_value_at_nullgas": 922,
+      "adc_value_at_messgas": 622,
+      "concentration_nullgas": 0,
+      "concentration_messgas": 20,
+      "modbus_register_address": 1,
+      "error_count": 0
     },
     {
-      "adc_value": 0,
-      "adc_at_nullgas": 0,
-      "adc_at_messgas": 0,
-      "value_at_nullgas": 0,
-      "value_at_messgas": 0
+      "sensor_type": "NemotoCO",
+      "si": "ppm",
+      "adc_value": null,
+      "adc_value_at_nullgas": 107,
+      "adc_value_at_messgas": 888,
+      "concentration_nullgas": 0,
+      "concentration_messgas": 280,
+      "modbus_register_address": 11,
+      "error_count": 0
     }
   ]
 }

@@ -19,22 +19,22 @@ impl Configuration {
         }
     }
 
-    /// Configuration als JSON codierter String
+    /// Configuration als JSON codierterts String Result
     ///
     /// # Examples
     ///
     /// ```
+    /// use xmz_server::*;
+    ///
     /// let configuration = Configuration {
-    /// server: Server {
-    /// serial_interface: "/dev/ttyS1".to_string(),
-    /// baud: 9600,
-    /// },
-    /// sensors: vec![Sensor::new(), Sensor::new(), Sensor::new(), Sensor::new(), ]
+    ///     server: Server::new(),
+    ///     sensors: vec![Sensor::new(SensorType::NemotoNO2), Sensor::new(SensorType::NemotoCO), Sensor::new(SensorType::NemotoNO2), Sensor::new(SensorType::NemotoCO), ]
     /// };
-    /// println!("{}", configuration.as_str());
+    ///
+    /// println!("{}", configuration.to_json().unwrap());
     /// ```
-    pub fn as_str(&self) -> Result<String> {
-        let s: String = try!(serde_json::to_string(self));
+    pub fn to_json(&self) -> Result<String> {
+        let s: String = try!(serde_json::to_string_pretty(self));
 
         Ok(s)
     }
