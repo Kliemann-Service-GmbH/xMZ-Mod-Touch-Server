@@ -10,8 +10,19 @@ use server::Server;
 /// Representiert die Globale Konfigurationsdatei des Servers
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Configuration {
+    #[serde(default)]
     pub server: Server,
+    #[serde(default)]
     pub kombisensors: Vec<Kombisensor>,
+}
+
+impl Default for Configuration {
+    fn default() -> Self {
+        Configuration {
+            server: Server::new(),
+            kombisensors: vec![],
+        }
+    }
 }
 
 /// Configuration des Servers

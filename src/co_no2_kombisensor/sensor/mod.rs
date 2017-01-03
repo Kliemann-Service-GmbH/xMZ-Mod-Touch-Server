@@ -46,13 +46,8 @@ pub struct Sensor {
     error_count: u32,
 }
 
-impl Sensor {
-    /// Erzeugt eine neue Sensor Instanz
-    ///
-    /// # Attributes
-    /// * `sensor_type`     - `SensorType` Type der Messzelle
-    ///
-    pub fn new(sensor_type: SensorType) -> Self {
+impl Default for Sensor {
+    fn default() -> Self {
         Sensor {
             number: 0,
             adc_value: 0,
@@ -62,11 +57,26 @@ impl Sensor {
             adc_value_at_messgas: 0,
             concentration_at_nullgas: 0,
             concentration_at_messgas: 0,
-            sensor_type: sensor_type,
+            sensor_type: SensorType::NemotoNO2,
             si: SI::ppm,
             config: 0,
             error_count: 0,
         }
+    }
+}
+
+impl Sensor {
+    /// Erzeugt eine neue Sensor Instanz
+    ///
+    /// # Attributes
+    /// * `sensor_type`     - `SensorType` Type der Messzelle
+    ///
+    pub fn new() -> Self {
+        Sensor { ..Default::default() }
+    }
+
+    pub fn new_with_type(sensor_type: SensorType) -> Self {
+        Sensor { sensor_type: sensor_type, ..Default::default() }
     }
 
     // Public Attribute
@@ -132,7 +142,7 @@ impl Sensor {
     /// ```no_run
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new(SensorType::NemotoNO2);
+    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
     /// assert_eq!(sensor.get_concentration(), 0.0);
     /// ```
     pub fn get_concentration(&self) -> f64 {
@@ -158,7 +168,7 @@ impl Sensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new(SensorType::NemotoNO2);
+    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
     /// assert_eq!(sensor.is_enabled(), false);
     /// ```
     #[allow(dead_code)]

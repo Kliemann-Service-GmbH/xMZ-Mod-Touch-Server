@@ -6,11 +6,17 @@ pub struct Server {
     pub baud: i32,
 }
 
-impl Server {
-    pub fn new() -> Server {
+impl Default for Server {
+    fn default() -> Self {
         Server {
             serial_interface: "/dev/ttyS1".to_string(),
             baud: 9600,
         }
+    }
+}
+
+impl Server {
+    pub fn new() -> Self {
+        Server { ..Default::default() }
     }
 }
