@@ -38,25 +38,23 @@ pub fn umount_boot() -> Result<()> {
 }
 
 pub fn run() -> Result<()> {
+    let mut config = String::new();
+
     #[cfg(feature = "development")]
     {
         println!("Development System");
-        let config = try!(system_command::read_in("xMZ-Mod-Touch.json"));
-        let configuration = Configuration::from_config(config);
-        println!("{:?}", configuration)
+        config = try!(system_command::read_in("xMZ-Mod-Touch.json"));
     }
 
     #[cfg(not(feature = "development"))]
     {
         println!("Produktiv System");
         try!(mount_boot());
-
-        let config = try!(system_command::read_in("/boot/xMZ-Mod-Touch.json"));
-        let configuration = Configuration::from_config(config);
-        println!("{:?}", configuration);
-
+        config = try!(system_command::read_in("/boot/xMZ-Mod-Touch.json"));
         try!(umount_boot());
     }
+    let configuration = Configuration::from_config(config);
+    println!("{:?}", configuration);
 
     Ok(())
 }
