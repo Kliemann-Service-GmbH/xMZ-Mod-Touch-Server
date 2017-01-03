@@ -1,5 +1,5 @@
 use error::*;
-use sensor::Sensor;
+use co_no2_kombisensor::sensor::Sensor;
 use serde_json;
 use server::Server;
 

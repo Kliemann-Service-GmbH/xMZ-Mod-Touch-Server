@@ -17,12 +17,13 @@ mod configuration;
 mod error;
 mod server;
 mod system_commands;
-mod sensor;
+mod co_no2_kombisensor;
 
+// TODO: Sern `*` entfernen, und explizit die Freigaben listen
 pub use self::configuration::*;
 pub use self::error::*;
 pub use self::server::*;
-pub use self::sensor::*;
+pub use self::co_no2_kombisensor::*;
 
 
 pub fn mount_boot() -> Result<()> {
