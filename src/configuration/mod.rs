@@ -46,7 +46,7 @@ impl Configuration {
     ///
     /// let configuration = Configuration {
     ///     server: Server::new(),
-    ///     sensors: vec![Sensor::new(SensorType::NemotoNO2), Sensor::new(SensorType::NemotoCO), Sensor::new(SensorType::NemotoNO2), Sensor::new(SensorType::NemotoCO), ]
+    ///     kombisensors: vec![Kombisensor::new(), Kombisensor::new()]
     /// };
     ///
     /// println!("{}", configuration.to_json().unwrap());
