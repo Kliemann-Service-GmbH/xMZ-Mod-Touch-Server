@@ -16,7 +16,7 @@ extern crate serde_json;
 pub mod configuration;
 mod error;
 mod server;
-mod system_commands;
+mod system_command;
 mod co_no2_kombisensor;
 
 pub use self::configuration::Configuration;
@@ -25,14 +25,14 @@ pub use self::server::*;
 pub use self::co_no2_kombisensor::*;
 
 pub fn mount_boot() -> Result<()> {
-    match system_commands::call("mount /dev/mmcblk0p1 /boot") {
+    match system_command::call("mount /dev/mmcblk0p1 /boot") {
         Ok(_) => Ok(()),
         Err(_) => Err(XMZError::NotAllowed),
     }
 }
 
 pub fn umount_boot() -> Result<()> {
-    system_commands::call("umount /boot")?;
+    system_command::call("umount /boot")?;
 
     Ok(())
 }
@@ -41,7 +41,7 @@ pub fn run() -> Result<()> {
     #[cfg(feature = "development")]
     {
         println!("Development System");
-        let config = try!(system_commands::readin("xMZ-Mod-Touch.json"));
+        let config = try!(system_command::read_in("xMZ-Mod-Touch.json"));
         let configuration = Configuration::from_config(config);
         println!("{:?}", configuration)
     }
@@ -51,7 +51,7 @@ pub fn run() -> Result<()> {
         println!("Produktiv System");
         try!(mount_boot());
 
-        let config = try!(system_commands::readin("/boot/xMZ-Mod-Touch.json"));
+        let config = try!(system_command::read_in("/boot/xMZ-Mod-Touch.json"));
         let configuration = Configuration::from_config(config);
         println!("{:?}", configuration);
 
