@@ -8,6 +8,7 @@ homepage = "https://gaswarnanlagen.com/xmz-mod-touch"
 repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git"
 license = "GPL-2.0"
 
+
 [[bin]]
 name = "xmz-server"
 path = "src/main.rs"

@@ -3,34 +3,142 @@
     "serial_interface": "/dev/ttyUSB0",
     "baud": 9600
   },
-  "sensors": [
+  "kombisensors": [
     {
-      "adc_value": 0,
-      "adc_at_nullgas": 0,
-      "adc_at_messgas": 0,
-      "value_at_nullgas": 0,
-      "value_at_messgas": 0
+      "version": "0.13.10",
+      "modbus_address": 1,
+      "sensors": [
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoNO2",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        },
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoCO",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        }
+      ]
     },
     {
-      "adc_value": 0,
-      "adc_at_nullgas": 0,
-      "adc_at_messgas": 0,
-      "value_at_nullgas": 0,
-      "value_at_messgas": 0
+      "version": "0.13.10",
+      "modbus_address": 2,
+      "sensors": [
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoNO2",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        },
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoCO",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        }
+      ]
     },
     {
-      "adc_value": 0,
-      "adc_at_nullgas": 0,
-      "adc_at_messgas": 0,
-      "value_at_nullgas": 0,
-      "value_at_messgas": 0
+      "version": "0.13.10",
+      "modbus_address": 3,
+      "sensors": [
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoNO2",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        },
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoCO",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        }
+      ]
     },
     {
-      "adc_value": 0,
-      "adc_at_nullgas": 0,
-      "adc_at_messgas": 0,
-      "value_at_nullgas": 0,
-      "value_at_messgas": 0
+      "version": "0.13.10",
+      "modbus_address": 4,
+      "sensors": [
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoNO2",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        },
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoCO",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        }
+      ]
     }
   ]
 }

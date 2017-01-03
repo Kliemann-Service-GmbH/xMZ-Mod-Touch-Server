@@ -22,7 +22,7 @@ cargo build --release
 ```bash
 cd
 cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
-cp -v ./target/release/xmz-server-bin /usr/bin/xmz-server
+cp -v ./target/release/xmz-server /usr/bin/
 ```
 
 ## Bibliotheken installieren
@@ -55,30 +55,28 @@ WantedBy=multi-user.target
 EOF
 ```
 
-Danach muss der service noch aktiviert ...
+Danach muss die Systemd Unit, beziehungsweise der Service noch aktiviert werden:
 
 ```bash
 systemctl enable xmz-mod-touch-server.service
 # systemctl daemon-reload # Dieser Befehl ist nur bei nachträglichen Änderungen am Unit File nötig!
 ```
 
-... und gestartet werden.
+Die Units können mit `systemctl` von Hand gestartet werden, alternativ Neustart des Systems:
 
 ```bash
 systemctl restart xmz-mod-touch-server.service
 ```
 
-
 # Update des Entwicklungssystems
-Für ein Update muss zunächst die laufende Instanz beendet werden `systemctl stop`,
+Für ein Update muss zunächst die laufende Instanz beendet werden `systemctl stop xmz-mod-touch-server.service`,
 danach wird in das Verzeichnis mit dem Quellcode gewechselt, der aktuelle
-Softwarestand mit `git pull` herunter geladen und anschließend die Software
-gebaut.
+Softwarestand mit `git pull` herunter geladen. Anschließend kann die Software
+neu gebaut werden.
 Angeschlossen wird das Ganze indem die neu erstellen Binaries nach `/usr/bin`
-kopiert werden und die Software neu gestartet wird `systemctl start`.
+kopiert werden und die Software neu gestartet wird `systemctl start xmz-mod-touch-server.service`.
 
 ```bash
-# systemctl daemon-reload # Evtl. wenn das systemd Unit File geändert wurde
 systemctl stop xmz-mod-touch-server.service
 cd
 cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
@@ -88,7 +86,6 @@ cp -v ./target/release/xmz-server-bin /usr/bin/xmz-server
 
 systemctl start xmz-mod-touch-server.service
 ```
-
 
 # Tests
 Optional können auch die Tests aufgerufen werden.
@@ -105,6 +102,7 @@ cargo test
 * https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
 * Dokumentation http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/target/doc/xmz_server/index.html
 * Command Line Parser https://github.com/kbknapp/clap-rs
+* RA-Gas CO-NO2-Kombisensor-Mod https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod
 
 [1]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
 [homepage]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server
