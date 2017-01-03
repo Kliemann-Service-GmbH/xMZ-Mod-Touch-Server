@@ -1,8 +1,8 @@
-/// Aktuelle Rust Representation des CO-NO2 Kombisensors
-/// **CO-NO2-Kombisensor-Mod** Firmware Version: 0.13.10
-/// https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod
+//! Dieses Modul representiert eine Messzelle, eines [CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod) der Firma RA-GAS
+//! `Firmware Version: 0.13.10`
 use std::fmt;
 
+/// Typ der Messzelle
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub enum SensorType {
@@ -14,6 +14,7 @@ pub enum SensorType {
     NemotoCO,
 }
 
+/// SI Einheit des zu messenden Mediums
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 #[allow(non_camel_case_types)]
@@ -24,6 +25,7 @@ pub enum SI {
     UEG,
 }
 
+/// Representation der Firmware Daten einer Messzelle
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Sensor {

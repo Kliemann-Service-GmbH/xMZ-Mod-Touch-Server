@@ -102,6 +102,7 @@ cargo test
 * https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
 * Dokumentation http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/target/doc/xmz_server/index.html
 * Command Line Parser https://github.com/kbknapp/clap-rs
+* RA-Gas CO-NO2-Kombisensor-Mod https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod
 
 [1]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
 [homepage]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server
