@@ -13,13 +13,13 @@
 extern crate serde_derive;
 extern crate serde_json;
 
-mod configuration;
+pub mod configuration;
 mod error;
 mod server;
 mod system_commands;
 mod co_no2_kombisensor;
 
-pub use self::configuration::*;
+pub use self::configuration::Configuration;
 pub use self::error::*;
 pub use self::server::*;
 pub use self::co_no2_kombisensor::*;

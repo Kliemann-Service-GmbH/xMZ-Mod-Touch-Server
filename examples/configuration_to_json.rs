@@ -1,3 +1,6 @@
+/// Dieses Beispiel dient auch dazu eine valide Konfiguration aus den einzelenen Modulen der
+/// Software zu erstellen.
+
 extern crate xmz_server;
 
 use std::fs::File;
@@ -6,12 +9,12 @@ use xmz_server::*;
 
 fn run() -> Result<()> {
     let configuration = Configuration {
-        server: Server::new(),
-        sensors: vec![
-            Sensor::new(SensorType::NemotoNO2),
-            Sensor::new(SensorType::NemotoCO),
-            Sensor::new(SensorType::NemotoNO2),
-            Sensor::new(SensorType::NemotoCO),
+        server: Server { serial_interface: "/dev/ttyUSB0".to_string(), baud: 9600 },
+        kombisensors: vec![
+            Kombisensor::new(),
+            Kombisensor::new(),
+            Kombisensor::new(),
+            Kombisensor::new(),
         ],
     };
 

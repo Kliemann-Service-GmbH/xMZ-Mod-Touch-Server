@@ -3,7 +3,8 @@
 use co_no2_kombisensor::sensor::{Sensor, SensorType};
 
 /// Platine des CO-NO2-Kombisensor-Mod
-#[derive(Clone, Debug)]
+#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Kombisensor {
     version: String,
     modbus_address: u8,
