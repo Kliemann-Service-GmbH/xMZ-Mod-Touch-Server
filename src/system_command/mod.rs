@@ -29,7 +29,7 @@ pub fn call<C: AsRef<str>>(command: C) -> Result<()>
 pub fn read_in<P: AsRef<str>>(path: P) -> Result<String>
     where P: std::convert::AsRef<std::path::Path> + std::fmt::Debug
 {
-    let mut f = try!(File::open(path));
+    let mut f = try!(File::open(&path).chain_err(|| format!("unable to open file: {:?}", path)));
     let mut s = String::new();
     try!(f.read_to_string(&mut s));
 
