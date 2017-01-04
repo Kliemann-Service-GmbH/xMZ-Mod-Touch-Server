@@ -1,6 +1,7 @@
 //! Dieses Modul representiert eine Messzelle, eines [CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod) der Firma RA-GAS
 //! `Firmware Version: 0.13.10`
 use std::fmt;
+use errors::*;
 
 /// Typ der Messzelle
 #[derive(Clone)]

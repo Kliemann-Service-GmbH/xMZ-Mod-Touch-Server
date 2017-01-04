@@ -85,15 +85,9 @@ pub fn run() -> Result<()> {
     {
         let mut kombisensors = kombisensors.lock().unwrap();
         for kombisensor in kombisensors.iter_mut() {
-            println!("{:?}", kombisensor.get_sensors_mut()[0].set_adc_value(100));
-        }
-    }
+            let sensor1 = kombisensor.get_sensor_mut(0)?;
 
-    let kombisensors = kombisensors.clone();
-    {
-        let mut kombisensors = kombisensors.lock().unwrap();
-        for kombisensor in kombisensors.iter() {
-            println!("{:?}", kombisensor);
+            println!("{:?}", sensor1.get_adc_value());
         }
     }
 
