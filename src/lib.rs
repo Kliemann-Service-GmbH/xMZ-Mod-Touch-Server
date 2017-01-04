@@ -24,36 +24,55 @@ pub use self::error::*;
 pub use self::server::*;
 pub use self::co_no2_kombisensor::*;
 
-
 /// Mounted die erste Partition der SDCard nach /boot
-pub fn mount_boot() -> Result<()> {
+#[allow(dead_code)]
+fn mount_boot() -> Result<()> {
     system_command::call("mount /dev/mmcblk0p1 /boot")?;
 
     Ok(())
 }
 
 /// Unmount /boot
-pub fn umount_boot() -> Result<()> {
+#[allow(dead_code)]
+fn umount_boot() -> Result<()> {
     system_command::call("umount /boot")?;
 
     Ok(())
 }
 
-pub fn run() -> Result<()> {
-    let mut config = String::new();
+
+/// Diese Funktion liest die Konfigurationsdatei ein, je nach Umgebung
+///
+/// Entweder wird das programm im `development` Modus aufgerufen, hier wird die Konfigurationsdatei
+/// lokal gesucht und gelesen.
+/// Oder aber das Programm wird im `produktiv` Modus (not(feature = "development")) ausgeführt,
+/// in diesem wird zunächste /boot gemounted, anschließend die Konfigurationsdatei eingelesen
+/// und zum Schluss /boot umounted.
+#[allow(unused_assignments)]
+fn read_config_file() -> Result<String> {
+    let mut config_file = String::new();
+
     #[cfg(feature = "development")]
     {
         println!("Development System");
-        config = try!(system_command::read_in("xMZ-Mod-Touch.json"));
+        config_file = try!(system_command::read_in("xMZ-Mod-Touch.json"));
     }
     #[cfg(not(feature = "development"))]
     {
         println!("Produktiv System");
         try!(mount_boot());
-        config = try!(system_command::read_in("/boot/xMZ-Mod-Touch.json"));
+        config_file = try!(system_command::read_in("/boot/xMZ-Mod-Touch.json"));
         try!(umount_boot());
     }
-    let configuration = try!(Configuration::from_config(config));
+
+    Ok(config_file)
+}
+
+/// Einsprungpunkt in die Lib
+pub fn run() -> Result<()> {
+    let config_file = try!(read_config_file());
+
+    let configuration = try!(Configuration::from_config(config_file));
     println!("{:?}", configuration);
 
     for kombisensor in configuration.get_kombisensors() {
