@@ -7,23 +7,27 @@
 //!
 //! Git Repository: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
 
+#![recursion_limit = "1024"]
 #![feature(proc_macro)]
 
+#[macro_use]
+extern crate error_chain;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
 
 pub mod configuration;
-mod error;
+mod errors;
 mod server;
 mod system_command;
 mod co_no2_kombisensor;
 
 pub use self::configuration::Configuration;
-pub use self::error::*;
 pub use self::server::*;
 pub use self::co_no2_kombisensor::*;
+use errors::*;
 use std::sync::{Arc, Mutex};
+
 
 /// Mounted die erste Partition der SDCard nach /boot
 #[allow(dead_code)]

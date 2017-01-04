@@ -1,4 +1,4 @@
-use error::*;
+use errors::*;
 use std;
 use std::fs::File;
 use std::io::prelude::*;
@@ -18,7 +18,7 @@ pub fn call<C: AsRef<str>>(command: C) -> Result<()>
             if status.success() {
                 Ok(())
             } else {
-                Err(XMZError::SystemCommandFailed)
+                Err("System Commando failed!".into())
             }
         }
         Err(err) => return Err(err.into()),
