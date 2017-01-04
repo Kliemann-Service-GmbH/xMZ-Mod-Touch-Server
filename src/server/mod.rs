@@ -1,5 +1,6 @@
 // use error::*;
 
+#[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Server {
     pub serial_interface: String,
