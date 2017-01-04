@@ -8,7 +8,6 @@ pub enum XMZError {
     Serde(serde_json::Error),
     Format(fmt::Error),
     Env(env::VarError),
-    NotAllowed,
     SystemCommandFailed,
 }
 
@@ -21,7 +20,6 @@ impl fmt::Display for XMZError {
             XMZError::Serde(ref err) => write!(f, "Serde JSON error: {}", err),
             XMZError::Format(ref err) => write!(f, "Format error: {}", err),
             XMZError::Env(ref err) => write!(f, "Environment error: {}", err),
-            XMZError::NotAllowed => write!(f, "Operation nicht erlaubt."),
             XMZError::SystemCommandFailed => {
                 write!(f, "System Command konnte nicht ausgeführt werden.")
             }
@@ -36,7 +34,6 @@ impl Error for XMZError {
             XMZError::Serde(ref err) => err.description(),
             XMZError::Format(ref err) => err.description(),
             XMZError::Env(ref err) => err.description(),
-            XMZError::NotAllowed => "Nicht erlaubt",
             XMZError::SystemCommandFailed => "System Command fehlerhaft",
         }
     }
@@ -47,7 +44,6 @@ impl Error for XMZError {
             XMZError::Serde(ref err) => Some(err),
             XMZError::Format(ref err) => Some(err),
             XMZError::Env(ref err) => Some(err),
-            XMZError::NotAllowed => None,
             XMZError::SystemCommandFailed => None,
         }
     }

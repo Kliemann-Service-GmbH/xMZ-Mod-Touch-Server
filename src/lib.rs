@@ -24,13 +24,15 @@ pub use self::error::*;
 pub use self::server::*;
 pub use self::co_no2_kombisensor::*;
 
+
+/// Mounted die erste Partition der SDCard nach /boot
 pub fn mount_boot() -> Result<()> {
-    match system_command::call("mount /dev/mmcblk0p1 /boot") {
-        Ok(_) => Ok(()),
-        Err(_) => Err(XMZError::NotAllowed),
-    }
+    system_command::call("mount /dev/mmcblk0p1 /boot")?;
+
+    Ok(())
 }
 
+/// Unmount /boot
 pub fn umount_boot() -> Result<()> {
     system_command::call("umount /boot")?;
 
@@ -39,13 +41,11 @@ pub fn umount_boot() -> Result<()> {
 
 pub fn run() -> Result<()> {
     let mut config = String::new();
-
     #[cfg(feature = "development")]
     {
         println!("Development System");
         config = try!(system_command::read_in("xMZ-Mod-Touch.json"));
     }
-
     #[cfg(not(feature = "development"))]
     {
         println!("Produktiv System");
@@ -53,8 +53,12 @@ pub fn run() -> Result<()> {
         config = try!(system_command::read_in("/boot/xMZ-Mod-Touch.json"));
         try!(umount_boot());
     }
-    let configuration = Configuration::from_config(config);
+    let configuration = try!(Configuration::from_config(config));
     println!("{:?}", configuration);
+
+    for kombisensor in configuration.get_kombisensors() {
+        println!("{:?}", kombisensor);
+    }
 
     Ok(())
 }
