@@ -1,7 +1,7 @@
 //! Modul zur Verwaltung der globale Server Konfigurationsdatei
 //!
 //!
-use error::*;
+use errors::*;
 use co_no2_kombisensor::Kombisensor;
 use serde_json;
 use server::Server;

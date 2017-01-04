@@ -7,22 +7,27 @@
 //!
 //! Git Repository: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
 
+#![recursion_limit = "1024"]
 #![feature(proc_macro)]
 
+#[macro_use]
+extern crate error_chain;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
 
 pub mod configuration;
-mod error;
+mod errors;
 mod server;
 mod system_command;
 mod co_no2_kombisensor;
 
 pub use self::configuration::Configuration;
-pub use self::error::*;
 pub use self::server::*;
 pub use self::co_no2_kombisensor::*;
+use errors::*;
+use std::sync::{Arc, Mutex};
+
 
 /// Mounted die erste Partition der SDCard nach /boot
 #[allow(dead_code)]
@@ -73,10 +78,17 @@ pub fn run() -> Result<()> {
     let config_file = try!(read_config_file());
 
     let configuration = try!(Configuration::from_config(config_file));
-    println!("{:?}", configuration);
 
-    for kombisensor in configuration.get_kombisensors() {
-        println!("{:?}", kombisensor);
+    let kombisensors: Arc<Mutex<Vec<Kombisensor>>> = Arc::new(Mutex::new(configuration.get_kombisensors()));
+
+    let kombisensors = kombisensors.clone();
+    {
+        let mut kombisensors = kombisensors.lock().unwrap();
+        for kombisensor in kombisensors.iter_mut() {
+            let sensor1 = kombisensor.get_sensor_mut(0)?;
+
+            println!("{:?}", sensor1.get_adc_value());
+        }
     }
 
     Ok(())

@@ -1,6 +1,7 @@
 //! Dieses Modul representiert eine Messzelle, eines [CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod) der Firma RA-GAS
 //! `Firmware Version: 0.13.10`
 use std::fmt;
+use errors::*;
 
 /// Typ der Messzelle
 #[derive(Clone)]
@@ -68,18 +69,28 @@ impl Default for Sensor {
 impl Sensor {
     /// Erzeugt eine neue Sensor Instanz
     ///
-    /// # Attributes
-    /// * `sensor_type`     - `SensorType` Type der Messzelle
-    ///
     pub fn new() -> Self {
         Sensor { ..Default::default() }
     }
 
+    /// Erzeugt eine neue Sensor Instanz
+    ///
+    /// # Attributes
+    /// * `sensor_type`     - `SensorType` Type der Messzelle
+    ///
     pub fn new_with_type(sensor_type: SensorType) -> Self {
         Sensor { sensor_type: sensor_type, ..Default::default() }
     }
 
     // Public Attribute
+    // Setter
+
+    pub fn set_adc_value(&mut self, value: u16) {
+        self.adc_value = value
+    }
+
+    // Getter
+
     pub fn get_number(&self) -> u16 {
         self.number
     }

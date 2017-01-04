@@ -1,4 +1,4 @@
-// use error::*;
+use errors::*;
 
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
