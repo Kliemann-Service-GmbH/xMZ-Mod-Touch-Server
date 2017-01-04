@@ -68,18 +68,28 @@ impl Default for Sensor {
 impl Sensor {
     /// Erzeugt eine neue Sensor Instanz
     ///
-    /// # Attributes
-    /// * `sensor_type`     - `SensorType` Type der Messzelle
-    ///
     pub fn new() -> Self {
         Sensor { ..Default::default() }
     }
 
+    /// Erzeugt eine neue Sensor Instanz
+    ///
+    /// # Attributes
+    /// * `sensor_type`     - `SensorType` Type der Messzelle
+    ///
     pub fn new_with_type(sensor_type: SensorType) -> Self {
         Sensor { sensor_type: sensor_type, ..Default::default() }
     }
 
     // Public Attribute
+    // Setter
+
+    pub fn set_adc_value(&mut self, value: u16) {
+        self.adc_value = value
+    }
+
+    // Getter
+
     pub fn get_number(&self) -> u16 {
         self.number
     }

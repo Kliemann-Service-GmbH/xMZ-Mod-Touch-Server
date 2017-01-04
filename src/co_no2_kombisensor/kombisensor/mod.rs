@@ -24,7 +24,14 @@ impl Default for Kombisensor {
 }
 
 impl Kombisensor {
+    /// Erzeugt eine neue Instanz
+    ///
     pub fn new() -> Self {
         Kombisensor { ..Default::default() }
+    }
+
+    /// Liefert die Sensoren mutable
+    pub fn get_sensors_mut(&mut self) -> Vec<Sensor> {
+        self.sensors.clone()
     }
 }

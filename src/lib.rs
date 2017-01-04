@@ -23,6 +23,7 @@ pub use self::configuration::Configuration;
 pub use self::error::*;
 pub use self::server::*;
 pub use self::co_no2_kombisensor::*;
+use std::sync::{Arc, Mutex};
 
 /// Mounted die erste Partition der SDCard nach /boot
 #[allow(dead_code)]
@@ -73,10 +74,23 @@ pub fn run() -> Result<()> {
     let config_file = try!(read_config_file());
 
     let configuration = try!(Configuration::from_config(config_file));
-    println!("{:?}", configuration);
 
-    for kombisensor in configuration.get_kombisensors() {
-        println!("{:?}", kombisensor);
+    let kombisensors: Arc<Mutex<Vec<Kombisensor>>> = Arc::new(Mutex::new(configuration.get_kombisensors()));
+
+    let kombisensors = kombisensors.clone();
+    {
+        let mut kombisensors = kombisensors.lock().unwrap();
+        for kombisensor in kombisensors.iter_mut() {
+            println!("{:?}", kombisensor.get_sensors_mut()[0].set_adc_value(100));
+        }
+    }
+
+    let kombisensors = kombisensors.clone();
+    {
+        let mut kombisensors = kombisensors.lock().unwrap();
+        for kombisensor in kombisensors.iter() {
+            println!("{:?}", kombisensor);
+        }
     }
 
     Ok(())
