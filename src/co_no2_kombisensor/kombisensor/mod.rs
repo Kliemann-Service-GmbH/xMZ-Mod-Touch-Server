@@ -35,6 +35,11 @@ impl Kombisensor {
     ///
     /// Da das `sensors` Member der Stuctur ein leeres vec! ist kann immer davon ausgegangen werden
     /// das wenigstens ein leerer Vector existiert. Desshalb kein Option<Vec<T>>.
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    /// ```
     pub fn get_sensors_mut(&mut self) -> Vec<Sensor> {
         self.sensors.clone()
     }
@@ -43,7 +48,7 @@ impl Kombisensor {
     ///
     /// # Examples
     /// ```
-    /// assert!(false);
+    /// use xmz_server::*;
     /// ```
     pub fn get_sensor_mut(&mut self, num: usize) -> Result<&Sensor> {
         match self.sensors.get(num) {

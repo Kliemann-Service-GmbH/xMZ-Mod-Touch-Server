@@ -16,13 +16,18 @@ extern crate error_chain;
 extern crate serde_derive;
 extern crate serde_json;
 
+// FIXME: Öffentliche API überdenken, nicht nötige `pub` entfernen
+pub mod alarmgruppe;
 pub mod configuration;
-mod errors;
-mod server;
-mod system_command;
-mod co_no2_kombisensor;
+pub mod errors;
+pub mod server;
+pub mod system_command;
+pub mod co_no2_kombisensor;
 
+// FIXME: Refactor alle unnötigen glob reexports, zu expliziten ones.
+pub use self::alarmgruppe::*;
 pub use self::configuration::Configuration;
+pub use self::errors::*;
 pub use self::server::*;
 pub use self::co_no2_kombisensor::*;
 use errors::*;
