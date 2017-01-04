@@ -31,6 +31,9 @@ impl Default for Configuration {
 /// nicht nötig.**
 /// Für ein Beispiel einer manuellen Initalisierung siehe `examples/configuration_to_json.rs`
 impl Configuration {
+    /// Erzeugt eine Configuration Datenstructur aus einem JSON Codierten String
+    ///
+    /// Der String wird im Normalfall aus eine .json Datei gebildet.
     pub fn from_config(config: String) -> Result<Configuration> {
         let c = try!(serde_json::from_str(&config));
 
@@ -56,4 +59,17 @@ impl Configuration {
 
         Ok(s)
     }
+
+    // Getter
+
+    /// Liefert die Server Konfiguration
+    pub fn get_server(&self) -> Server {
+        self.server.clone()
+    }
+
+    /// Liefert die Kombisensoren
+    pub fn get_kombisensors(&self) -> Vec<Kombisensor> {
+        self.kombisensors.clone()
+    }
+
 }
