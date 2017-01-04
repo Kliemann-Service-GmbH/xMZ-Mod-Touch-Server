@@ -26,7 +26,7 @@ pub fn call<C: AsRef<str>>(command: C) -> Result<()>
 }
 
 /// Liest eine Text Datei ein und liefert ein String Result
-pub fn readin<P: AsRef<str>>(path: P) -> Result<String>
+pub fn read_in<P: AsRef<str>>(path: P) -> Result<String>
     where P: std::convert::AsRef<std::path::Path> + std::fmt::Debug
 {
     let mut f = try!(File::open(path));

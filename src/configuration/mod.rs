@@ -10,8 +10,19 @@ use server::Server;
 /// Representiert die Globale Konfigurationsdatei des Servers
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Configuration {
+    #[serde(default)]
     pub server: Server,
+    #[serde(default)]
     pub kombisensors: Vec<Kombisensor>,
+}
+
+impl Default for Configuration {
+    fn default() -> Self {
+        Configuration {
+            server: Server::new(),
+            kombisensors: vec![],
+        }
+    }
 }
 
 /// Configuration des Servers
@@ -20,6 +31,9 @@ pub struct Configuration {
 /// nicht nötig.**
 /// Für ein Beispiel einer manuellen Initalisierung siehe `examples/configuration_to_json.rs`
 impl Configuration {
+    /// Erzeugt eine Configuration Datenstructur aus einem JSON Codierten String
+    ///
+    /// Der String wird im Normalfall aus eine .json Datei gebildet.
     pub fn from_config(config: String) -> Result<Configuration> {
         let c = try!(serde_json::from_str(&config));
 
@@ -35,7 +49,7 @@ impl Configuration {
     ///
     /// let configuration = Configuration {
     ///     server: Server::new(),
-    ///     sensors: vec![Sensor::new(SensorType::NemotoNO2), Sensor::new(SensorType::NemotoCO), Sensor::new(SensorType::NemotoNO2), Sensor::new(SensorType::NemotoCO), ]
+    ///     kombisensors: vec![Kombisensor::new(), Kombisensor::new()]
     /// };
     ///
     /// println!("{}", configuration.to_json().unwrap());
@@ -45,4 +59,17 @@ impl Configuration {
 
         Ok(s)
     }
+
+    // Getter
+
+    /// Liefert die Server Konfiguration
+    pub fn get_server(&self) -> Server {
+        self.server.clone()
+    }
+
+    /// Liefert die Kombisensoren
+    pub fn get_kombisensors(&self) -> Vec<Kombisensor> {
+        self.kombisensors.clone()
+    }
+
 }
