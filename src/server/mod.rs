@@ -1,15 +1,23 @@
-/// Server  - Serverteil der Software
-pub mod server;
+// use error::*;
 
-/// Zonen   - Verwaltung der Störungen und Alarme
-///
-/// Jede Zone hat mindestens ein Alarmpunkt. Jedem dieser Alarmpunkte können Relais und LED zugewiesen werden.
-/// Diese werden dann aktiviert/ deaktiviert, je nach Schaltrichtung.
-pub mod zone;
+#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Server {
+    pub serial_interface: String,
+    pub baud: i32,
+}
 
-/// ServerCommand   - Befehle die der Server verarbeiten kann_module_modbus_adresse_abfragen
-///
-pub mod server_command;
+impl Default for Server {
+    fn default() -> Self {
+        Server {
+            serial_interface: "/dev/ttyS1".to_string(),
+            baud: 9600,
+        }
+    }
+}
 
-/// Fehlerbehandlung
-pub mod error;
+impl Server {
+    pub fn new() -> Self {
+        Server { ..Default::default() }
+    }
+}
