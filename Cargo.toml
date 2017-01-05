@@ -1,6 +1,6 @@
 [package]
 name = "xmz_server"
-version = "0.20.4"
+version = "0.20.5"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "xMZ-Mod-Touch Server"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
@@ -26,3 +26,4 @@ serde = "0.8"
 serde_derive = "0.8"
 serde_json = "0.8"
 error-chain = "0.7.2"
+sysfs_gpio = "0.4"

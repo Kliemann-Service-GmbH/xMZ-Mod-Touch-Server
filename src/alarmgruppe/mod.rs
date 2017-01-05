@@ -1,36 +1,6 @@
 use errors::*;
 
 
-pub enum ShiftRegisterType {
-    LED,
-    RELAIS,
-}
-
-pub struct ShiftRegister {
-    register_type: ShiftRegisterType,
-    // pub oe_pin: Pin,
-    // pub ds_pin: Pin,
-    // pub clock_pin: Pin,
-    // pub latch_pin: Pin,
-    pub data: u64,
-}
-
-impl ShiftRegister {
-    pub fn new(register_type: ShiftRegisterType) -> Self {
-        match register_type {
-            ShiftRegisterType::LED => ShiftRegister {
-                register_type: register_type,
-                data: 0,
-            },
-            ShiftRegisterType::RELAIS => ShiftRegister {
-                register_type: register_type,
-                data: 0,
-            }
-        }
-    }
-}
-
-
 #[derive(Debug, Eq, PartialEq)]
 pub enum AlarmgruppenTyp {
     Stoerung,
@@ -70,16 +40,6 @@ impl Alarmgruppe {
 
 mod tests {
     use super::*;
-
-    #[test]
-    fn relais() {
-        let relais = ShiftRegister::new(ShiftRegisterType::RELAIS);
-    }
-
-    #[test]
-    fn leds() {
-        let led = ShiftRegister::new(ShiftRegisterType::LED);
-    }
 
     #[test]
     fn stoerung() {
