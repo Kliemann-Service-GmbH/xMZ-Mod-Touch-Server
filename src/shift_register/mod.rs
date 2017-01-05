@@ -182,9 +182,11 @@ impl ShiftRegister {
     /// sim.reset();
     /// assert_eq!(sim.get(1), false);
     /// ```
-    pub fn reset(&mut self) {
+    pub fn reset(&mut self) -> Result<()> {
         self.data = 0;
-        self.shift_out();
+        try!(self.shift_out());
+
+        Ok(())
     }
 
 
@@ -206,18 +208,20 @@ impl ShiftRegister {
     /// assert_eq!(sim.get(1), true);
     /// assert_eq!(sim.get(10), false);
     /// ```
-    pub fn test(&mut self) {
+    pub fn test(&mut self) -> Result<()> {
         // Alten Stand speichern
         let old_state = self.data;
 
         self.data = u64::max_value();
-        self.shift_out();
+        try!(self.shift_out());
         thread::sleep(Duration::new(1, 0));
-        self.reset();
+        try!(self.reset());
 
         // alten Stand wieder herstellen
         self.data = old_state;
-        self.shift_out();
+        try!(self.shift_out());
+
+        Ok(())
     }
 
 
