@@ -14,6 +14,7 @@
 #[macro_use] extern crate serde_derive;
 extern crate serde_json;
 extern crate sysfs_gpio;
+extern crate rand;
 
 // FIXME: Öffentliche API überdenken, nicht nötige `pub` entfernen
 pub mod alarmgruppe;

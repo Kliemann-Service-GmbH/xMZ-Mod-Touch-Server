@@ -1,4 +1,5 @@
 use errors::*;
+use rand::Rng;
 use std::thread;
 use std::time::Duration;
 use sysfs_gpio::{Direction, Pin};
@@ -213,6 +214,41 @@ impl ShiftRegister {
         let old_state = self.data;
 
         self.data = u64::max_value();
+        try!(self.shift_out());
+        thread::sleep(Duration::new(1, 0));
+        try!(self.reset());
+
+        // alten Stand wieder herstellen
+        self.data = old_state;
+        try!(self.shift_out());
+
+        Ok(())
+    }
+
+    /// Random Lampentest testet einige, wirklich vorhanden, Outputs, zufällig
+    ///
+    /// Diese Funktion schaltet alle Ausgänge high, wartet eine Sekunde und schaltet danach alle
+    /// Ausgänge wieder aus.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
+    ///
+    /// sim.test_random();
+    /// ```
+    pub fn test_random(&mut self) -> Result<()> {
+        // Alten Stand speichern
+        let old_state = self.data;
+
+        self.data =  match self.register_type {
+            ShiftRegisterType::LED => { ::rand::thread_rng().gen_range(1, 25u64) }
+            ShiftRegisterType::RELAIS => { ::rand::thread_rng().gen_range(1, 17u64) }
+            ShiftRegisterType::Simulation => { ::rand::thread_rng().gen_range(1, u64::max_value()) }
+        };
+
         try!(self.shift_out());
         thread::sleep(Duration::new(1, 0));
         try!(self.reset());
