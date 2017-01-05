@@ -10,6 +10,7 @@ error_chain! {
     // This section can be empty.
     foreign_links {
         Fmt(::std::fmt::Error);
+        Gpio(::sysfs_gpio::Error) #[cfg(unix)];
         Io(::std::io::Error) #[cfg(unix)];
         SerdeJson(::serde_json::Error);
     }
