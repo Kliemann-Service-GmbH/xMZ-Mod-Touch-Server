@@ -18,7 +18,7 @@ pub fn call<C: AsRef<str>>(command: C) -> Result<()>
             if status.success() {
                 Ok(())
             } else {
-                Err("System Commando failed!".into())
+                Err("System Command failed!".into())
             }
         }
         Err(err) => return Err(err.into()),

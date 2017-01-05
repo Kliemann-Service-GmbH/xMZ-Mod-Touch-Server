@@ -10,26 +10,28 @@
 #![recursion_limit = "1024"]
 #![feature(proc_macro)]
 
-#[macro_use]
-extern crate error_chain;
-#[macro_use]
-extern crate serde_derive;
+#[macro_use] extern crate error_chain;
+#[macro_use] extern crate serde_derive;
 extern crate serde_json;
+extern crate sysfs_gpio;
 
 // FIXME: Öffentliche API überdenken, nicht nötige `pub` entfernen
 pub mod alarmgruppe;
+pub mod co_no2_kombisensor;
 pub mod configuration;
 pub mod errors;
 pub mod server;
+pub mod shift_register;
 pub mod system_command;
-pub mod co_no2_kombisensor;
 
 // FIXME: Refactor alle unnötigen glob reexports, zu expliziten ones.
 pub use self::alarmgruppe::*;
+pub use self::co_no2_kombisensor::*;
 pub use self::configuration::Configuration;
 pub use self::errors::*;
 pub use self::server::*;
-pub use self::co_no2_kombisensor::*;
+pub use self::shift_register::*;
+
 use errors::*;
 use std::sync::{Arc, Mutex};
 
@@ -49,7 +51,6 @@ fn umount_boot() -> Result<()> {
 
     Ok(())
 }
-
 
 /// Diese Funktion liest die Konfigurationsdatei ein, je nach Umgebung
 ///
@@ -71,7 +72,15 @@ fn read_config_file() -> Result<String> {
     {
         println!("Produktiv System");
         try!(mount_boot());
-        config_file = try!(system_command::read_in("/boot/xMZ-Mod-Touch.json"));
+        // Hier kann nicht einfach ein try!(system_command::read_in(..)) angewannt werden,
+        // da
+        config_file = match system_command::read_in("/boot/xMZ-Mod-Touch.json") {
+            Ok(config_file) => config_file,
+            Err(_) => {
+                try!(umount_boot());
+                String::new()
+            },
+        };
         try!(umount_boot());
     }
 
@@ -91,8 +100,7 @@ pub fn run() -> Result<()> {
         let mut kombisensors = kombisensors.lock().unwrap();
         for kombisensor in kombisensors.iter_mut() {
             let sensor1 = kombisensor.get_sensor_mut(0)?;
-
-            println!("{:?}", sensor1.get_adc_value());
+            println!("1. Messzelle; adc_value: {:?}", sensor1.get_adc_value());
         }
     }
 
