@@ -244,8 +244,8 @@ impl ShiftRegister {
         let old_state = self.data;
 
         self.data =  match self.register_type {
-            ShiftRegisterType::LED => { ::rand::thread_rng().gen_range(1, 25u64) }
-            ShiftRegisterType::RELAIS => { ::rand::thread_rng().gen_range(1, 17u64) }
+            ShiftRegisterType::LED => { ::rand::thread_rng().gen_range(1, 16777215u64) } // 1 bis 0b11111111_11111111_11111111
+            ShiftRegisterType::RELAIS => { ::rand::thread_rng().gen_range(1, 65535u64) } // 1 bis 0b11111111_11111111
             ShiftRegisterType::Simulation => { ::rand::thread_rng().gen_range(1, u64::max_value()) }
         };
 
