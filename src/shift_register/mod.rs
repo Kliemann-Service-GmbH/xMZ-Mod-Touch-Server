@@ -242,17 +242,11 @@ impl ShiftRegister {
     pub fn test_random(&mut self) -> Result<()> {
         // Alten Stand speichern
         let old_state = self.data;
-
-        self.data =  match self.register_type {
-            ShiftRegisterType::LED => { ::rand::thread_rng().gen_range(1, 16777215u64) } // 1 bis 0b11111111_11111111_11111111
-            ShiftRegisterType::RELAIS => { ::rand::thread_rng().gen_range(1, 65535u64) } // 1 bis 0b11111111_11111111
-            ShiftRegisterType::Simulation => { ::rand::thread_rng().gen_range(1, u64::max_value()) }
-        };
-
+        // Buffer mit Zufallsdaten füllen
+        self.data =  ::rand::thread_rng().gen_range(1, u64::max_value());
         try!(self.shift_out());
         thread::sleep(Duration::new(1, 0));
         try!(self.reset());
-
         // alten Stand wieder herstellen
         self.data = old_state;
         try!(self.shift_out());

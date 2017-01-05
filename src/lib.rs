@@ -34,7 +34,6 @@ pub use self::server::*;
 pub use self::shift_register::*;
 
 use errors::*;
-use std::sync::{Arc, Mutex};
 
 
 /// Mounted die erste Partition der SDCard nach /boot
@@ -61,7 +60,7 @@ fn umount_boot() -> Result<()> {
 /// in diesem wird zunächste /boot gemounted, anschließend die Konfigurationsdatei eingelesen
 /// und zum Schluss /boot umounted.
 #[allow(unused_assignments)]
-fn read_config_file() -> Result<String> {
+pub fn read_config_file() -> Result<String> {
     let mut config_file = String::new();
 
     #[cfg(feature = "development")]
@@ -86,24 +85,4 @@ fn read_config_file() -> Result<String> {
     }
 
     Ok(config_file)
-}
-
-/// Einsprungpunkt in die Lib
-pub fn run() -> Result<()> {
-    let config_file = try!(read_config_file());
-
-    let configuration = try!(Configuration::from_config(config_file));
-
-    let kombisensors: Arc<Mutex<Vec<Kombisensor>>> = Arc::new(Mutex::new(configuration.get_kombisensors()));
-
-    let kombisensors = kombisensors.clone();
-    {
-        let mut kombisensors = kombisensors.lock().unwrap();
-        for kombisensor in kombisensors.iter_mut() {
-            let sensor1 = kombisensor.get_sensor_mut(0)?;
-            println!("1. Messzelle; adc_value: {:?}", sensor1.get_adc_value());
-        }
-    }
-
-    Ok(())
 }
