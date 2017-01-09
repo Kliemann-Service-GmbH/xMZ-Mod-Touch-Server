@@ -1,10 +1,9 @@
-/// Dieses Beispiel dient auch dazu eine valide Konfiguration aus den einzelenen Modulen der
-/// Software zu erstellen.
+/// Dieses Beispiel dient zum Erstellen einer validen Konfigurationsdatei.
 ///
-/// Hier wird eine Konfiguration erstellt. Die Kombisensoren werden wie der Server von Hand
-/// initalisiert, anschließend wird das Configuration Objekt in JSON kodiert in
-/// eine Datei (Configuration.json) geschrieben.
+/// Dazu wird eine Server Instanz erzeugt und konfiguriert. Anschließend wird der
+/// Server in das Json Format serialisiert und in eine Text Datei gespeichert.
 
+extern crate serde_json;
 extern crate xmz_server;
 
 use std::fs::File;
@@ -13,13 +12,11 @@ use xmz_server::*;
 
 
 fn run() -> Result<()> {
-    let configuration = Configuration {
-        server: Server::new(),
-    };
-
-    let configuration_json = try!(configuration.to_json());
+    let server = Server::new();
+    let server_str = try!(serde_json::to_string_pretty(&server));
     let mut f = try!(File::create("Configuration.json"));
-    try!(f.write(configuration_json.as_bytes()));
+
+    try!(f.write(server_str.as_bytes()));
 
     Ok(())
 }

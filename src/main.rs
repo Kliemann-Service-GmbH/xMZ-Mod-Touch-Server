@@ -1,3 +1,4 @@
+extern crate serde_json;
 extern crate xmz_server;
 
 #[allow(unused_imports)]
@@ -7,8 +8,10 @@ use xmz_server::*;
 
 
 fn run() -> Result<()> {
-    let config_file = try!(read_config_file());
-    let _configuration = try!(Configuration::from_config(config_file));
+    let config_file = try!(configuration::read_config_file());
+    let server: Server = try!(serde_json::from_str(&config_file));
+
+    println!("{:#?}", server);
 
 
     Ok(())
