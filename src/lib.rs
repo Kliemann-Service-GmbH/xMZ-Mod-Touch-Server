@@ -36,6 +36,7 @@ pub use self::server::*;
 pub use self::shift_register::*;
 pub use self::zone::*;
 
+#[allow(unused_imports)]
 use errors::*;
 
 

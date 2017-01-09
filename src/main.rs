@@ -1,5 +1,6 @@
 extern crate xmz_server;
 
+#[allow(unused_imports)]
 use std::sync::{Arc, Mutex};
 use xmz_server::*;
 
@@ -7,7 +8,7 @@ use xmz_server::*;
 
 fn run() -> Result<()> {
     let config_file = try!(read_config_file());
-    let configuration = try!(Configuration::from_config(config_file));
+    let _configuration = try!(Configuration::from_config(config_file));
 
 
     Ok(())

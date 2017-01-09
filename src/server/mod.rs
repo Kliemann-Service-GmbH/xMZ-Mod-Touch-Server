@@ -1,6 +1,6 @@
-use errors::*;
+// use errors::*;
 use shift_register::{ShiftRegister, ShiftRegisterType};
-use co_no2_kombisensor::{Sensor, SensorType, Kombisensor};
+use co_no2_kombisensor::{Kombisensor};
 use zone::{Zone, ZoneType};
 
 
@@ -38,7 +38,11 @@ impl Default for Server {
 }
 
 impl Server {
+    /// Erzeugt eine neue Server Instanz
+    ///
     pub fn new() -> Self {
         Server { ..Default::default() }
     }
+
+
 }
