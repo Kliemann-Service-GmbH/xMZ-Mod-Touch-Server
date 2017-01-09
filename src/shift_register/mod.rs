@@ -5,21 +5,33 @@ use std::time::Duration;
 use sysfs_gpio::{Direction, Pin};
 
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum ShiftRegisterType {
     LED,
     RELAIS,
     Simulation,
 }
 
+#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ShiftRegister {
     register_type: ShiftRegisterType,
+    #[serde(skip_serializing)]
+    #[serde(skip_deserializing)]
     pub oe_pin: Option<Pin>,
+    #[serde(skip_serializing)]
+    #[serde(skip_deserializing)]
     pub ds_pin: Option<Pin>,
+    #[serde(skip_serializing)]
+    #[serde(skip_deserializing)]
     pub clock_pin: Option<Pin>,
+    #[serde(skip_serializing)]
+    #[serde(skip_deserializing)]
     pub latch_pin: Option<Pin>,
     pub data: u64,
 }
+
 
 impl ShiftRegister {
     /// Erzeugt ein neuen Shift Register

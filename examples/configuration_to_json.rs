@@ -14,13 +14,7 @@ use xmz_server::*;
 
 fn run() -> Result<()> {
     let configuration = Configuration {
-        server: Server { serial_interface: "/dev/ttyUSB0".to_string(), baud: 9600 },
-        kombisensors: vec![
-            Kombisensor::new(),
-            Kombisensor::new(),
-            Kombisensor::new(),
-            Kombisensor::new(),
-        ],
+        server: Server::new(),
     };
 
     let configuration_json = try!(configuration.to_json());
