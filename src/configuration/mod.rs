@@ -2,63 +2,55 @@
 //!
 //!
 use errors::*;
-use serde_json;
-use server::Server;
+use system_command;
 
+/// Mounted die erste Partition der SDCard nach /boot
+#[allow(dead_code)]
+fn mount_boot() -> Result<()> {
+    system_command::call("mount /dev/mmcblk0p1 /boot")?;
 
-/// Representiert die Globale Konfigurationsdatei des Servers
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Configuration {
-    #[serde(default)]
-    pub server: Server,
+    Ok(())
 }
 
-impl Default for Configuration {
-    fn default() -> Self {
-        Configuration {
-            server: Server::new(),
-        }
-    }
+/// Unmount /boot
+#[allow(dead_code)]
+fn umount_boot() -> Result<()> {
+    system_command::call("umount /boot")?;
+
+    Ok(())
 }
 
-/// Configuration des Servers
+/// Diese Funktion liest die Konfigurationsdatei ein, je nach Umgebung
 ///
-/// Die Konfiguration wird nur aus der JSON Datei generiert. **Deshalb ist eine `new()` Funktion
-/// nicht nötig.**
-/// Für ein Beispiel einer manuellen Initalisierung siehe `examples/configuration_to_json.rs`
-impl Configuration {
-    /// Erzeugt eine Configuration Datenstructur aus einem JSON Codierten String
-    ///
-    /// Der String wird im Normalfall aus eine .json Datei gebildet.
-    pub fn from_config(config: String) -> Result<Configuration> {
-        let c = try!(serde_json::from_str(&config));
+/// Entweder wird das programm im `development` Modus aufgerufen, hier wird die Konfigurationsdatei
+/// lokal gesucht und gelesen.
+/// Oder aber das Programm wird im `produktiv` Modus (not(feature = "development")) ausgeführt,
+/// in diesem wird zunächste /boot gemounted, anschließend die Konfigurationsdatei eingelesen
+/// und zum Schluss /boot umounted.
+#[allow(unused_assignments)]
+pub fn read_config_file() -> Result<String> {
+    let mut config_file = String::new();
 
-        Ok(c)
+    #[cfg(feature = "development")]
+    {
+        println!("Development System, Konfiguration einlesen.");
+        config_file = try!(system_command::read_in("xMZ-Mod-Touch.json"));
+    }
+    #[cfg(not(feature = "development"))]
+    {
+        println!("Produktiv System, Konfiguration einlesen.");
+        try!(mount_boot());
+        // Hier kann nicht einfach ein try!(system_command::read_in(..)) angewannt werden,
+        // da
+        config_file = match system_command::read_in("/boot/xMZ-Mod-Touch.json") {
+            Ok(config_file) => config_file,
+            Err(_) => {
+                try!(umount_boot());
+                String::new()
+            },
+        };
+        try!(umount_boot());
     }
 
-    /// Configuration als JSON codierterts String Result
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let configuration = Configuration {
-    ///     server: Server::new(),
-    /// };
-    ///
-    /// println!("{}", configuration.to_json().unwrap());
-    /// ```
-    pub fn to_json(&self) -> Result<String> {
-        let s: String = try!(serde_json::to_string_pretty(self));
-
-        Ok(s)
-    }
-
-    // Getter
-
-    /// Liefert die Server Konfiguration
-    pub fn get_server(&self) -> Server {
-        self.server.clone()
-    }
+    Ok(config_file)
 }

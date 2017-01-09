@@ -5,8 +5,8 @@ use std::io::prelude::*;
 use std::process::Command;
 
 
-/// Führt den als Parameter `command` übergebenen Befehl in einer `sh -c` aus, oder wirft ein
-/// `XMZError::SystemCommandFailed` Fehler aus.
+/// Führt den als Parameter `command` übergebenen Befehl in einer `sh -c` aus,
+/// oder wirft ein Fehler aus.
 pub fn call<C: AsRef<str>>(command: C) -> Result<()>
     where C: std::convert::AsRef<std::ffi::OsStr>
 {

@@ -1,6 +1,6 @@
+use co_no2_kombisensor::{Kombisensor};
 use errors::*;
 use shift_register::{ShiftRegister, ShiftRegisterType};
-use co_no2_kombisensor::{Kombisensor};
 use zone::{Zone, ZoneType};
 
 
@@ -23,7 +23,9 @@ impl Default for Server {
         Server {
             leds: ShiftRegister::new(ShiftRegisterType::LED),
             relais: ShiftRegister::new(ShiftRegisterType::RELAIS),
-            kombisensors: vec![],
+            kombisensors: vec![
+                Kombisensor::new(),
+            ],
             zones: vec![
                 Zone::new(ZoneType::STOERUNG),
                 Zone::new(ZoneType::SCHWELLWERT),
