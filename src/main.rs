@@ -9,9 +9,9 @@ use xmz_server::*;
 
 fn run() -> Result<()> {
     let config_file = try!(configuration::read_config_file());
-    let server: Server = try!(serde_json::from_str(&config_file));
+    let mut server: Server = try!(serde_json::from_str(&config_file));
 
-    println!("{:#?}", server);
+    try!(server.init());
 
 
     Ok(())
