@@ -2,7 +2,6 @@
 //!
 //!
 use errors::*;
-use co_no2_kombisensor::Kombisensor;
 use serde_json;
 use server::Server;
 
@@ -12,15 +11,12 @@ use server::Server;
 pub struct Configuration {
     #[serde(default)]
     pub server: Server,
-    #[serde(default)]
-    pub kombisensors: Vec<Kombisensor>,
 }
 
 impl Default for Configuration {
     fn default() -> Self {
         Configuration {
             server: Server::new(),
-            kombisensors: vec![],
         }
     }
 }
@@ -49,7 +45,6 @@ impl Configuration {
     ///
     /// let configuration = Configuration {
     ///     server: Server::new(),
-    ///     kombisensors: vec![Kombisensor::new(), Kombisensor::new()]
     /// };
     ///
     /// println!("{}", configuration.to_json().unwrap());
@@ -66,10 +61,4 @@ impl Configuration {
     pub fn get_server(&self) -> Server {
         self.server.clone()
     }
-
-    /// Liefert die Kombisensoren
-    pub fn get_kombisensors(&self) -> Vec<Kombisensor> {
-        self.kombisensors.clone()
-    }
-
 }

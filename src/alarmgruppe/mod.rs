@@ -1,4 +1,4 @@
-use errors::*;
+// use errors::*;
 
 
 #[derive(Debug, Eq, PartialEq)]
@@ -37,17 +37,17 @@ impl Alarmgruppe {
 
 }
 
-
+#[allow(unused_imports)]
 mod tests {
     use super::*;
 
     #[test]
     fn stoerung() {
-        let stoerung = Alarmgruppe::new(AlarmgruppenTyp::Stoerung);
+        let _stoerung = Alarmgruppe::new(AlarmgruppenTyp::Stoerung);
     }
 
     #[test]
     fn zone1() {
-        let zone1 = Alarmgruppe::new(AlarmgruppenTyp::Zone);
+        let _zone1 = Alarmgruppe::new(AlarmgruppenTyp::Zone);
     }
 }

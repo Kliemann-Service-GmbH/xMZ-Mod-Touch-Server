@@ -12,6 +12,7 @@
 
 #[macro_use] extern crate error_chain;
 #[macro_use] extern crate serde_derive;
+extern crate serde;
 extern crate serde_json;
 extern crate sysfs_gpio;
 extern crate rand;
@@ -24,6 +25,7 @@ pub mod errors;
 pub mod server;
 pub mod shift_register;
 pub mod system_command;
+pub mod zone;
 
 // FIXME: Refactor alle unnötigen glob reexports, zu expliziten ones.
 pub use self::alarmgruppe::*;
@@ -32,7 +34,9 @@ pub use self::configuration::Configuration;
 pub use self::errors::*;
 pub use self::server::*;
 pub use self::shift_register::*;
+pub use self::zone::*;
 
+#[allow(unused_imports)]
 use errors::*;
 
 

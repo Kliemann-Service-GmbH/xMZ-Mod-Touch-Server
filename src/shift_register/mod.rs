@@ -5,20 +5,36 @@ use std::time::Duration;
 use sysfs_gpio::{Direction, Pin};
 
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum ShiftRegisterType {
     LED,
     RELAIS,
     Simulation,
 }
 
+#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ShiftRegister {
     register_type: ShiftRegisterType,
-    pub oe_pin: Option<Pin>,
-    pub ds_pin: Option<Pin>,
-    pub clock_pin: Option<Pin>,
-    pub latch_pin: Option<Pin>,
+    pub oe_pin: Option<u64>,
+    pub ds_pin: Option<u64>,
+    pub clock_pin: Option<u64>,
+    pub latch_pin: Option<u64>,
     pub data: u64,
+}
+
+impl Default for ShiftRegister {
+    fn default() -> Self {
+        ShiftRegister {
+            register_type: ShiftRegisterType::Simulation,
+            oe_pin: None,
+            ds_pin: None,
+            clock_pin: None,
+            latch_pin: None,
+            data: 0,
+        }
+    }
 }
 
 impl ShiftRegister {
@@ -39,18 +55,18 @@ impl ShiftRegister {
         match register_type {
             ShiftRegisterType::LED => ShiftRegister {
                 register_type: register_type,
-                oe_pin: Some(Pin::new(276)),
-                ds_pin: Some(Pin::new(38)),
-                clock_pin: Some(Pin::new(44)),
-                latch_pin: Some(Pin::new(40)),
+                oe_pin: Some(276),
+                ds_pin: Some(38),
+                clock_pin: Some(44),
+                latch_pin: Some(40),
                 data: 0,
             },
             ShiftRegisterType::RELAIS => ShiftRegister {
                 register_type: register_type,
-                oe_pin: Some(Pin::new(277)),
-                ds_pin: Some(Pin::new(45)),
-                clock_pin: Some(Pin::new(39)),
-                latch_pin: Some(Pin::new(37)),
+                oe_pin: Some(277),
+                ds_pin: Some(45),
+                clock_pin: Some(39),
+                latch_pin: Some(37),
                 data: 0,
             },
             ShiftRegisterType::Simulation => ShiftRegister {
@@ -212,12 +228,11 @@ impl ShiftRegister {
     pub fn test(&mut self) -> Result<()> {
         // Alten Stand speichern
         let old_state = self.data;
-
+        // Buffer komplett mit Einsen füllen
         self.data = u64::max_value();
         try!(self.shift_out());
         thread::sleep(Duration::new(1, 0));
         try!(self.reset());
-
         // alten Stand wieder herstellen
         self.data = old_state;
         try!(self.shift_out());
@@ -258,10 +273,10 @@ impl ShiftRegister {
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
     fn export_pins(&self) -> Result<()> {
-        if let Some(ref oe_pin) = self.oe_pin { try!(oe_pin.export()) };
-        if let Some(ref ds_pin) = self.ds_pin { try!(ds_pin.export()) };
-        if let Some(ref clock_pin) = self.clock_pin { try!(clock_pin.export()) };
-        if let Some(ref latch_pin) = self.latch_pin { try!(latch_pin.export()) };
+        if let Some(oe_pin) = self.oe_pin { try!(Pin::new(oe_pin).export()) };
+        if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).export()) };
+        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).export()) };
+        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).export()) };
 
         Ok(())
     }
@@ -269,14 +284,14 @@ impl ShiftRegister {
     /// Schaltet die Pins in den OUTPUT Pin Modus
     ///
     fn set_pin_direction_output(&self) -> Result<()> {
-        if let Some(ref oe_pin) = self.oe_pin { try!(oe_pin.set_direction(Direction::Out)) };
-        if let Some(ref oe_pin) = self.oe_pin { try!(oe_pin.set_value(0)) }; // !OE pin low == Shift register enabled.
-        if let Some(ref ds_pin) = self.ds_pin { try!(ds_pin.set_direction(Direction::Out)) };
-        if let Some(ref ds_pin) = self.ds_pin { try!(ds_pin.set_value(0)) };
-        if let Some(ref clock_pin) = self.clock_pin { try!(clock_pin.set_direction(Direction::Out)) };
-        if let Some(ref clock_pin) = self.clock_pin { try!(clock_pin.set_value(0)) };
-        if let Some(ref latch_pin) = self.latch_pin { try!(latch_pin.set_direction(Direction::Out)) };
-        if let Some(ref latch_pin) = self.latch_pin { try!(latch_pin.set_value(0)) };
+        if let Some(oe_pin) = self.oe_pin { try!(Pin::new(oe_pin).set_direction(Direction::Out)) };
+        if let Some(oe_pin) = self.oe_pin { try!(Pin::new(oe_pin).set_value(0)) }; // !OE pin low == Shift register enabled.
+        if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).set_direction(Direction::Out)) };
+        if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).set_value(0)) };
+        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_direction(Direction::Out)) };
+        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(0)) };
+        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_direction(Direction::Out)) };
+        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(0)) };
 
         Ok(())
     }
@@ -284,16 +299,16 @@ impl ShiftRegister {
 
     /// Toogelt den Clock Pin high->low
     fn clock_in(&self) -> Result<()> {
-        if let Some(ref clock_pin) = self.clock_pin { try!(clock_pin.set_value(1)) };
-        if let Some(ref clock_pin) = self.clock_pin { try!(clock_pin.set_value(0)) };
+        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(1)) };
+        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(0)) };
 
         Ok(())
     }
 
     /// Toggelt den Latch Pin pin high->low,
     fn latch_out(&self) -> Result<()> {
-        if let Some(ref latch_pin) = self.latch_pin { try!(latch_pin.set_value(1)) };
-        if let Some(ref latch_pin) = self.latch_pin { try!(latch_pin.set_value(0)) };
+        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(1)) };
+        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(0)) };
 
         Ok(())
     }
@@ -308,8 +323,8 @@ impl ShiftRegister {
         // Daten einclocken
         for i in (0..64).rev() {
             match (self.data >> i) & 1 {
-                1 => { if let Some(ref ds_pin) = self.ds_pin { try!(ds_pin.set_value(1)) } },
-                _ => { if let Some(ref ds_pin) = self.ds_pin { try!(ds_pin.set_value(0)) } },
+                1 => { if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).set_value(1)) } },
+                _ => { if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).set_value(0)) } },
             }
             try!(self.clock_in());
         }
