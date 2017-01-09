@@ -1,0 +1,59 @@
+{
+  "leds": {
+    "register_type": "LED",
+    "data": 0
+  },
+  "relais": {
+    "register_type": "RELAIS",
+    "data": 0
+  },
+  "kombisensors": [
+    {
+      "version": "0.0.0",
+      "modbus_address": 247,
+      "sensors": [
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoNO2",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        },
+        {
+          "number": 0,
+          "adc_value": 0,
+          "min_value": 0,
+          "max_value": 0,
+          "adc_value_at_nullgas": 0,
+          "adc_value_at_messgas": 0,
+          "concentration_at_nullgas": 0,
+          "concentration_at_messgas": 0,
+          "sensor_type": "NemotoCO",
+          "si": "ppm",
+          "config": 0,
+          "error_count": 0
+        }
+      ]
+    }
+  ],
+  "zones": [
+    {
+      "zone_type": "STOERUNG"
+    },
+    {
+      "zone_type": "SCHWELLWERT"
+    }
+  ],
+  "modbus_serial_device": "/dev/ttyUSB1",
+  "modbus_baud": 9600,
+  "modbus_parity": "N",
+  "modbus_data_bit": 8,
+  "modbus_stop_bit": 1
+}
