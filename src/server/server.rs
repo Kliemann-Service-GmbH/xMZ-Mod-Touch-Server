@@ -64,8 +64,7 @@ impl Server {
     /// Default Konfiguration des Servers
     fn default_configuration(&mut self) -> Result<()> {
         try!(self.relais.set(1));
-        try!(self.leds.set(1));
-        try!(self.leds.set(3));
+        try!(self.leds.set(1)); // Power 
 
         Ok(())
     }
