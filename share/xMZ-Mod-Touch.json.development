@@ -51,7 +51,7 @@
       "zone_type": "SCHWELLWERT"
     }
   ],
-  "modbus_serial_device": "/dev/ttyUSB1",
+  "modbus_serial_device": "/dev/ttyUSB0",
   "modbus_baud": 9600,
   "modbus_parity": "N",
   "modbus_data_bit": 8,

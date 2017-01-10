@@ -1,6 +1,7 @@
 use co_no2_kombisensor::{Kombisensor};
 use errors::*;
 use shift_register::{ShiftRegister, ShiftRegisterType};
+use std::fs;
 use zone::{Zone, ZoneType};
 
 
@@ -61,10 +62,17 @@ impl Server {
         Ok(())
     }
 
+    pub fn update_sensors(&mut self) -> Result<()> {
+        try!(fs::metadata(&self.modbus_serial_device)
+            .chain_err(|| "Server's Modbus Serial Interface not found"));
+
+        Ok(())
+    }
+
     /// Default Konfiguration des Servers
     fn default_configuration(&mut self) -> Result<()> {
         try!(self.relais.set(1));
-        try!(self.leds.set(1)); // Power 
+        try!(self.leds.set(1)); // Power
 
         Ok(())
     }
