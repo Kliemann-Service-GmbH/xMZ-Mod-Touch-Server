@@ -7,6 +7,8 @@ rust:
 - nightly
 # after_success:
 #     - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy.sh
+
+# https://www.reddit.com/r/rust/comments/2p6zxy/heres_how_to_easily_deploy_doc_to_github_pages/
 after_success: |
     cargo doc \
     && echo '<meta http-equiv=refresh content=0;url=xmz_server/index.html>' > target/doc/index.html && \
