@@ -1,5 +1,6 @@
 use co_no2_kombisensor::{Kombisensor};
 use errors::*;
+use libmodbus_rs::modbus::Modbus;
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
 use zone::{Zone, ZoneType};
@@ -63,8 +64,17 @@ impl Server {
     }
 
     pub fn update_sensors(&mut self) -> Result<()> {
+        // Test ob das Serielle Interface existiert
+        // und ob die Berechtigungen für ein Zugriff ausreichen
         try!(fs::metadata(&self.modbus_serial_device)
             .chain_err(|| "Server's Modbus Serial Interface not found"));
+
+        // Modbus Kontext erzeugen
+        let mut modbus_context = Modbus::new_rtu(self.modbus_serial_device.as_ref(),
+                                    self.modbus_baud,
+                                    self.modbus_parity,
+                                    self.modbus_data_bit,
+                                    self.modbus_stop_bit);
 
         Ok(())
     }

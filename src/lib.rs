@@ -12,10 +12,11 @@
 
 #[macro_use] extern crate error_chain;
 #[macro_use] extern crate serde_derive;
-extern crate serde;
-extern crate serde_json;
-extern crate sysfs_gpio;
+extern crate libmodbus_rs;
 extern crate rand;
+extern crate serde_json;
+extern crate serde;
+extern crate sysfs_gpio;
 
 // FIXME: Öffentliche API überdenken, nicht nötige `pub` entfernen
 pub mod alarmgruppe;
