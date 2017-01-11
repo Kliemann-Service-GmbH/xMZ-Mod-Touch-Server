@@ -34,21 +34,45 @@ pub enum SI {
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Sensor {
+    #[serde(default)]
     number: u16,
     /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
+    #[serde(default)]
     adc_value: u16,
+    #[serde(default)]
     min_value: u16,
+    #[serde(default)]
     max_value: u16,
+    #[serde(default)]
     adc_value_at_nullgas: u16,
+    #[serde(default)]
     adc_value_at_messgas: u16,
+    #[serde(default)]
     concentration_at_nullgas: u32,
+    #[serde(default)]
     concentration_at_messgas: u32,
+    #[serde(default)]
     sensor_type: SensorType,
     /// SI Einheit des Sensors (ppm, % UEG, Vol %)
+    #[serde(default)]
     si: SI,
+    #[serde(default)]
     config: u16,
     /// Fehlerzähler, zZt. nicht in Firmware vorhanden
+    #[serde(default)]
     error_count: u32,
+}
+
+impl Default for SensorType {
+    fn default() -> Self {
+        SensorType::NemotoNO2
+    }
+}
+
+impl Default for SI {
+    fn default() -> Self {
+        SI::ppm
+    }
 }
 
 impl Default for Sensor {
@@ -254,6 +278,37 @@ impl Sensor {
     /// ```
     pub fn get_mv(&self) -> u16 {
         (5000 / 1024) * self.adc_value as u16
+    }
+
+    /// Erhöht den Fehlerzähler um eins
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_error_count(), 0);
+    /// sensor.error_count_inc();
+    /// assert_eq!(sensor.get_error_count(), 1);
+    /// ```
+    pub fn error_count_inc(&mut self) {
+        self.error_count += 1;
+    }
+
+    /// Setzt den Fehlerzähler des Sensors auf Null
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// sensor.error_count_inc();
+    /// assert_eq!(sensor.get_error_count(), 1);
+    /// sensor.error_count_reset();
+    /// assert_eq!(sensor.get_error_count(), 0);
+    /// ```
+    pub fn error_count_reset(&mut self) {
+        self.error_count = 0;
     }
 
     /// Berechnet die Gaskonzentration mit einer linearen Funktion

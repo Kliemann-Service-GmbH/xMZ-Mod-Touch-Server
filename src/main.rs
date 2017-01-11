@@ -21,15 +21,16 @@ fn run() -> Result<()> {
 
     loop {
         let server_output_sensors = server.clone();
-        let _ = thread::spawn(move || {
+        let thread_output_sensors = thread::spawn(move || {
             let _ = server_output_sensors.lock().map(|server| {
                 for kombisensor in server.get_kombisensors().iter() {
+                    println!("Sensor: {}", kombisensor.get_modbus_slave_id());
                     for sensor in kombisensor.get_sensors().iter() {
-                        println!("{:?}", sensor.get_adc_value());
+                        println!(">> {} {}", sensor.get_sensor_type(), sensor.get_adc_value());
                     }
                 }
             });
-        }).join();
+        });
 
         // 1. Thread zum Update der Sensoren via modbus_stop_bit
         //
@@ -37,13 +38,16 @@ fn run() -> Result<()> {
         // hat dieser Thread einen Namen `thread_update_sensors` und desshalb wird der Thread
         // am Ende gejoined `thread_update_sensors.join()`
         let server_update_sensors = server.clone();
-        let _ = thread::spawn(move || {
+        let thread_update_sensors = thread::spawn(move || {
             let _ = server_update_sensors.lock().map(|mut server| {
                 let _ = server.update_sensors()
                     .map_err(|err| println!("error: {}", err));
             });
-            thread::sleep(Duration::from_millis(1000));
-        }).join();
+            // thread::sleep(Duration::from_millis(1000));
+        });
+
+        thread_output_sensors.join();
+        thread_update_sensors.join();
     }
 }
 
