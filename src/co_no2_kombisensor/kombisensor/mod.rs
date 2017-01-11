@@ -89,7 +89,7 @@ impl Kombisensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let kombisensor = Kombisensor::new();
+    /// let mut kombisensor = Kombisensor::new();
     /// assert_eq!(kombisensor.get_error_count(), 0);
     /// kombisensor.inc_error_count();
     /// assert_eq!(kombisensor.get_error_count(), 1);
@@ -104,7 +104,7 @@ impl Kombisensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let kombisensor = Kombisensor::new();
+    /// let mut kombisensor = Kombisensor::new();
     /// kombisensor.inc_error_count();
     /// assert_eq!(kombisensor.get_error_count(), 1);
     /// kombisensor.reset_error_count();
