@@ -113,6 +113,18 @@ impl Server {
         Ok(())
     }
 
+    pub fn update_sensors_test(&mut self) -> Result<()> {
+        for kombisensor in self.get_kombisensors_mut().iter_mut() {
+            if kombisensor.get_modbus_slave_id() == 6 {
+                // return Err("Modbus Adresse geht nicht".into());
+            } else {
+                println!("Kombisensor: {}", kombisensor.get_modbus_slave_id());
+            }
+        }
+        Ok(())
+    }
+
+    /// FIXME: Refactor das!
     /// Update der Sensor Datenstruktur via Modbus
     ///
     /// # Examples
@@ -135,35 +147,31 @@ impl Server {
                                     self.modbus_stop_bit);
 
         for kombisensor in self.get_kombisensors_mut().iter_mut() {
-            // Modbus Adresse setzen
-            try!(modbus_context.set_slave(kombisensor.get_modbus_slave_id() as i32));
-            // Modbus Debug wenn das Programm im Debug Mode läuft
-            if log_enabled!(LogLevel::Debug) {
-                try!(modbus_context.set_debug(true));
-            }
-            // try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
-            let mut tab_reg: Vec<u16> = Vec::new();
-
-            for sensor in kombisensor.get_sensors_mut().iter_mut() {
-                if sensor.get_error_count() <= 5 {
-                    match modbus_context.connect() {
-                        Ok(_) => {
-                            info!("Fehlerzähler des Sensors wird wieder auf Null gesetzt.");
-                            sensor.error_count_reset();
-                            try!(modbus_context.read_registers(0 as i32, 30).map(|tab_reg| {
-                                // tab_reg.get(0).map(|var| sensor.set_adc_value(Some(*var)));
-                                println!("{:?}", tab_reg);
-                            }));
-                            modbus_context.close();
-                        }
-                        Err(err) => {
-                            debug!("modbus_connect() fehlgeschlagen, erhöhe Sensor.error_count: {} um eins", sensor.get_error_count());
-                            sensor.error_count_inc();
-                        }
-                    }
-                } else {
-                    debug!("Der Fehlerzähler des Sensors (error_count) ist gleich 5. Es wird kein weiterer `modbus_connect()` versucht.");
+            if kombisensor.get_error_count() < 5 {
+                // Modbus Adresse setzen
+                try!(modbus_context.set_slave(kombisensor.get_modbus_slave_id() as i32)
+                    .chain_err(|| format!("Modbus Address: {}, invalid", kombisensor.get_modbus_slave_id())));
+                // Modbus Debug wenn das Programm im Debug Mode läuft
+                if log_enabled!(LogLevel::Debug) {
+                    try!(modbus_context.set_debug(true));
                 }
+                // try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
+                let mut tab_reg: Vec<u16> = Vec::new();
+
+                modbus_context.connect();
+                let tab_reg = modbus_context.read_registers(0 as i32, 30)
+                    .map_err(|err| {
+                        warn!("Kombisensor nicht erreichbar, Fehlerzähler um Eins erhöht.");
+                        kombisensor.inc_error_count();
+                    })
+                    .map(|tab_reg| {
+                        // Fehlerzähler wieder auf Null setzen
+                        info!("Fehlerzähler wieder auf Null gesetzt.");
+                        kombisensor.reset_error_count();
+                    });
+                modbus_context.close();
+            } else {
+                debug!("To many Errors while try reaching kombisensor: {}", kombisensor.get_modbus_slave_id());
             }
         }
 

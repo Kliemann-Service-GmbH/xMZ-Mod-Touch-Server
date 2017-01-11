@@ -12,6 +12,8 @@ pub struct Kombisensor {
     modbus_slave_id: u8,
     #[serde(default)]
     sensors: Vec<Sensor>,
+    #[serde(default)]
+    error_count: u64,
 }
 
 impl Default for Kombisensor {
@@ -20,6 +22,7 @@ impl Default for Kombisensor {
             version: "0.0.0".to_string(),
             modbus_slave_id: 247,
             sensors: vec![Sensor::new_with_type(SensorType::NemotoNO2), Sensor::new_with_type(SensorType::NemotoCO)],
+            error_count: 0,
         }
     }
 }
@@ -65,6 +68,50 @@ impl Kombisensor {
     /// ```
     pub fn get_sensors_mut(&mut self) -> &mut Vec<Sensor> {
         self.sensors.as_mut()
+    }
+
+    /// Liefert den Fehlerzähler zurück
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert_eq!(kombisensor.get_error_count(), 0);
+    /// ```
+    pub fn get_error_count(&self) -> u64 {
+        self.error_count
+    }
+
+    /// Erhöht den Fehlerzähler um Eins
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert_eq!(kombisensor.get_error_count(), 0);
+    /// kombisensor.inc_error_count();
+    /// assert_eq!(kombisensor.get_error_count(), 1);
+    /// ```
+    pub fn inc_error_count(&mut self) {
+        self.error_count += 1;
+    }
+
+    /// Setzt den Fehlerzähler auf Null zurück
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// kombisensor.inc_error_count();
+    /// assert_eq!(kombisensor.get_error_count(), 1);
+    /// kombisensor.reset_error_count();
+    /// assert_eq!(kombisensor.get_error_count(), 0);
+    /// ```
+    pub fn reset_error_count(&mut self) {
+        self.error_count = 0;
     }
 
 }

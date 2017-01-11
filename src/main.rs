@@ -24,12 +24,15 @@ fn run() -> Result<()> {
         let thread_output_sensors = thread::spawn(move || {
             let _ = server_output_sensors.lock().map(|server| {
                 for kombisensor in server.get_kombisensors().iter() {
-                    println!("Sensor: {}", kombisensor.get_modbus_slave_id());
                     for sensor in kombisensor.get_sensors().iter() {
-                        println!(">> {} {}", sensor.get_sensor_type(), sensor.get_adc_value());
+                        println!("{} {} {}", kombisensor.get_modbus_slave_id(),
+                                            sensor.get_sensor_type(),
+                                            sensor.get_adc_value()
+                        );
                     }
                 }
             });
+            thread::sleep(Duration::from_millis(1000));
         });
 
         // 1. Thread zum Update der Sensoren via modbus_stop_bit
@@ -41,7 +44,9 @@ fn run() -> Result<()> {
         let thread_update_sensors = thread::spawn(move || {
             let _ = server_update_sensors.lock().map(|mut server| {
                 let _ = server.update_sensors()
-                    .map_err(|err| println!("error: {}", err));
+                    .map_err(|err| {
+                        error!("error: {}", err);
+                    });
             });
             // thread::sleep(Duration::from_millis(1000));
         });

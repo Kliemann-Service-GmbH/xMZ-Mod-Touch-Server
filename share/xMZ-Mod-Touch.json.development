@@ -53,7 +53,7 @@
       "sensors": [{}, {}]
     },
     {
-      "modbus_slave_id": 28,
+      "modbus_slave_id": 46,
       "sensors": [{}, {}]
     }
   ],

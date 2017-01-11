@@ -58,9 +58,6 @@ pub struct Sensor {
     si: SI,
     #[serde(default)]
     config: u16,
-    /// Fehlerzähler, zZt. nicht in Firmware vorhanden
-    #[serde(default)]
-    error_count: u32,
 }
 
 impl Default for SensorType {
@@ -89,7 +86,6 @@ impl Default for Sensor {
             sensor_type: SensorType::NemotoNO2,
             si: SI::ppm,
             config: 0,
-            error_count: 0,
         }
     }
 }
@@ -257,17 +253,6 @@ impl Sensor {
         self.config
     }
 
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let sensor = Sensor::new();
-    /// ```
-    pub fn get_error_count(&self) -> u32 {
-        self.error_count
-    }
-
     /// Liefert den berechneten milli Volt Wert
     ///
     /// # Examples
@@ -278,37 +263,6 @@ impl Sensor {
     /// ```
     pub fn get_mv(&self) -> u16 {
         (5000 / 1024) * self.adc_value as u16
-    }
-
-    /// Erhöht den Fehlerzähler um eins
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_error_count(), 0);
-    /// sensor.error_count_inc();
-    /// assert_eq!(sensor.get_error_count(), 1);
-    /// ```
-    pub fn error_count_inc(&mut self) {
-        self.error_count += 1;
-    }
-
-    /// Setzt den Fehlerzähler des Sensors auf Null
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// sensor.error_count_inc();
-    /// assert_eq!(sensor.get_error_count(), 1);
-    /// sensor.error_count_reset();
-    /// assert_eq!(sensor.get_error_count(), 0);
-    /// ```
-    pub fn error_count_reset(&mut self) {
-        self.error_count = 0;
     }
 
     /// Berechnet die Gaskonzentration mit einer linearen Funktion
