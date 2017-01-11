@@ -1,3 +1,5 @@
+#[macro_use] extern crate log;
+extern crate env_logger;
 extern crate serde_json;
 extern crate xmz_server;
 
@@ -18,28 +20,36 @@ fn run() -> Result<()> {
     let server = Arc::new(Mutex::new(server));
 
     loop {
-        let server_update_sensors = server.clone();
-        let server_request_handler = server.clone();
+        let server_output_sensors = server.clone();
+        let _ = thread::spawn(move || {
+            let _ = server_output_sensors.lock().map(|server| {
+                for kombisensor in server.get_kombisensors().iter() {
+                    for sensor in kombisensor.get_sensors().iter() {
+                        println!("{:?}", sensor.get_adc_value());
+                    }
+                }
+            });
+        }).join();
 
         // 1. Thread zum Update der Sensoren via modbus_stop_bit
         //
         // Dieser Thread muss mindestens einmal durchlauden werden pro loop Zyklus, desshalb
         // hat dieser Thread einen Namen `thread_update_sensors` und desshalb wird der Thread
         // am Ende gejoined `thread_update_sensors.join()`
-        let thread_update_sensors = thread::spawn(move || {
-            server_update_sensors.lock().map(|mut server| {
-                server.update_sensors()
-                    .map(|mut server| println!("thread_update_sensors: {:#?}", server))
+        let server_update_sensors = server.clone();
+        let _ = thread::spawn(move || {
+            let _ = server_update_sensors.lock().map(|mut server| {
+                let _ = server.update_sensors()
                     .map_err(|err| println!("error: {}", err));
             });
-            thread::sleep_ms(100);
+            thread::sleep(Duration::from_millis(1000));
         }).join();
     }
-
-    Ok(())
 }
 
 fn main() {
+    env_logger::init().unwrap();
+
     println!("xMZ-Mod-Touch-Server Version: {}\n",
              env!("CARGO_PKG_VERSION"));
 

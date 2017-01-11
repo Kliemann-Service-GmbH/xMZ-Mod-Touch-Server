@@ -13,6 +13,10 @@ pub enum SensorType {
     /// Nemote CO Messzelle, EC NAP-505
     /// Datenblatt: https://www.nemoto.co.jp/nse/sensor-search/use/gas-alarm/nap-505.html?lang=en
     NemotoCO,
+    /// Sensor Type für Simmulation eines NO2 Sensors und Testläufe
+    SimmulationNO2,
+    /// Sensor Type für Simmulation eines CO Sensors und Testläufe
+    SimmulationCO,
 }
 
 /// SI Einheit des zu messenden Mediums
@@ -69,79 +73,185 @@ impl Default for Sensor {
 impl Sensor {
     /// Erzeugt eine neue Sensor Instanz
     ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn new() -> Self {
         Sensor { ..Default::default() }
     }
 
-    /// Erzeugt eine neue Sensor Instanz
+    /// Erzeugt eine neue Sensor Instanz, eines bestimmten Sensor Typs
     ///
     /// # Attributes
     /// * `sensor_type`     - `SensorType` Type der Messzelle
     ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// ```
     pub fn new_with_type(sensor_type: SensorType) -> Self {
         Sensor { sensor_type: sensor_type, ..Default::default() }
     }
 
-    // Public Attribute
-    // Setter
-
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_adc_value(), 0);
+    /// sensor.set_adc_value(100);
+    /// assert_eq!(sensor.get_adc_value(), 100);
+    /// ```
     pub fn set_adc_value(&mut self, value: u16) {
         self.adc_value = value
     }
 
-    // Getter
-
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_number(&self) -> u16 {
         self.number
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_adc_value(&self) -> u16 {
         self.adc_value
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_min_value(&self) -> u16 {
         self.min_value
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_max_value(&self) -> u16 {
         self.max_value
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_adc_value_at_nullgas(&self) -> u16 {
         self.adc_value_at_nullgas
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_adc_value_at_messgas(&self) -> u16 {
         self.adc_value_at_messgas
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_concentration_at_nullgas(&self) -> u32 {
         self.concentration_at_nullgas
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_concentration_at_messgas(&self) -> u32 {
         self.concentration_at_messgas
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_sensor_type(&self) -> SensorType {
         self.sensor_type.clone()
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_si(&self) -> SI {
         self.si.clone()
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_config(&self) -> u16 {
         self.config
     }
 
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_error_count(&self) -> u32 {
         self.error_count
     }
 
-    /// MISC
-
     /// Liefert den berechneten milli Volt Wert
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let sensor = Sensor::new();
+    /// ```
     pub fn get_mv(&self) -> u16 {
         (5000 / 1024) * self.adc_value as u16
     }
@@ -153,7 +263,7 @@ impl Sensor {
     /// ```no_run
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
+    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
     /// assert_eq!(sensor.get_concentration(), 0.0);
     /// ```
     pub fn get_concentration(&self) -> f64 {
@@ -179,7 +289,7 @@ impl Sensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
+    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
     /// assert_eq!(sensor.is_enabled(), false);
     /// ```
     #[allow(dead_code)]
@@ -191,15 +301,21 @@ impl Sensor {
     }
 }
 
+/// String Format des Sensor Typen
+///
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             SensorType::NemotoNO2 => write!(f, "Nemoto™ NO2"),
             SensorType::NemotoCO => write!(f, "Nemoto™ CO"),
+            SensorType::SimmulationNO2 => write!(f, "Simmulation NO2"),
+            SensorType::SimmulationCO => write!(f, "Simmulation CO"),
         }
     }
 }
 
+/// String Format der SI Einheit
+///
 impl fmt::Display for SI {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {

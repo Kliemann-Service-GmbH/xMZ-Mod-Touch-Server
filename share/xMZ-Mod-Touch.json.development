@@ -10,7 +10,7 @@
   "kombisensors": [
     {
       "version": "0.0.0",
-      "modbus_address": 247,
+      "modbus_slave_id": 247,
       "sensors": [
         {
           "number": 0,

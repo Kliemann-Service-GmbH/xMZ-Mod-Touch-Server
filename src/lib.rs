@@ -12,7 +12,9 @@
 
 #[macro_use] extern crate error_chain;
 #[macro_use] extern crate serde_derive;
+extern crate env_logger;
 extern crate libmodbus_rs;
+#[macro_use] extern crate log;
 extern crate rand;
 extern crate serde_json;
 extern crate serde;
