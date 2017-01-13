@@ -4,16 +4,17 @@ use co_no2_kombisensor::sensor::{Sensor, SensorType};
 // use errors::*;
 
 /// Platine des CO-NO2-Kombisensor-Mod
-#[derive(Clone)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Debug)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub struct Kombisensor {
     #[serde(default)]
-    version: String,
-    modbus_slave_id: u8,
+    pub version: String,
+    pub modbus_slave_id: u8,
     #[serde(default)]
-    sensors: Vec<Sensor>,
+    pub sensors: Vec<Sensor>,
     #[serde(default)]
-    error_count: u64,
+    pub error_count: u64,
 }
 
 impl Default for Kombisensor {

@@ -4,8 +4,9 @@ use std::fmt;
 // use errors::*;
 
 /// Typ der Messzelle
-#[derive(Clone)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Debug)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub enum SensorType {
     /// Nemoto NO2 Messzelle, EC NAP-550
     /// Datenblatt: https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
@@ -20,8 +21,9 @@ pub enum SensorType {
 }
 
 /// SI Einheit des zu messenden Mediums
-#[derive(Clone)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Debug)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize)]
 #[allow(non_camel_case_types)]
 pub enum SI {
     none,
@@ -31,33 +33,34 @@ pub enum SI {
 }
 
 /// Representation der Firmware Daten einer Messzelle
-#[derive(Clone)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Debug)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub struct Sensor {
     #[serde(default)]
-    number: u16,
+    pub number: u16,
     /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
     #[serde(default)]
-    adc_value: u16,
+    pub adc_value: u16,
     #[serde(default)]
-    min_value: u16,
+    pub min_value: u16,
     #[serde(default)]
-    max_value: u16,
+    pub max_value: u16,
     #[serde(default)]
-    adc_value_at_nullgas: u16,
+    pub adc_value_at_nullgas: u16,
     #[serde(default)]
-    adc_value_at_messgas: u16,
+    pub adc_value_at_messgas: u16,
     #[serde(default)]
-    concentration_at_nullgas: u32,
+    pub concentration_at_nullgas: u16,
     #[serde(default)]
-    concentration_at_messgas: u32,
+    pub concentration_at_messgas: u16,
     #[serde(default)]
-    sensor_type: SensorType,
+    pub sensor_type: SensorType,
     /// SI Einheit des Sensors (ppm, % UEG, Vol %)
     #[serde(default)]
-    si: SI,
+    pub si: SI,
     #[serde(default)]
-    config: u16,
+    pub config: u16,
 }
 
 impl Default for SensorType {
@@ -205,7 +208,7 @@ impl Sensor {
     ///
     /// let sensor = Sensor::new();
     /// ```
-    pub fn get_concentration_at_nullgas(&self) -> u32 {
+    pub fn get_concentration_at_nullgas(&self) -> u16 {
         self.concentration_at_nullgas
     }
 
@@ -216,7 +219,7 @@ impl Sensor {
     ///
     /// let sensor = Sensor::new();
     /// ```
-    pub fn get_concentration_at_messgas(&self) -> u32 {
+    pub fn get_concentration_at_messgas(&self) -> u16 {
         self.concentration_at_messgas
     }
 

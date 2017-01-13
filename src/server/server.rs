@@ -168,6 +168,7 @@ impl Server {
                         // Fehlerzähler wieder auf Null setzen
                         info!("Fehlerzähler wieder auf Null gesetzt.");
                         kombisensor.reset_error_count();
+                        debug!("{:?}", tab_reg);
                     });
                 modbus_context.close();
             } else {
