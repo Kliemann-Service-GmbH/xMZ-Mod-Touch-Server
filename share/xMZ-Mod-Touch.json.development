@@ -9,38 +9,52 @@
   },
   "kombisensors": [
     {
-      "version": "0.0.0",
-      "modbus_address": 247,
-      "sensors": [
-        {
-          "number": 0,
-          "adc_value": 0,
-          "min_value": 0,
-          "max_value": 0,
-          "adc_value_at_nullgas": 0,
-          "adc_value_at_messgas": 0,
-          "concentration_at_nullgas": 0,
-          "concentration_at_messgas": 0,
-          "sensor_type": "NemotoNO2",
-          "si": "ppm",
-          "config": 0,
-          "error_count": 0
-        },
-        {
-          "number": 0,
-          "adc_value": 0,
-          "min_value": 0,
-          "max_value": 0,
-          "adc_value_at_nullgas": 0,
-          "adc_value_at_messgas": 0,
-          "concentration_at_nullgas": 0,
-          "concentration_at_messgas": 0,
-          "sensor_type": "NemotoCO",
-          "si": "ppm",
-          "config": 0,
-          "error_count": 0
-        }
-      ]
+      "modbus_slave_id": 1,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 2,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 3,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 4,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 5,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 6,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 23,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 24,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 25,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 26,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 27,
+      "sensors": [{}, {}]
+    },
+    {
+      "modbus_slave_id": 46,
+      "sensors": [{}, {}]
     }
   ],
   "zones": [
@@ -51,7 +65,7 @@
       "zone_type": "SCHWELLWERT"
     }
   ],
-  "modbus_serial_device": "/dev/ttyUSB1",
+  "modbus_serial_device": "/dev/ttyUSB0",
   "modbus_baud": 9600,
   "modbus_parity": "N",
   "modbus_data_bit": 8,

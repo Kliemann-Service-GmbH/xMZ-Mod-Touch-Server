@@ -7,15 +7,20 @@
 //!
 //! Git Repository: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
 
+
 #![recursion_limit = "1024"]
 #![feature(proc_macro)]
 
 #[macro_use] extern crate error_chain;
+#[macro_use] extern crate log;
+#[macro_use] extern crate nom;
 #[macro_use] extern crate serde_derive;
-extern crate serde;
-extern crate serde_json;
-extern crate sysfs_gpio;
+extern crate env_logger;
+extern crate libmodbus_rs;
 extern crate rand;
+extern crate serde_json;
+extern crate serde;
+extern crate sysfs_gpio;
 
 // FIXME: Öffentliche API überdenken, nicht nötige `pub` entfernen
 pub mod alarmgruppe;
