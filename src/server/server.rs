@@ -6,7 +6,6 @@ use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
 use zone::{Zone, ZoneType};
 
-
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ServerMode {
@@ -113,17 +112,6 @@ impl Server {
         Ok(())
     }
 
-    pub fn update_sensors_test(&mut self) -> Result<()> {
-        for kombisensor in self.get_kombisensors_mut().iter_mut() {
-            if kombisensor.get_modbus_slave_id() == 6 {
-                // return Err("Modbus Adresse geht nicht".into());
-            } else {
-                println!("Kombisensor: {}", kombisensor.get_modbus_slave_id());
-            }
-        }
-        Ok(())
-    }
-
     /// FIXME: Refactor das!
     /// Update der Sensor Datenstruktur via Modbus
     ///
@@ -134,6 +122,8 @@ impl Server {
     /// let server = Server::new();
     /// ```
     pub fn update_sensors(&mut self) -> Result<()> {
+        use co_no2_kombisensor::kombisensor::to_bytes;
+
         // Test ob das Serielle Interface existiert
         // und ob die Berechtigungen für ein Zugriff ausreichen
         try!(fs::metadata(&self.modbus_serial_device)
@@ -147,6 +137,8 @@ impl Server {
                                     self.modbus_stop_bit);
 
         for kombisensor in self.get_kombisensors_mut().iter_mut() {
+            // Nur Kombisensoren auslesen die nicht so viele Fehler haben
+            // Der Error Counter soll nicht connective Sensoren erkennen helfen.
             if kombisensor.get_error_count() < 5 {
                 // Modbus Adresse setzen
                 try!(modbus_context.set_slave(kombisensor.get_modbus_slave_id() as i32)
@@ -155,10 +147,11 @@ impl Server {
                 if log_enabled!(LogLevel::Debug) {
                     try!(modbus_context.set_debug(true));
                 }
-                // try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
+                // Modbus Datenstruktur vorbereiten
                 let mut tab_reg: Vec<u16> = Vec::new();
-
+                // Mit der Seriellen Schnittstelle eine Verbindung aufbauen
                 modbus_context.connect();
+                // 30 Register über das Modbus Protokoll aus dem Kombisensor auslesen
                 let tab_reg = modbus_context.read_registers(0 as i32, 30)
                     .map_err(|err| {
                         warn!("Kombisensor nicht erreichbar, Fehlerzähler um Eins erhöht.");
@@ -168,7 +161,8 @@ impl Server {
                         // Fehlerzähler wieder auf Null setzen
                         info!("Fehlerzähler wieder auf Null gesetzt.");
                         kombisensor.reset_error_count();
-                        debug!("{:?}", tab_reg);
+                        let bytes = to_bytes(tab_reg);
+                        kombisensor.parse(&bytes[..]);
                     });
                 modbus_context.close();
             } else {
