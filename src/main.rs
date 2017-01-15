@@ -25,14 +25,15 @@ fn run() -> Result<()> {
             let _ = server_output_sensors.lock().map(|server| {
                 for kombisensor in server.get_kombisensors().iter() {
                     for sensor in kombisensor.get_sensors().iter() {
-                        trace!("{} {} {}", kombisensor.get_modbus_slave_id(),
+                        println!("{} {} ADC: {} (Fehler: {})", kombisensor.get_modbus_slave_id(),
                                             sensor.get_sensor_type(),
-                                            sensor.get_adc_value()
+                                            sensor.get_adc_value(),
+                                            kombisensor.get_error_count(),
                         );
                     }
                 }
             });
-            // thread::sleep(Duration::from_millis(1000));
+            thread::sleep(Duration::from_millis(100));
         });
 
         // 1. Thread zum Update der Sensoren via modbus_stop_bit

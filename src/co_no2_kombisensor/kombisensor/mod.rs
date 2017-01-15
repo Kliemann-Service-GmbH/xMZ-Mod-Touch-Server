@@ -260,10 +260,17 @@ impl Kombisensor {
 
         )
     }
-
 }
 
-fn to_bytes<'a>(slice_u16: Vec<u16>) -> &'a [u8] {
+/// Wandelt den gegebenen Vec<u16> in ein Slice aus bytes
+///
+/// Diese Funktion wird für die Kombisensor.parse() Parameter benätigt.
+///
+/// # Examples
+/// ```
+/// use xmz_server::*;
+/// ```
+pub fn to_bytes<'a>(slice_u16: Vec<u16>) -> &'a [u8] {
     use std::slice;
     use std::mem;
     let slice_u8: &[u8] = unsafe {
