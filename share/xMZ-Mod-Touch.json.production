@@ -1,54 +1,36 @@
 {
   "leds": {
     "register_type": "LED",
-    "oe_pin": 276,
-    "ds_pin": 38,
-    "clock_pin": 44,
-    "latch_pin": 40,
     "data": 0
   },
   "relais": {
     "register_type": "RELAIS",
-    "oe_pin": 277,
-    "ds_pin": 45,
-    "clock_pin": 39,
-    "latch_pin": 37,
     "data": 0
   },
   "kombisensors": [
     {
-      "version": "0.0.0",
-      "modbus_slave_id": 247,
-      "sensors": [
-        {
-          "number": 0,
-          "adc_value": 0,
-          "min_value": 0,
-          "max_value": 0,
-          "adc_value_at_nullgas": 0,
-          "adc_value_at_messgas": 0,
-          "concentration_at_nullgas": 0,
-          "concentration_at_messgas": 0,
-          "sensor_type": "NemotoNO2",
-          "si": "ppm",
-          "config": 0,
-          "error_count": 0
-        },
-        {
-          "number": 0,
-          "adc_value": 0,
-          "min_value": 0,
-          "max_value": 0,
-          "adc_value_at_nullgas": 0,
-          "adc_value_at_messgas": 0,
-          "concentration_at_nullgas": 0,
-          "concentration_at_messgas": 0,
-          "sensor_type": "NemotoCO",
-          "si": "ppm",
-          "config": 0,
-          "error_count": 0
-        }
-      ]
+      "modbus_slave_id": 41,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 42,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 43,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 44,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 45,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 46,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     }
   ],
   "zones": [

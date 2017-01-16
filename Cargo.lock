@@ -144,7 +144,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "libmodbus-rs"
 version = "0.3.5"
-source = "git+https://github.com/zzeroo/libmodbus-rs.git#23858975f2e1d5b3c357104c68a1238957453798"
+source = "git+https://github.com/zzeroo/libmodbus-rs.git#7939c4661aae5914bbf972ea24f1bc3bbac88301"
 dependencies = [
  "bitflags 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -154,7 +154,7 @@ dependencies = [
 [[package]]
 name = "libmodbus-sys"
 version = "0.2.1"
-source = "git+https://github.com/zzeroo/libmodbus-rs.git#23858975f2e1d5b3c357104c68a1238957453798"
+source = "git+https://github.com/zzeroo/libmodbus-rs.git#7939c4661aae5914bbf972ea24f1bc3bbac88301"
 dependencies = [
  "gcc 0.3.41 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)",

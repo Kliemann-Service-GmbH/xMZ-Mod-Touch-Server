@@ -10,27 +10,27 @@
   "kombisensors": [
     {
       "modbus_slave_id": 41,
-      "sensors": [{}, {}]
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
       "modbus_slave_id": 42,
-      "sensors": [{}, {}]
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
       "modbus_slave_id": 43,
-      "sensors": [{}, {}]
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
       "modbus_slave_id": 44,
-      "sensors": [{}, {}]
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
       "modbus_slave_id": 45,
-      "sensors": [{}, {}]
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
       "modbus_slave_id": 46,
-      "sensors": [{}, {}]
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     }
   ],
   "zones": [
