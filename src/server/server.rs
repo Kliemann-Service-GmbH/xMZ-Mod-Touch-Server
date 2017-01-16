@@ -1,6 +1,6 @@
 use co_no2_kombisensor::{Kombisensor};
 use errors::*;
-use libmodbus_rs::modbus::Modbus;
+use libmodbus_rs::*;
 use log::LogLevel;
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
@@ -147,6 +147,9 @@ impl Server {
                 if log_enabled!(LogLevel::Debug) {
                     try!(modbus_context.set_debug(true));
                 }
+                 // für die "echte" Hardware nötig
+                try!(modbus_context.rtu_set_rts(MODBUS_RTU_RTS_DOWN));
+
                 // Modbus Datenstruktur vorbereiten
                 let mut tab_reg: Vec<u16> = Vec::new();
                 // Mit der Seriellen Schnittstelle eine Verbindung aufbauen
