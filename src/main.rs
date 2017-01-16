@@ -33,7 +33,8 @@ fn run() -> Result<()> {
                     }
                 }
             });
-            thread::sleep(Duration::from_millis(100));
+            println!("");
+            thread::sleep(Duration::from_millis(1000));
         });
 
         // 1. Thread zum Update der Sensoren via modbus_stop_bit
@@ -52,8 +53,8 @@ fn run() -> Result<()> {
             // thread::sleep(Duration::from_millis(1000));
         });
 
-        thread_output_sensors.join();
         thread_update_sensors.join();
+        thread_output_sensors.join();
     }
 }
 

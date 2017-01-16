@@ -254,10 +254,8 @@ impl Kombisensor {
                         sensor1_concentration_at_messgas, sensor2_concentration_at_messgas,
                         sensor1_config, sensor2_config,
                     );
-
                 }
             )
-
         )
     }
 }
