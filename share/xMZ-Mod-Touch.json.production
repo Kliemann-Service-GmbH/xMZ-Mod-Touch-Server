@@ -9,27 +9,83 @@
   },
   "kombisensors": [
     {
-      "modbus_slave_id": 41,
+      "modbus_slave_id": 10,
       "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
-      "modbus_slave_id": 42,
+      "modbus_slave_id": 11,
       "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
-      "modbus_slave_id": 43,
+      "modbus_slave_id": 12,
       "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
-      "modbus_slave_id": 44,
+      "modbus_slave_id": 13,
       "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
-      "modbus_slave_id": 45,
+      "modbus_slave_id": 14,
       "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     },
     {
-      "modbus_slave_id": 46,
+      "modbus_slave_id": 15,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 16,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 17,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 18,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 19,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 20,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 21,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 22,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 23,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 24,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 25,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 26,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 27,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 28,
+      "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
+    },
+    {
+      "modbus_slave_id": 29,
       "sensors": [{"sensor_type": "NemotoNO2"}, {"sensor_type": "NemotoCO"}]
     }
   ],
