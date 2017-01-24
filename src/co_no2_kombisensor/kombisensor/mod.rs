@@ -323,7 +323,7 @@ mod tests {
         let input = get_input_helper();
         let bytes = to_bytes(input);
         let mut kombisensor = Kombisensor::new();
-        assert_eq!(kombisensor.get_sensors().len(), 0);
+        assert_eq!(kombisensor.get_sensors().len(), 2);
         kombisensor.parse(&bytes[..]);
         assert_eq!(kombisensor.get_sensors().len(), 2);
     }

@@ -109,6 +109,7 @@ impl Server {
         // Lampentest, alle LED leuchten 1s auf
         info!("Lampentest LED");
         try!(self.leds.test());
+        // Default Konfiguration laden
         info!("Default Konfiguration laden");
         try!(self.default_configuration());
 
