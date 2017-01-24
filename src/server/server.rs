@@ -102,11 +102,14 @@ impl Server {
     /// ```
     pub fn init(&mut self) -> Result<()> {
         // Relais und LEDs aus beim Hardware Start
+        info!("Reset LEDs");
         try!(self.leds.reset());
+        info!("Reset Relais");
         try!(self.relais.reset());
         // Lampentest, alle LED leuchten 1s auf
+        info!("Lampentest LED");
         try!(self.leds.test());
-
+        info!("Default Konfiguration laden");
         try!(self.default_configuration());
 
         Ok(())
