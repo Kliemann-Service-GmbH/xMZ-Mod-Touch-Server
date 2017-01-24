@@ -24,7 +24,10 @@ impl Default for Kombisensor {
         Kombisensor {
             version: "0.0.0".to_string(),
             modbus_slave_id: 247,
-            sensors: vec![],
+            sensors: vec![
+                Sensor::new_with_type(SensorType::NemotoNO2),
+                Sensor::new_with_type(SensorType::NemotoCO),
+            ],
             error_count: 0,
         }
     }
