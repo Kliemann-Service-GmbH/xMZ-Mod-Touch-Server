@@ -1,7 +1,12 @@
+extern crate xmz_server;
+extern crate serde_json;
+
 extern crate futures;
 extern crate tokio_core;
 extern crate tokio_proto;
 extern crate tokio_service;
+
+use xmz_server::{configuration, Server};
 
 // Codec
 use std::io;
@@ -90,6 +95,23 @@ impl Service for Echo {
     }
 }
 
+pub struct ServerEcho;
+
+impl Service for ServerEcho {
+    type Request = String;
+    type Response = String;
+
+    type Error = io::Error;
+    type Future = BoxFuture<Self::Response, Self::Error>;
+
+    fn call(&self, req: Self::Request) -> Self::Future {
+        let config_file = configuration::read_config_file().unwrap();
+        let mut server: Server = serde_json::from_str(&config_file).unwrap();
+
+        future::ok(format!("{:?}", server)).boxed()
+    }
+}
+
 
 use tokio_proto::TcpServer;
 
@@ -102,5 +124,5 @@ fn main() {
 
     // We provide a way to *instantiate* the service for each new
     // connection; here, we just immediately return a new instance.
-    server.serve(|| Ok(Echo));
+    server.serve(|| Ok(ServerEcho));
 }

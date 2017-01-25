@@ -24,5 +24,6 @@ error_chain! {
             description("invalid toolchain name")
             display("invalid toolchain name: '{}'", t)
         }
+        SystemCommandError
     }
 }
