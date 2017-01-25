@@ -1,10 +1,18 @@
 {
   "leds": {
     "register_type": "LED",
+    "oe_pin": 276,
+    "ds_pin": 38,
+    "clock_pin": 44,
+    "latch_pin": 40,
     "data": 0
   },
   "relais": {
     "register_type": "RELAIS",
+    "oe_pin": 277,
+    "ds_pin": 45,
+    "clock_pin": 39,
+    "latch_pin": 37,
     "data": 0
   },
   "kombisensors": [
