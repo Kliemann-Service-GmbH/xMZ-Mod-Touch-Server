@@ -7,7 +7,9 @@ use system_command;
 /// Mounted die erste Partition der SDCard nach /boot
 #[allow(dead_code)]
 fn mount_boot() -> Result<()> {
-    system_command::call("mount /dev/mmcblk0p1 /boot")?;
+    if system_command::is_mounted("/boot") == false {
+        system_command::call("mount /dev/mmcblk0p1 /boot")?;
+    }
 
     Ok(())
 }
@@ -33,19 +35,20 @@ pub fn read_config_file() -> Result<String> {
 
     #[cfg(feature = "development")]
     {
-        println!("Development System, Konfiguration einlesen.");
+        info!("Development System, Konfiguration einlesen.");
         config_file = try!(system_command::read_in("xMZ-Mod-Touch.json"));
     }
     #[cfg(not(feature = "development"))]
     {
-        println!("Produktiv System, Konfiguration einlesen.");
+        info!("Produktiv System, Konfiguration einlesen.");
         try!(mount_boot());
         // Hier kann nicht einfach ein try!(system_command::read_in(..)) angewannt werden,
-        // da
+        // da im Fehlerfall (Konfig ungültig) noch /boot umounted werden muss
         config_file = match system_command::read_in("/boot/xMZ-Mod-Touch.json") {
             Ok(config_file) => config_file,
             Err(_) => {
                 try!(umount_boot());
+                // Im Fehlerfall wird ein leerer String zurück gegeben
                 String::new()
             },
         };

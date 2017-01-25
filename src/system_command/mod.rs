@@ -5,6 +5,26 @@ use std::io::prelude::*;
 use std::process::Command;
 
 
+/// Prüft ob der übergebene Pfad gemouted ist
+///
+/// # Examples
+/// ```
+/// use xmz_server::system_command::*;
+///
+/// assert_eq!(is_mounted("/"), true);
+/// assert_eq!(is_mounted("/not-existend-hope-so"), false);
+/// ```
+pub fn is_mounted(path: &str) -> bool {
+    match Command::new("sh")
+        .arg("-c")
+        .arg(format!("mountpoint -q {}", path))
+        .status()
+    {
+        Ok(status) => if status.success() { true } else { false },
+        Err(_) => false
+    }
+}
+
 /// Führt den als Parameter `command` übergebenen Befehl in einer `sh -c` aus,
 /// oder wirft ein Fehler aus.
 pub fn call<C: AsRef<str>>(command: C) -> Result<()>
@@ -18,7 +38,7 @@ pub fn call<C: AsRef<str>>(command: C) -> Result<()>
             if status.success() {
                 Ok(())
             } else {
-                Err("System Command failed!".into())
+                Err(ErrorKind::SystemCommandError.into())
             }
         }
         Err(err) => return Err(err.into()),
