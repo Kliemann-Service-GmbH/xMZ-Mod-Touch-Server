@@ -16,74 +16,30 @@
     "data": 0
   },
   "kombisensors": [
-    {
-      "modbus_slave_id": 10
-    },
-    {
-      "modbus_slave_id": 11
-    },
-    {
-      "modbus_slave_id": 12
-    },
-    {
-      "modbus_slave_id": 13
-    },
-    {
-      "modbus_slave_id": 14
-    },
-    {
-      "modbus_slave_id": 15
-    },
-    {
-      "modbus_slave_id": 16
-    },
-    {
-      "modbus_slave_id": 17
-    },
-    {
-      "modbus_slave_id": 18
-    },
-    {
-      "modbus_slave_id": 19
-    },
-    {
-      "modbus_slave_id": 20
-    },
-    {
-      "modbus_slave_id": 21
-    },
-    {
-      "modbus_slave_id": 22
-    },
-    {
-      "modbus_slave_id": 23
-    },
-    {
-      "modbus_slave_id": 24
-    },
-    {
-      "modbus_slave_id": 25
-    },
-    {
-      "modbus_slave_id": 26
-    },
-    {
-      "modbus_slave_id": 27
-    },
-    {
-      "modbus_slave_id": 28
-    },
-    {
-      "modbus_slave_id": 29
-    }
+    { "modbus_slave_id": 10 },
+    { "modbus_slave_id": 11 },
+    { "modbus_slave_id": 12 },
+    { "modbus_slave_id": 13 },
+    { "modbus_slave_id": 14 },
+    { "modbus_slave_id": 15 },
+    { "modbus_slave_id": 16 },
+    { "modbus_slave_id": 17 },
+    { "modbus_slave_id": 18 },
+    { "modbus_slave_id": 19 },
+    { "modbus_slave_id": 20 },
+    { "modbus_slave_id": 21 },
+    { "modbus_slave_id": 22 },
+    { "modbus_slave_id": 23 },
+    { "modbus_slave_id": 24 },
+    { "modbus_slave_id": 25 },
+    { "modbus_slave_id": 26 },
+    { "modbus_slave_id": 27 },
+    { "modbus_slave_id": 28 },
+    { "modbus_slave_id": 29 }
   ],
   "zones": [
-    {
-      "zone_type": "STOERUNG"
-    },
-    {
-      "zone_type": "SCHWELLWERT"
-    }
+    { "zone_type": "STOERUNG" },
+    { "zone_type": "SCHWELLWERT" }
   ],
   "modbus_serial_device": "/dev/ttyS1",
   "modbus_baud": 9600,
