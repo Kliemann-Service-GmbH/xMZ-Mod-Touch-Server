@@ -14,7 +14,12 @@ fn run() -> Result<()> {
     let config_file = try!(configuration::read_config_file());
     let mut server: Server = try!(serde_json::from_str(&config_file));
 
+    // println!("{:#?}", server);
     try!(server.init());
+
+    server.update_sensors()?;
+    println!("{:#?}", server);
+
 
     // // Die Server Instanz wird nun in ein Arc<Mutex<T>> gepackt (shared (Arc) mutable (Mutex) state)
     // let server = Arc::new(Mutex::new(server));

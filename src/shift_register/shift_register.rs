@@ -21,6 +21,7 @@ pub struct ShiftRegister {
     pub ds_pin: Option<u64>,
     pub clock_pin: Option<u64>,
     pub latch_pin: Option<u64>,
+    #[serde(default)]
     pub data: u64,
 }
 
