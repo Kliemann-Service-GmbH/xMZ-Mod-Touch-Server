@@ -8,7 +8,6 @@ homepage = "https://gaswarnanlagen.com/xmz-mod-touch"
 repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git"
 license = "GPL-2.0"
 
-
 [[bin]]
 name = "xmz-server"
 path = "src/main.rs"
@@ -21,18 +20,15 @@ development = []
 env_logger = "0.3"
 
 [dependencies]
-clap = "^2.19"
-error-chain = "^0.7.2"
+clap = "2.20"
+error-chain = "0.7.2"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
-rand="^0.3"
-serde = "^0.8"
-serde_derive = "^0.8"
-serde_json = "^0.8"
-sysfs_gpio = "^0.4"
-env_logger = "^0.3.5"
-log = "^0.3.5"
-nom = "^2.0.1"
-futures = "0.1"
-tokio-core = "0.1"
-tokio-service = "0.1"
-tokio-proto = "0.1"
+rand="0.3"
+serde = "0.8"
+serde_derive = "0.8"
+serde_json = "0.8"
+sysfs_gpio = "0.4"
+env_logger = "0.3.5"
+log = "0.3.6"
+nom = "2.0.1"
+iron = "0.5.1"

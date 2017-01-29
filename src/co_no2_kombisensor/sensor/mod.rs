@@ -122,8 +122,6 @@ impl Sensor {
     }
 
 /// Setter
-
-
     /// Setzt die Sensor Nummer
     ///
     /// # Examples

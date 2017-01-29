@@ -10,6 +10,20 @@ use std::time::Duration;
 use xmz_server::*;
 
 
+fn helper_print(server: &Server) {
+    for kombisensor in server.get_kombisensors().iter() {
+        for sensor in kombisensor.get_sensors().iter() {
+            println!("{} {}\tADC: {} {:04.02} {}\t(Fehler: {})", kombisensor.get_modbus_slave_id(),
+                                sensor.get_sensor_type(),
+                                sensor.get_adc_value(),
+                                sensor.get_concentration(),
+                                sensor.get_si(),
+                                kombisensor.get_error_count(),
+            );
+        }
+    }
+}
+
 fn run() -> Result<()> {
     let config_file = try!(configuration::read_config_file());
     let mut server: Server = try!(serde_json::from_str(&config_file));
@@ -18,50 +32,10 @@ fn run() -> Result<()> {
     try!(server.init());
 
     server.update_sensors()?;
-    println!("{:#?}", server);
+    // println!("{:#?}", server);
 
+    helper_print(&server);
 
-    // // Die Server Instanz wird nun in ein Arc<Mutex<T>> gepackt (shared (Arc) mutable (Mutex) state)
-    // let server = Arc::new(Mutex::new(server));
-    //
-    // loop {
-    //     let server_output_sensors = server.clone();
-    //     let thread_output_sensors = thread::spawn(move || {
-    //         let _ = server_output_sensors.lock().map(|server| {
-    //             for kombisensor in server.get_kombisensors().iter() {
-    //                 for sensor in kombisensor.get_sensors().iter() {
-    //                     println!("{} {} ADC: {} (Fehler: {})", kombisensor.get_modbus_slave_id(),
-    //                                         sensor.get_sensor_type(),
-    //                                         sensor.get_adc_value(),
-    //                                         kombisensor.get_error_count(),
-    //                     );
-    //                 }
-    //             }
-    //         });
-    //         println!("");
-    //         thread::sleep(Duration::from_millis(1000));
-    //     });
-    //
-    //     // 1. Thread zum Update der Sensoren via modbus_stop_bit
-    //     //
-    //     // Dieser Thread muss mindestens einmal durchlauden werden pro loop Zyklus, desshalb
-    //     // hat dieser Thread einen Namen `thread_update_sensors` und desshalb wird der Thread
-    //     // am Ende gejoined `thread_update_sensors.join()`
-    //     let server_update_sensors = server.clone();
-    //     let thread_update_sensors = thread::spawn(move || {
-    //         let _ = server_update_sensors.lock().map(|mut server| {
-    //             let _ = server.update_sensors()
-    //                 .map_err(|err| {
-    //                     error!("error: {}", err);
-    //                 });
-    //         });
-    //         // thread::sleep(Duration::from_millis(1000));
-    //     });
-    //
-    //     thread_update_sensors.join();
-    //     thread_output_sensors.join();
-    // }
-    //
     Ok(())
 }
 
