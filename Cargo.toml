@@ -1,6 +1,6 @@
 [package]
 name = "xmz_server"
-version = "0.20.9"
+version = "0.21.0"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "xMZ-Mod-Touch Server"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
@@ -21,14 +21,16 @@ env_logger = "0.3"
 
 [dependencies]
 clap = "2.20"
-error-chain = "0.7.2"
-libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
-rand="0.3"
-serde = "0.8"
-serde_derive = "0.8"
-serde_json = "0.8"
-sysfs_gpio = "0.4"
 env_logger = "0.3.5"
+error-chain = "0.7.2"
+gtk = { git = "https://github.com/gtk-rs/gtk.git" }
+iron = "0.5.1"
+libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
 log = "0.3.6"
 nom = "2.0.1"
-iron = "0.5.1"
+rand="0.3"
+router = "*"
+serde = "0.9"
+serde_derive = "0.9"
+serde_json = "0.9"
+sysfs_gpio = "0.4"

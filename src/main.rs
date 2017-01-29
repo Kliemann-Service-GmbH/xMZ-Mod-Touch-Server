@@ -1,40 +1,81 @@
+// `error_chain!` can recurse deeply
+#![recursion_limit = "1024"]
+
+#[macro_use] extern crate error_chain;
 #[macro_use] extern crate log;
 extern crate env_logger;
+extern crate iron;
+extern crate router;
 extern crate serde_json;
 extern crate xmz_server;
 
 #[allow(unused_imports)]
+use iron::prelude::*;
+use iron::status;
+use router::Router;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 use xmz_server::*;
+use xmz_server::errors::*;
 
 
-fn helper_print(server: &Server) {
-    for kombisensor in server.get_kombisensors().iter() {
-        for sensor in kombisensor.get_sensors().iter() {
-            println!("{} {}\tADC: {} {:04.02} {}\t(Fehler: {})", kombisensor.get_modbus_slave_id(),
-                                sensor.get_sensor_type(),
-                                sensor.get_adc_value(),
-                                sensor.get_concentration(),
-                                sensor.get_si(),
-                                kombisensor.get_error_count(),
-            );
+fn server_update(server: Arc<Mutex<Server>>) -> Result<()> {
+    thread::spawn(move || {
+        loop {
+            {
+                let mut server = server.lock().unwrap();
+                server.simulation();
+            } // Unlock weil server out of scope geht
+
+            thread::sleep(Duration::from_millis(1000));
         }
-    }
+    });
+
+    Ok(())
 }
 
+fn server_web_interface(server: Arc<Mutex<Server>>) -> Result<()> {
+    let mut router = Router::new();
+
+    router.get("/",                 move |r: &mut Request| index(r,    &server.lock().unwrap()), "index");
+
+    fn index(_: &mut Request, server: &Server) -> IronResult<Response> {
+        let payload = serde_json::to_string(&server).unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    }
+
+    // debug!("Server response on: http://localhost:3000");
+    Iron::new(router).http("localhost:3000").unwrap();
+
+    Ok(())
+}
+
+fn oneshot_server_init(server: Arc<Mutex<Server>>) -> Result<()> {
+    let mut server = server.lock().unwrap();
+    server.init()?;
+
+    Ok(())
+}
+
+
 fn run() -> Result<()> {
+    // Server Instanz aus der Konfigurationsdatei builden
     let config_file = try!(configuration::read_config_file());
     let mut server: Server = try!(serde_json::from_str(&config_file));
 
-    // println!("{:#?}", server);
-    try!(server.init());
+    // Thread save, Referenz counted Server Instanz erzeugen
+    let server = Arc::new(Mutex::new(server));
 
-    server.update_sensors()?;
-    // println!("{:#?}", server);
+    // Einmalig die Server default Konfiguration laden
+    // FIXME: Evtl mit der Konfigurationsdatei obsolet machen
+    oneshot_server_init(server.clone())?;
 
-    helper_print(&server);
+    /// Update thread
+    server_update(server.clone())?;
+
+    /// IPC/ Web stuff
+    server_web_interface(server.clone())?;
 
     Ok(())
 }

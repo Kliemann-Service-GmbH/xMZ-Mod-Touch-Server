@@ -115,6 +115,12 @@ impl Kombisensor {
         self.error_count
     }
 
+    /// Mutabler Iterrator
+    /// FIXME: Doku fehlt
+    pub fn sensors_mut(&mut self) -> &mut Vec<Sensor> {
+        &mut self.sensors
+    }
+
     /// Erhöht den Fehlerzähler um Eins
     ///
     /// # Examples
@@ -261,6 +267,7 @@ impl Kombisensor {
             )
         )
     }
+
 }
 
 /// Wandelt den gegebenen Vec<u16> in ein Slice aus bytes
