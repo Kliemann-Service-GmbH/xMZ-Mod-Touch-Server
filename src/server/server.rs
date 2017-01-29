@@ -4,7 +4,7 @@ use libmodbus_rs::*;
 use log::LogLevel;
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
-use zone::{Zone, ZoneType};
+use zone::{Zone, ZoneTyp};
 
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
@@ -40,8 +40,8 @@ impl Default for Server {
                 Kombisensor::new(),
             ],
             zones: vec![
-                Zone::new(ZoneType::STOERUNG),
-                Zone::new(ZoneType::SCHWELLWERT),
+                Zone::new(ZoneTyp::Stoerung),
+                Zone::new(ZoneTyp::Zone),
             ],
             modbus_serial_device: "/dev/ttyS1".to_string(),
             modbus_baud: 9600,
@@ -178,6 +178,19 @@ impl Server {
         }
 
         Ok(())
+    }
+
+    /// Simulation 1
+    /// FIXME: Doku fehlt
+    pub fn simulation(&mut self) {
+        extern crate rand;
+        use rand::Rng;
+
+        for mut kombisensor in self.kombisensors.iter_mut() {
+            for mut sensor in kombisensor.sensors_mut().iter_mut() {
+                sensor.set_adc_value(rand::thread_rng().gen_range(0, 1023));
+            }
+        }
     }
 
     /// Default Konfiguration des Servers

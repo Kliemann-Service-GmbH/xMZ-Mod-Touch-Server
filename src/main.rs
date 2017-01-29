@@ -1,62 +1,82 @@
+// `error_chain!` can recurse deeply
+#![recursion_limit = "1024"]
+
+#[macro_use] extern crate error_chain;
 #[macro_use] extern crate log;
 extern crate env_logger;
+extern crate iron;
+extern crate router;
 extern crate serde_json;
 extern crate xmz_server;
 
 #[allow(unused_imports)]
+use iron::prelude::*;
+use iron::status;
+use router::Router;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 use xmz_server::*;
+use xmz_server::errors::*;
+
+
+fn server_update(server: Arc<Mutex<Server>>) -> Result<()> {
+    thread::spawn(move || {
+        loop {
+            {
+                let mut server = server.lock().unwrap();
+                server.simulation();
+            } // Unlock weil server out of scope geht
+
+            thread::sleep(Duration::from_millis(1000));
+        }
+    });
+
+    Ok(())
+}
+
+fn server_web_interface(server: Arc<Mutex<Server>>) -> Result<()> {
+    let mut router = Router::new();
+
+    router.get("/",                 move |r: &mut Request| index(r,    &server.lock().unwrap()), "index");
+
+    fn index(_: &mut Request, server: &Server) -> IronResult<Response> {
+        let payload = serde_json::to_string(&server).unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    }
+
+    // debug!("Server response on: http://localhost:3000");
+    Iron::new(router).http("localhost:3000").unwrap();
+
+    Ok(())
+}
+
+fn oneshot_server_init(server: Arc<Mutex<Server>>) -> Result<()> {
+    let mut server = server.lock().unwrap();
+    server.init()?;
+
+    Ok(())
+}
 
 
 fn run() -> Result<()> {
+    // Server Instanz aus der Konfigurationsdatei builden
     let config_file = try!(configuration::read_config_file());
     let mut server: Server = try!(serde_json::from_str(&config_file));
 
-    try!(server.init());
+    // Thread save, Referenz counted Server Instanz erzeugen
+    let server = Arc::new(Mutex::new(server));
 
-    // // Die Server Instanz wird nun in ein Arc<Mutex<T>> gepackt (shared (Arc) mutable (Mutex) state)
-    // let server = Arc::new(Mutex::new(server));
-    //
-    // loop {
-    //     let server_output_sensors = server.clone();
-    //     let thread_output_sensors = thread::spawn(move || {
-    //         let _ = server_output_sensors.lock().map(|server| {
-    //             for kombisensor in server.get_kombisensors().iter() {
-    //                 for sensor in kombisensor.get_sensors().iter() {
-    //                     println!("{} {} ADC: {} (Fehler: {})", kombisensor.get_modbus_slave_id(),
-    //                                         sensor.get_sensor_type(),
-    //                                         sensor.get_adc_value(),
-    //                                         kombisensor.get_error_count(),
-    //                     );
-    //                 }
-    //             }
-    //         });
-    //         println!("");
-    //         thread::sleep(Duration::from_millis(1000));
-    //     });
-    //
-    //     // 1. Thread zum Update der Sensoren via modbus_stop_bit
-    //     //
-    //     // Dieser Thread muss mindestens einmal durchlauden werden pro loop Zyklus, desshalb
-    //     // hat dieser Thread einen Namen `thread_update_sensors` und desshalb wird der Thread
-    //     // am Ende gejoined `thread_update_sensors.join()`
-    //     let server_update_sensors = server.clone();
-    //     let thread_update_sensors = thread::spawn(move || {
-    //         let _ = server_update_sensors.lock().map(|mut server| {
-    //             let _ = server.update_sensors()
-    //                 .map_err(|err| {
-    //                     error!("error: {}", err);
-    //                 });
-    //         });
-    //         // thread::sleep(Duration::from_millis(1000));
-    //     });
-    //
-    //     thread_update_sensors.join();
-    //     thread_output_sensors.join();
-    // }
-    //
+    // Einmalig die Server default Konfiguration laden
+    // FIXME: Evtl mit der Konfigurationsdatei obsolet machen
+    oneshot_server_init(server.clone())?;
+
+    /// Update thread
+    server_update(server.clone())?;
+
+    /// IPC/ Web stuff
+    server_web_interface(server.clone())?;
+
     Ok(())
 }
 

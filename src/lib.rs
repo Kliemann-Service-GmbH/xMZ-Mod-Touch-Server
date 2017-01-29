@@ -23,7 +23,6 @@ extern crate serde;
 extern crate sysfs_gpio;
 
 // FIXME: Öffentliche API überdenken, nicht nötige `pub` entfernen
-pub mod alarmgruppe;
 pub mod co_no2_kombisensor;
 pub mod configuration;
 pub mod errors;
@@ -33,7 +32,6 @@ pub mod system_command;
 pub mod zone;
 
 // FIXME: Refactor alle unnötigen glob reexports, zu expliziten ones.
-pub use self::alarmgruppe::*;
 pub use self::co_no2_kombisensor::*;
 pub use self::configuration::*;
 pub use self::errors::*;
