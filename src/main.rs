@@ -1,3 +1,4 @@
+
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
 
@@ -18,6 +19,7 @@ use std::thread;
 use std::time::Duration;
 use xmz_server::*;
 use xmz_server::errors::*;
+use xmz_server::configuration;
 
 
 fn server_update(server: Arc<Mutex<Server>>) -> Result<()> {
@@ -40,7 +42,8 @@ fn server_web_interface(server: Arc<Mutex<Server>>) -> Result<()> {
 
     router.get("/",                 move |r: &mut Request| index(r,    &server.lock().unwrap()), "index");
 
-    fn index(_: &mut Request, server: &Server) -> IronResult<Response> {
+    fn index(request: &mut Request, server: &Server) -> IronResult<Response> {
+        debug!("{:#?}", request);
         let payload = serde_json::to_string(&server).unwrap();
         Ok(Response::with((status::Ok, payload)))
     }
