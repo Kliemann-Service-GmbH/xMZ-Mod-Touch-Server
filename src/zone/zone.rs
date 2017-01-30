@@ -26,7 +26,7 @@ impl Zone {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let zone1 = Zone::new(ZoneType::Stoerung);
+    /// let alarmgruppe1 = Zone::new(ZoneType::Stoerung);
     /// ```
     ///
     pub fn new(zone_typ: ZoneType) -> Self {
@@ -48,7 +48,7 @@ mod tests {
     }
 
     #[test]
-    fn zone1() {
-        let _zone1 = Zone::new(ZoneType::Zone);
+    fn alarmgruppe1() {
+        let _alarmgruppe1 = Zone::new(ZoneType::Alarmgruppe);
     }
 }

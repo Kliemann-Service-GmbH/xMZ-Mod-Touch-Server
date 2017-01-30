@@ -93,6 +93,33 @@ impl Default for Sensor {
     }
 }
 
+/// String Format des Sensor Typen
+///
+impl fmt::Display for SensorType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            &SensorType::SimmulationNO2 => write!(f, "NO2 Messzelle (Simulation)"),
+            &SensorType::SimmulationCO => write!(f, "CO Messzelle (Simulation)"),
+            &SensorType::NemotoNO2 => write!(f, "NO2 Messzelle"),
+            &SensorType::NemotoCO => write!(f, "CO Messzelle"),
+        }
+    }
+}
+
+/// String Format der SI Einheit
+///
+impl fmt::Display for SI {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            SI::none => write!(f, ""),
+            SI::ppm => write!(f, "ppm"),
+            SI::UEG => write!(f, "% UEG"),
+            SI::Vol => write!(f, "Vol %"),
+        }
+    }
+}
+
+
 impl Sensor {
     /// Erzeugt eine neue Sensor Instanz
     ///
@@ -352,8 +379,8 @@ impl Sensor {
     ///
     /// let sensor = Sensor::new();
     /// ```
-    pub fn get_sensor_type(&self) -> SensorType {
-        self.sensor_type.clone()
+    pub fn get_sensor_type(&self) -> String {
+        format!("{}", self.sensor_type)
     }
 
     ///
@@ -363,8 +390,8 @@ impl Sensor {
     ///
     /// let sensor = Sensor::new();
     /// ```
-    pub fn get_si(&self) -> SI {
-        self.si.clone()
+    pub fn get_si(&self) -> String {
+        format!("{}", self.si)
     }
 
     ///
@@ -431,32 +458,6 @@ impl Sensor {
         match (self.config >> 0) & 1 {
             0 => false,
             _ => true,
-        }
-    }
-}
-
-/// String Format des Sensor Typen
-///
-impl fmt::Display for SensorType {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            SensorType::NemotoNO2 => write!(f, "Nemoto™ NO2"),
-            SensorType::NemotoCO => write!(f, "Nemoto™ CO"),
-            SensorType::SimmulationNO2 => write!(f, "Simmulation NO2"),
-            SensorType::SimmulationCO => write!(f, "Simmulation CO"),
-        }
-    }
-}
-
-/// String Format der SI Einheit
-///
-impl fmt::Display for SI {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            SI::none => write!(f, ""),
-            SI::ppm => write!(f, "ppm"),
-            SI::UEG => write!(f, "% UEG"),
-            SI::Vol => write!(f, "Vol %"),
         }
     }
 }

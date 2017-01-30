@@ -27,7 +27,10 @@ fn server_update(server: Arc<Mutex<Server>>) -> Result<()> {
         loop {
             {
                 let mut server = server.lock().unwrap();
-                server.simulation();
+
+                // server.simulation();
+                server.update_sensors();
+
             } // Unlock weil server out of scope geht
 
             thread::sleep(Duration::from_millis(1000));
@@ -90,6 +93,7 @@ fn main() {
              env!("CARGO_PKG_VERSION"));
 
     if let Err(ref e) = run() {
+
         println!("error: {}", e);
 
         for e in e.iter().skip(1) {
