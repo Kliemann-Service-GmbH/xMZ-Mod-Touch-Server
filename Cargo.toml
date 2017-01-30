@@ -1,3 +1,4 @@
+# FIXME: Umbenennen nach 'xmz_mod_touch_server'
 [package]
 name = "xmz_server"
 version = "0.21.0"
@@ -19,11 +20,11 @@ development = []
 [dev-dependencies]
 env_logger = "0.3"
 
+
 [dependencies]
-clap = "2.20"
-env_logger = "0.3.5"
+clap = "*"
+env_logger = "0.3"
 error-chain = "0.7.2"
-gtk = { git = "https://github.com/gtk-rs/gtk.git" }
 iron = "0.5.1"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
 log = "0.3.6"

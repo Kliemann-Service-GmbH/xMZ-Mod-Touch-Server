@@ -33,9 +33,9 @@ pub mod zone;
 
 // FIXME: Refactor alle unnötigen glob reexports, zu expliziten ones.
 pub use self::co_no2_kombisensor::*;
-pub use self::configuration::*;
+pub use self::configuration::configuration::*;
 pub use self::errors::*;
-pub use self::server::*;
+pub use self::server::server::{Server, ServerMode};
 pub use self::shift_register::*;
 pub use self::system_command::*;
 pub use self::zone::*;

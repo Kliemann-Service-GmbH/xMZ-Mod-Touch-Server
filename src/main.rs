@@ -18,6 +18,7 @@ use std::thread;
 use std::time::Duration;
 use xmz_server::*;
 use xmz_server::errors::*;
+use xmz_server::configuration;
 
 
 fn server_update(server: Arc<Mutex<Server>>) -> Result<()> {
