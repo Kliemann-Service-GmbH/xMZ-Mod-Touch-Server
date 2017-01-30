@@ -1,21 +1,35 @@
 {
   "leds": {
-    "register_type": "LED"
+    "register_type": "LED",
+    "data": 0
   },
   "relais": {
-    "register_type": "RELAIS"
+    "register_type": "RELAIS",
+    "data": 0
   },
   "kombisensors": [
-    { "modbus_slave_id": 1 },
-    { "modbus_slave_id": 2 },
-    { "modbus_slave_id": 3 },
-    { "modbus_slave_id": 4 },
-    { "modbus_slave_id": 5 },
-    { "modbus_slave_id": 6 }
+    { "modbus_slave_id": 1,
+      "sensors": [ { "sensor_type": "NemotoNO2" }, { "sensor_type": "NemotoCO" } ]
+    },
+    { "modbus_slave_id": 2,
+      "sensors": [ { "sensor_type": "NemotoNO2" }, { "sensor_type": "NemotoCO" } ]
+    },
+    { "modbus_slave_id": 3,
+      "sensors": [ { "sensor_type": "NemotoNO2" }, { "sensor_type": "NemotoCO" } ]
+    },
+    { "modbus_slave_id": 4,
+      "sensors": [ { "sensor_type": "NemotoNO2" }, { "sensor_type": "NemotoCO" } ]
+    },
+    { "modbus_slave_id": 5,
+      "sensors": [ { "sensor_type": "NemotoNO2" }, { "sensor_type": "NemotoCO" } ]
+    },
+    { "modbus_slave_id": 6,
+      "sensors": [ { "sensor_type": "NemotoNO2" }, { "sensor_type": "NemotoCO" } ]
+    }
   ],
   "zones": [
-    { "zone_type": "STOERUNG" },
-    { "zone_type": "SCHWELLWERT" }
+    { "zone_typ": "Stoerung" },
+    { "zone_typ": "Alarmgruppe" }
   ],
   "modbus_serial_device": "/dev/ttyUSB0",
   "modbus_baud": 9600,

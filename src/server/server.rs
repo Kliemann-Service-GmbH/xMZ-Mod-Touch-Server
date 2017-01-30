@@ -4,7 +4,7 @@ use libmodbus_rs::*;
 use log::LogLevel;
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::fs;
-use zone::{Zone, ZoneTyp};
+use zone::{Zone, ZoneType};
 
 #[derive(Clone)]
 #[derive(Serialize, Deserialize, Debug)]
@@ -40,8 +40,8 @@ impl Default for Server {
                 Kombisensor::new(),
             ],
             zones: vec![
-                Zone::new(ZoneTyp::Stoerung),
-                Zone::new(ZoneTyp::Zone),
+                Zone::new(ZoneType::Stoerung),
+                Zone::new(ZoneType::Alarmgruppe),
             ],
             modbus_serial_device: "/dev/ttyS1".to_string(),
             modbus_baud: 9600,
