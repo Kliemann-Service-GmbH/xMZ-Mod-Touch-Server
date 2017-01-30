@@ -5,8 +5,7 @@
 //!
 //! Server Teil der 'xMZ-Mod-Touch'-Platform
 //!
-//! Git Repository: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
-
+//! Git Repository: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git
 
 #![recursion_limit = "1024"]
 #![feature(proc_macro)]

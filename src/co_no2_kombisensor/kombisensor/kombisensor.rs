@@ -2,12 +2,22 @@
 //!
 use co_no2_kombisensor::sensor::{SI, Sensor, SensorType};
 use nom::{IResult, le_u8, le_u16};
+use std::fmt;
+
+#[derive(Clone, Debug)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize)]
+pub enum KombisensorType {
+    RAGasCoNo2,
+}
 
 /// Platine des CO-NO2-Kombisensor-Mod
 #[derive(Clone, Debug)]
 #[derive(Eq, PartialEq)]
 #[derive(Serialize, Deserialize)]
 pub struct Kombisensor {
+    #[serde(default)]
+    kombisensor_type: KombisensorType,
     #[serde(default)]
     version: String,
     modbus_slave_id: u8,
@@ -20,6 +30,7 @@ pub struct Kombisensor {
 impl Default for Kombisensor {
     fn default() -> Self {
         Kombisensor {
+            kombisensor_type: KombisensorType::RAGasCoNo2,
             version: "0.0.0".to_string(),
             modbus_slave_id: 247,
             sensors: vec![
@@ -30,6 +41,21 @@ impl Default for Kombisensor {
         }
     }
 }
+
+impl Default for KombisensorType {
+    fn default() -> Self {
+        KombisensorType::RAGasCoNo2
+    }
+}
+
+impl fmt::Display for KombisensorType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            &KombisensorType::RAGasCoNo2 => write!(f, "RA-Gas GmbH CO/ NO2 Kombisensor Modbus"),
+        }
+    }
+}
+
 
 impl Kombisensor {
     /// Erzeugt eine neue Instanz
@@ -52,6 +78,20 @@ impl Kombisensor {
     /// ```
     pub fn get_modbus_slave_id(&self) -> u8 {
         self.modbus_slave_id
+    }
+
+    /// Liefert den Typ des Kombisensors als String
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert_eq!("RA-Gas GmbH CO/ NO2 Kombisensor Modbus", format!("{}", kombisensor.get_kombisensor_type()));
+    /// ```
+    pub fn get_kombisensor_type(&self) -> String {
+        format!("{}", self.kombisensor_type)
     }
 
     /// Liefert eine Sensor Referenz in Option verpackt
