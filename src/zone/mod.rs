@@ -4,4 +4,4 @@
 //! zugeordnet werden können. Aber auch die Zone "Störung".
 mod zone;
 
-pub use self::zone::{Zone, ZoneTyp};
+pub use self::zone::{Zone, ZoneType};
