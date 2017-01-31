@@ -427,7 +427,7 @@ impl Sensor {
     /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
     /// assert_eq!(sensor.get_concentration(), 0.0);
     /// ```
-    pub fn get_concentration(&self) -> f32 {
+    pub fn get_concentration(&self) -> f64 {
         let adc_value = self.adc_value;
         let adc_value_at_nullgas = self.adc_value_at_nullgas;
         // Damit wir in der Formel nicht durch Null teilen, wird der Wert adc_value_at_messgas auf 1 gesetzt, sollte er Null sein
@@ -435,9 +435,9 @@ impl Sensor {
         let concentration_at_nullgas = self.concentration_at_nullgas;
         let concentration_at_messgas = self.concentration_at_messgas;
 
-        let concentration = (concentration_at_messgas as f32 - concentration_at_nullgas as f32) /
-        (adc_value_at_messgas as f32 - adc_value_at_nullgas as f32) *
-        (adc_value as f32 - adc_value_at_nullgas as f32) + concentration_at_nullgas as f32;
+        let concentration = (concentration_at_messgas as f64 - concentration_at_nullgas as f64) /
+        (adc_value_at_messgas as f64 - adc_value_at_nullgas as f64) *
+        (adc_value as f64 - adc_value_at_nullgas as f64) + concentration_at_nullgas as f64;
 
         // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
         if concentration < 0.0 { 0.0 } else { concentration }
