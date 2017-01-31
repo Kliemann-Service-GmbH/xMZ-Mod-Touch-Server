@@ -87,6 +87,7 @@ fn run() -> Result<()> {
 }
 
 fn main() {
+    // Initialisiere den Logger (erst nach diesem sind `trace!()`, `debug!()` usw funktional)
     env_logger::init().unwrap();
 
     println!("xMZ-Mod-Touch-Server Version: {}\n",
