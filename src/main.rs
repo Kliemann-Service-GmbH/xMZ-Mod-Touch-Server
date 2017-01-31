@@ -46,7 +46,7 @@ fn server_web_interface(server: Arc<Mutex<Server>>) -> Result<()> {
     router.get("/",                 move |r: &mut Request| index(r,    &server.lock().unwrap()), "index");
 
     fn index(request: &mut Request, server: &Server) -> IronResult<Response> {
-        debug!("{:#?}", request);
+        info!("{:#?}", request);
         let payload = serde_json::to_string(&server).unwrap();
         Ok(Response::with((status::Ok, payload)))
     }
