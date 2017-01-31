@@ -52,7 +52,7 @@ fn server_web_interface(server: Arc<Mutex<Server>>) -> Result<()> {
     }
 
     // debug!("Server response on: http://localhost:3000");
-    Iron::new(router).http("localhost:3000").unwrap();
+    Iron::new(router).http("0.0.0.0:3000").unwrap();
 
     Ok(())
 }
