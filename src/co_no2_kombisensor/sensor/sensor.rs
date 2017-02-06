@@ -148,142 +148,9 @@ impl Sensor {
         Sensor { sensor_type: sensor_type, ..Default::default() }
     }
 
-/// Setter
-    /// Setzt die Sensor Nummer
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_number(), 0);
-    /// sensor.set_number(100);
-    /// assert_eq!(sensor.get_number(), 100);
-    /// ```
-    pub fn set_number(&mut self, number: u16) {
-        self.number = number;
-    }
+    // Getter
 
-    /// Setzt den ADC Wert des Sensors
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_adc_value(), 0);
-    /// sensor.set_adc_value(100);
-    /// assert_eq!(sensor.get_adc_value(), 100);
-    /// ```
-    pub fn set_adc_value(&mut self, value: u16) {
-        self.adc_value = value
-    }
-
-    /// Setzt minimalen Sensormesswert des Sensors
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_min_value(), 0);
-    /// sensor.set_min_value(10);
-    /// assert_eq!(sensor.get_min_value(), 10);
-    /// ```
-    pub fn set_min_value(&mut self, min_value: u16) {
-        self.min_value = min_value;
-    }
-
-    /// Setzt den maximalen Sensormesswert des Sensors
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_max_value(), 0);
-    /// sensor.set_max_value(10);
-    /// assert_eq!(sensor.get_max_value(), 10);
-    /// ```
-    pub fn set_max_value(&mut self, max_value: u16) {
-        self.max_value = max_value;
-    }
-
-    /// Setzt den Nullgas ADC Wert des Sensors
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_adc_value_at_nullgas(), 0);
-    /// sensor.set_adc_value_at_nullgas(100);
-    /// assert_eq!(sensor.get_adc_value_at_nullgas(), 100);
-    /// ```
-    pub fn set_adc_value_at_nullgas(&mut self, adc_value_at_nullgas: u16) {
-        self.adc_value_at_nullgas = adc_value_at_nullgas;
-    }
-
-    /// Setzt den Messgas ADC Wert des Sensors
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_adc_value_at_messgas(), 0);
-    /// sensor.set_adc_value_at_messgas(100);
-    /// assert_eq!(sensor.get_adc_value_at_messgas(), 100);
-    /// ```
-    pub fn set_adc_value_at_messgas(&mut self, adc_value_at_messgas: u16) {
-        self.adc_value_at_messgas = adc_value_at_messgas;
-    }
-
-    /// Setzt die Gaskonzentration des Nullgases
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_concentration_at_nullgas(), 0);
-    /// sensor.set_concentration_at_nullgas(100);
-    /// assert_eq!(sensor.get_concentration_at_nullgas(), 100);
-    /// ```
-    pub fn set_concentration_at_nullgas(&mut self, concentration_at_nullgas: u16) {
-        self.concentration_at_nullgas = concentration_at_nullgas;
-    }
-
-    /// Setzt die Gaskonzentration des Messgases
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_concentration_at_messgas(), 0);
-    /// sensor.set_concentration_at_messgas(100);
-    /// assert_eq!(sensor.get_concentration_at_messgas(), 100);
-    /// ```
-    pub fn set_concentration_at_messgas(&mut self, concentration_at_messgas: u16) {
-        self.concentration_at_messgas = concentration_at_messgas;
-    }
-
-    /// Setzt Configuration des Sensors
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_config(), 0);
-    /// sensor.set_config(1);
-    /// assert_eq!(sensor.get_config(), 1);
-    /// ```
-    pub fn set_config(&mut self, config: u16) {
-        self.config = config;
-    }
-
+    /// Liefert die Sensor Number
     ///
     /// # Examples
     /// ```
@@ -442,6 +309,146 @@ impl Sensor {
         // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
         if concentration < 0.0 { 0.0 } else { concentration }
     }
+
+
+    // Setter
+
+    /// Setzt die Sensor Nummer
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_number(), 0);
+    /// sensor.set_number(100);
+    /// assert_eq!(sensor.get_number(), 100);
+    /// ```
+    pub fn set_number(&mut self, number: u16) {
+        self.number = number;
+    }
+
+    /// Setzt den ADC Wert des Sensors
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_adc_value(), 0);
+    /// sensor.set_adc_value(100);
+    /// assert_eq!(sensor.get_adc_value(), 100);
+    /// ```
+    pub fn set_adc_value(&mut self, value: u16) {
+        self.adc_value = value
+    }
+
+    /// Setzt minimalen Sensormesswert des Sensors
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_min_value(), 0);
+    /// sensor.set_min_value(10);
+    /// assert_eq!(sensor.get_min_value(), 10);
+    /// ```
+    pub fn set_min_value(&mut self, min_value: u16) {
+        self.min_value = min_value;
+    }
+
+    /// Setzt den maximalen Sensormesswert des Sensors
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_max_value(), 0);
+    /// sensor.set_max_value(10);
+    /// assert_eq!(sensor.get_max_value(), 10);
+    /// ```
+    pub fn set_max_value(&mut self, max_value: u16) {
+        self.max_value = max_value;
+    }
+
+    /// Setzt den Nullgas ADC Wert des Sensors
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_adc_value_at_nullgas(), 0);
+    /// sensor.set_adc_value_at_nullgas(100);
+    /// assert_eq!(sensor.get_adc_value_at_nullgas(), 100);
+    /// ```
+    pub fn set_adc_value_at_nullgas(&mut self, adc_value_at_nullgas: u16) {
+        self.adc_value_at_nullgas = adc_value_at_nullgas;
+    }
+
+    /// Setzt den Messgas ADC Wert des Sensors
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_adc_value_at_messgas(), 0);
+    /// sensor.set_adc_value_at_messgas(100);
+    /// assert_eq!(sensor.get_adc_value_at_messgas(), 100);
+    /// ```
+    pub fn set_adc_value_at_messgas(&mut self, adc_value_at_messgas: u16) {
+        self.adc_value_at_messgas = adc_value_at_messgas;
+    }
+
+    /// Setzt die Gaskonzentration des Nullgases
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_concentration_at_nullgas(), 0);
+    /// sensor.set_concentration_at_nullgas(100);
+    /// assert_eq!(sensor.get_concentration_at_nullgas(), 100);
+    /// ```
+    pub fn set_concentration_at_nullgas(&mut self, concentration_at_nullgas: u16) {
+        self.concentration_at_nullgas = concentration_at_nullgas;
+    }
+
+    /// Setzt die Gaskonzentration des Messgases
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_concentration_at_messgas(), 0);
+    /// sensor.set_concentration_at_messgas(100);
+    /// assert_eq!(sensor.get_concentration_at_messgas(), 100);
+    /// ```
+    pub fn set_concentration_at_messgas(&mut self, concentration_at_messgas: u16) {
+        self.concentration_at_messgas = concentration_at_messgas;
+    }
+
+    /// Setzt Configuration des Sensors
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_config(), 0);
+    /// sensor.set_config(1);
+    /// assert_eq!(sensor.get_config(), 1);
+    /// ```
+    pub fn set_config(&mut self, config: u16) {
+        self.config = config;
+    }
+
+    // Diverse Funktionen
 
     /// Liefert true oder false je nachdem ob der Sensor aktiv Ist
     ///
