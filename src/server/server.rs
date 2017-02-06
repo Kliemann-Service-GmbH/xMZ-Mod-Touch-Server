@@ -89,6 +89,26 @@ impl Server {
         self.kombisensors.as_mut()
     }
 
+    /// Findet den Kombisensor mit der übergebenen Modbus Slave Id
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// // Neue Server haben per default einen einzigen Kombisensor, mit der Modbus Slave Id
+    /// // 247 konfiguriert.
+    /// let server = Server::new();
+    ///
+    /// if let Some(Kombisensor) = server.get_kombisensor_by_modbus_id(247) {
+    ///     assert_eq!(Kombisensor.get_modbus_slave_id(), 247);
+    /// }
+    ///
+    /// assert_eq!(server.get_kombisensor_by_modbus_id(1), None);
+    /// ```
+    pub fn get_kombisensor_by_modbus_id(&self, modbus_id: u32) -> Option<&Kombisensor> {
+        self.kombisensors.get(modbus_id as usize)
+    }
+
     /// Grundeinstellungen der Hardware
     ///
     /// Dazu gehören unter anderem das leeren der ShiftRegister Speicher,
