@@ -32,7 +32,7 @@ pub struct Server {
 }
 
 impl Default for Server {
-    fn default() -> Self {
+    fn default() -> Server {
         Server {
             leds: ShiftRegister::new(ShiftRegisterType::LED),
             relais: ShiftRegister::new(ShiftRegisterType::RELAIS),
@@ -95,18 +95,51 @@ impl Server {
     /// ```
     /// use xmz_server::*;
     ///
-    /// // Neue Server haben per default einen einzigen Kombisensor, mit der Modbus Slave Id
-    /// // 247 konfiguriert.
-    /// let server = Server::new();
+    /// let mut kombisensor1 = Kombisensor::new();
+    /// let mut kombisensor2 = Kombisensor::new();
+    /// kombisensor1.set_modbus_slave_id(10);
+    /// kombisensor2.set_modbus_slave_id(20);
     ///
-    /// if let Some(Kombisensor) = server.get_kombisensor_by_modbus_id(247) {
-    ///     assert_eq!(Kombisensor.get_modbus_slave_id(), 247);
+    /// let mut server = Server::new();
+    /// server.add_kombisensors(vec![kombisensor1, kombisensor2]);
+    ///
+    /// if let Some(Kombisensor) = server.get_kombisensor_by_modbus_id(20) {
+    ///     assert_eq!(Kombisensor.get_modbus_slave_id(), 20);
     /// }
     ///
     /// assert_eq!(server.get_kombisensor_by_modbus_id(1), None);
     /// ```
     pub fn get_kombisensor_by_modbus_id(&self, modbus_id: u8) -> Option<&Kombisensor> {
-        self.kombisensors.get(modbus_id as usize)
+        let mut ret: Option<&Kombisensor> = None;
+        for kombisensor in self.kombisensors.iter() {
+            if kombisensor.get_modbus_slave_id() == modbus_id {
+                ret = Some(kombisensor);
+            }
+        }
+        ret
+    }
+
+    // Setter
+
+    /// Fügt Kombisensoren hinzu
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let kombisensor1 = Kombisensor::new();
+    /// let kombisensor2 = Kombisensor::new();
+    ///
+    /// let mut server = Server::new();
+    /// assert_eq!(server.get_kombisensors().len(), 1);
+    ///
+    /// server.add_kombisensors(vec![kombisensor1, kombisensor2]);
+    /// assert_eq!(server.get_kombisensors().len(), 3);
+    /// ```
+    pub fn add_kombisensors(&mut self, kombisensors: Vec<Kombisensor>) {
+        for kombisensor in kombisensors {
+            self.kombisensors.push(kombisensor);
+        }
     }
 
     /// Grundeinstellungen der Hardware
