@@ -105,7 +105,7 @@ impl Server {
     ///
     /// assert_eq!(server.get_kombisensor_by_modbus_id(1), None);
     /// ```
-    pub fn get_kombisensor_by_modbus_id(&self, modbus_id: u32) -> Option<&Kombisensor> {
+    pub fn get_kombisensor_by_modbus_id(&self, modbus_id: u8) -> Option<&Kombisensor> {
         self.kombisensors.get(modbus_id as usize)
     }
 
