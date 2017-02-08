@@ -17,14 +17,10 @@ doc = false
 [features]
 development = []
 
-[dev-dependencies]
-env_logger = "0.3"
-
-
 [dependencies]
 clap = "2.20.0"
 env_logger = "0.3"
-error-chain = "0.7.2"
+error-chain = "^0"
 iron = "0.5.1"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
 log = "0.3.6"
@@ -35,3 +31,7 @@ serde = "0.9"
 serde_derive = "0.9"
 serde_json = "0.9"
 sysfs_gpio = "0.4"
+
+# Aktiviere Log in Tests: https://github.com/rust-lang-nursery/log#in-tests
+[dev-dependencies]
+env_logger = "0.3"
