@@ -39,13 +39,9 @@ pub fn read_config_file() -> Result<String> {
     #[cfg(not(feature = "development"))]
     {
         info!("Produktiv System, Konfiguration einlesen.");
-        // ist /boot nicht gemouted, moute es
-        if !system_command::is_mounted("/boot") {
-            try!(mount_boot());
-        }
         // Hier kann nicht einfach ein try!(system_command::read_in(..)) angewannt werden,
         // da im Fehlerfall (Konfig ungültig) noch /boot umounted werden muss
-        config_file = match system_command::read_in("cat") {
+        config_file = match system_command::read_in("/boot/xMZ-Mod-Touch.json") {
             Ok(config_file) => {
                 config_file
             }
