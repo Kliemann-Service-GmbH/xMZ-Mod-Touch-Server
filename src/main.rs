@@ -90,8 +90,9 @@ fn main() {
     // Initialisiere den Logger (erst nach diesem sind `trace!()`, `debug!()` usw funktional)
     env_logger::init().unwrap();
 
-    println!("xMZ-Mod-Touch-Server Version: {}\n",
-             env!("CARGO_PKG_VERSION"));
+    println!("{} Version: {}\n",
+        env!("CARGO_PKG_NAME"),
+        env!("CARGO_PKG_VERSION"));
 
     if let Err(ref e) = run() {
 
