@@ -14,10 +14,10 @@ pub enum SensorType {
     /// Nemote CO Messzelle, EC NAP-505
     /// Datenblatt: https://www.nemoto.co.jp/nse/sensor-search/use/gas-alarm/nap-505.html?lang=en
     NemotoCO,
-    /// Sensor Type für Simmulation eines NO2 Sensors und Testläufe
-    SimmulationNO2,
-    /// Sensor Type für Simmulation eines CO Sensors und Testläufe
-    SimmulationCO,
+    /// Sensor Type für Simulation eines NO2 Sensors und Testläufe
+    SimulationNO2,
+    /// Sensor Type für Simulation eines CO Sensors und Testläufe
+    SimulationCO,
 }
 
 /// SI Einheit des zu messenden Mediums
@@ -98,8 +98,8 @@ impl Default for Sensor {
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            &SensorType::SimmulationNO2 => write!(f, "NO2 Messzelle (Simulation)"),
-            &SensorType::SimmulationCO => write!(f, "CO Messzelle (Simulation)"),
+            &SensorType::SimulationNO2 => write!(f, "NO2 Messzelle (Simulation)"),
+            &SensorType::SimulationCO => write!(f, "CO Messzelle (Simulation)"),
             &SensorType::NemotoNO2 => write!(f, "NO2 Messzelle"),
             &SensorType::NemotoCO => write!(f, "CO Messzelle"),
         }
@@ -142,7 +142,7 @@ impl Sensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
     /// ```
     pub fn new_with_type(sensor_type: SensorType) -> Self {
         Sensor { sensor_type: sensor_type, ..Default::default() }
@@ -291,7 +291,7 @@ impl Sensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let mut sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// let mut sensor = Sensor::new_with_type(SensorType::SimulationNO2);
     /// sensor.set_adc_value_at_nullgas(114);
     /// sensor.set_adc_value_at_messgas(875);
     /// sensor.set_concentration_at_nullgas(0);
@@ -322,7 +322,7 @@ impl Sensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let mut sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// let mut sensor = Sensor::new_with_type(SensorType::SimulationNO2);
     /// sensor.set_adc_value_at_nullgas(114);
     /// sensor.set_adc_value_at_messgas(875);
     /// sensor.set_concentration_at_nullgas(0);
@@ -482,7 +482,7 @@ impl Sensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
     /// assert_eq!(sensor.is_enabled(), false);
     /// ```
     #[allow(dead_code)]
