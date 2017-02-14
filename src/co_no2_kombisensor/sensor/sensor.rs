@@ -288,30 +288,55 @@ impl Sensor {
     ///
     /// # Examples
     ///
-    /// ```no_run
+    /// ```
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
-    /// assert_eq!(sensor.get_concentration(), 0.0);
+    /// let mut sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// sensor.set_adc_value_at_nullgas(114);
+    /// sensor.set_adc_value_at_messgas(875);
+    /// sensor.set_concentration_at_nullgas(0);
+    /// sensor.set_concentration_at_messgas(280);
+    /// sensor.set_adc_value(333);
+    ///
+    /// assert_eq!(sensor.get_concentration(), 80.57818659658344);
     /// ```
     pub fn get_concentration(&self) -> f64 {
-        let adc_value = self.adc_value;
-        let adc_value_at_nullgas = self.adc_value_at_nullgas;
-        // Damit wir in der Formel nicht durch Null teilen, wird der Wert adc_value_at_messgas auf 1 gesetzt, sollte er Null sein
+        // Damit wir in der Formel nicht durch Null teilen,
+        // wird der Wert adc_value_at_messgas auf 1 gesetzt, sollte er Null sein
         let adc_value_at_messgas = if self.adc_value_at_messgas == 0 { 1 } else { self.adc_value_at_messgas };
-        let concentration_at_nullgas = self.concentration_at_nullgas;
-        let concentration_at_messgas = self.concentration_at_messgas;
 
-        let concentration = (concentration_at_messgas as f64 - concentration_at_nullgas as f64) /
-        (adc_value_at_messgas as f64 - adc_value_at_nullgas as f64) *
-        (adc_value as f64 - adc_value_at_nullgas as f64) + concentration_at_nullgas as f64;
+        let concentration = (self.concentration_at_messgas as f64 - self.concentration_at_nullgas as f64) /
+            (adc_value_at_messgas as f64 - self.adc_value_at_nullgas as f64) *
+            (self.adc_value as f64 - self.adc_value_at_nullgas as f64) + self.concentration_at_nullgas as f64;
 
-        // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
+        // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonsten die berechnete Konzentration
         if concentration < 0.0 { 0.0 } else { concentration }
     }
 
 
     // Setter
+
+    /// Berechnet den ADC Wert aus einer gegebenen Konzentration
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// sensor.set_adc_value_at_nullgas(114);
+    /// sensor.set_adc_value_at_messgas(875);
+    /// sensor.set_concentration_at_nullgas(0);
+    /// sensor.set_concentration_at_messgas(280);
+    /// sensor.set_adc_from_concentration(80.57818659658344);
+    ///
+    /// assert_eq!(sensor.get_adc_value(), 333);
+    /// ```
+    pub fn set_adc_from_concentration(&mut self, concentration: f64) {
+        let adc_value = (self.adc_value_at_messgas as f64 - self.adc_value_at_nullgas as f64) /
+            (self.concentration_at_messgas as f64 - self.concentration_at_nullgas as f64) *
+            (concentration - self.concentration_at_nullgas as f64) + self.adc_value_at_nullgas as f64;
+        self.adc_value = adc_value as u16;
+    }
 
     /// Setzt die Sensor Nummer
     ///
