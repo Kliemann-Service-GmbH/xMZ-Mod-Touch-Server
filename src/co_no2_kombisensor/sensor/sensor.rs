@@ -335,7 +335,10 @@ impl Sensor {
         let adc_value = (self.adc_value_at_messgas as f64 - self.adc_value_at_nullgas as f64) /
             (self.concentration_at_messgas as f64 - self.concentration_at_nullgas as f64) *
             (concentration - self.concentration_at_nullgas as f64) + self.adc_value_at_nullgas as f64;
-        self.adc_value = adc_value as u16;
+
+        // Überschreitet der ADC Wert 1023 dann wird nur 1023 gesetzt.
+        // Die Sensor Hardware, verfügt nur über einen 8Bit ADC Wandler (0..1023)
+        self.adc_value = if adc_value > 1023.0 { 1023.0 as u16 } else { adc_value as u16 };
     }
 
     /// Setzt die Sensor Nummer
