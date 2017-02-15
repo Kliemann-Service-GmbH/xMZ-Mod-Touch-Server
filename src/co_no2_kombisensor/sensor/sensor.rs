@@ -1,7 +1,9 @@
 //! Dieses Modul representiert eine Messzelle, eines [CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod) der Firma RA-GAS
 //! `Firmware Version: 0.13.10`
 use std::fmt;
+use std::time::{Duration, Instant};
 // use errors::*;
+
 
 /// Typ der Messzelle
 #[derive(Clone, Debug)]
@@ -14,10 +16,10 @@ pub enum SensorType {
     /// Nemote CO Messzelle, EC NAP-505
     /// Datenblatt: https://www.nemoto.co.jp/nse/sensor-search/use/gas-alarm/nap-505.html?lang=en
     NemotoCO,
-    /// Sensor Type für Simmulation eines NO2 Sensors und Testläufe
-    SimmulationNO2,
-    /// Sensor Type für Simmulation eines CO Sensors und Testläufe
-    SimmulationCO,
+    /// Sensor Type für Simulation eines NO2 Sensors und Testläufe
+    SimulationNO2,
+    /// Sensor Type für Simulation eines CO Sensors und Testläufe
+    SimulationCO,
 }
 
 /// SI Einheit des zu messenden Mediums
@@ -61,6 +63,8 @@ pub struct Sensor {
     si: SI,
     #[serde(default)]
     config: u16,
+    #[serde(skip_serializing, skip_deserializing)]
+    adc_values_time: Vec<(u16, Instant)>,
 }
 
 impl Default for SensorType {
@@ -89,6 +93,7 @@ impl Default for Sensor {
             sensor_type: SensorType::NemotoNO2,
             si: SI::ppm,
             config: 0,
+            adc_values_time: vec![],
         }
     }
 }
@@ -98,8 +103,8 @@ impl Default for Sensor {
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            &SensorType::SimmulationNO2 => write!(f, "NO2 Messzelle (Simulation)"),
-            &SensorType::SimmulationCO => write!(f, "CO Messzelle (Simulation)"),
+            &SensorType::SimulationNO2 => write!(f, "NO2 Messzelle (Simulation)"),
+            &SensorType::SimulationCO => write!(f, "CO Messzelle (Simulation)"),
             &SensorType::NemotoNO2 => write!(f, "NO2 Messzelle"),
             &SensorType::NemotoCO => write!(f, "CO Messzelle"),
         }
@@ -142,7 +147,7 @@ impl Sensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
     /// ```
     pub fn new_with_type(sensor_type: SensorType) -> Self {
         Sensor { sensor_type: sensor_type, ..Default::default() }
@@ -288,44 +293,57 @@ impl Sensor {
     ///
     /// # Examples
     ///
-    /// ```no_run
+    /// ```
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
-    /// assert_eq!(sensor.get_concentration(), 0.0);
+    /// let mut sensor = Sensor::new_with_type(SensorType::SimulationNO2);
+    /// sensor.set_adc_value_at_nullgas(114);
+    /// sensor.set_adc_value_at_messgas(875);
+    /// sensor.set_concentration_at_nullgas(0);
+    /// sensor.set_concentration_at_messgas(280);
+    /// sensor.set_adc_value(333);
+    ///
+    /// assert_eq!(sensor.get_concentration(), 80.57818659658344);
     /// ```
     pub fn get_concentration(&self) -> f64 {
-        let adc_value = self.adc_value;
-        let adc_value_at_nullgas = self.adc_value_at_nullgas;
-        // Damit wir in der Formel nicht durch Null teilen, wird der Wert adc_value_at_messgas auf 1 gesetzt, sollte er Null sein
+        // Damit wir in der Formel nicht durch Null teilen,
+        // wird der Wert adc_value_at_messgas auf 1 gesetzt, sollte er Null sein
         let adc_value_at_messgas = if self.adc_value_at_messgas == 0 { 1 } else { self.adc_value_at_messgas };
-        let concentration_at_nullgas = self.concentration_at_nullgas;
-        let concentration_at_messgas = self.concentration_at_messgas;
 
-        let concentration = (concentration_at_messgas as f64 - concentration_at_nullgas as f64) /
-        (adc_value_at_messgas as f64 - adc_value_at_nullgas as f64) *
-        (adc_value as f64 - adc_value_at_nullgas as f64) + concentration_at_nullgas as f64;
+        let concentration = (self.concentration_at_messgas as f64 - self.concentration_at_nullgas as f64) /
+            (adc_value_at_messgas as f64 - self.adc_value_at_nullgas as f64) *
+            (self.adc_value as f64 - self.adc_value_at_nullgas as f64) + self.concentration_at_nullgas as f64;
 
-        // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
+        // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonsten die berechnete Konzentration
         if concentration < 0.0 { 0.0 } else { concentration }
     }
 
 
     // Setter
 
-    /// Setzt die Sensor Nummer
+    /// Berechnet den ADC Wert aus einer gegebenen Konzentration
     ///
     /// # Examples
     /// ```
     /// use xmz_server::*;
     ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_number(), 0);
-    /// sensor.set_number(100);
-    /// assert_eq!(sensor.get_number(), 100);
+    /// let mut sensor = Sensor::new_with_type(SensorType::SimulationNO2);
+    /// sensor.set_adc_value_at_nullgas(114);
+    /// sensor.set_adc_value_at_messgas(875);
+    /// sensor.set_concentration_at_nullgas(0);
+    /// sensor.set_concentration_at_messgas(280);
+    /// sensor.set_adc_from_concentration(80.57818659658344);
+    ///
+    /// assert_eq!(sensor.get_adc_value(), 333);
     /// ```
-    pub fn set_number(&mut self, number: u16) {
-        self.number = number;
+    pub fn set_adc_from_concentration(&mut self, concentration: f64) {
+        let adc_value = (self.adc_value_at_messgas as f64 - self.adc_value_at_nullgas as f64) /
+            (self.concentration_at_messgas as f64 - self.concentration_at_nullgas as f64) *
+            (concentration - self.concentration_at_nullgas as f64) + self.adc_value_at_nullgas as f64;
+
+        // Überschreitet der ADC Wert 1023 dann wird nur 1023 gesetzt.
+        // Die Sensor Hardware, verfügt nur über einen 8Bit ADC Wandler (0..1023)
+        self.adc_value = if adc_value > 1023.0 { 1023.0 as u16 } else { adc_value as u16 };
     }
 
     /// Setzt den ADC Wert des Sensors
@@ -341,6 +359,21 @@ impl Sensor {
     /// ```
     pub fn set_adc_value(&mut self, value: u16) {
         self.adc_value = value
+    }
+
+    /// Setzt die Sensor Nummer
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_number(), 0);
+    /// sensor.set_number(100);
+    /// assert_eq!(sensor.get_number(), 100);
+    /// ```
+    pub fn set_number(&mut self, number: u16) {
+        self.number = number;
     }
 
     /// Setzt minimalen Sensormesswert des Sensors
@@ -457,7 +490,7 @@ impl Sensor {
     /// ```
     /// use xmz_server::*;
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::SimmulationNO2);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
     /// assert_eq!(sensor.is_enabled(), false);
     /// ```
     #[allow(dead_code)]
@@ -466,5 +499,62 @@ impl Sensor {
             0 => false,
             _ => true,
         }
+    }
+
+    /// Update die Values, Timestamp Tuppel
+    ///
+    pub fn update_adc_values_time(&mut self) {
+        self.adc_values_time.push( (self.adc_value, Instant::now()) );
+    }
+
+    // zu Gettern
+    pub fn get_adc_values_time(&self) -> &Vec<(u16, Instant)> {
+        &self.adc_values_time
+    }
+
+    pub fn average(&mut self, duration: Duration) -> u16 {
+        // Werte Tuppel kürzen
+        self.adc_values_time.retain(|&(_, x)| x.elapsed() <= duration);
+
+        // Länge des Werte Tuppels ist finden
+        let len = self.adc_values_time.len() as u16;
+        let mut weight = len;
+        let mut sum: u16 = 0;
+
+        for &(value, _) in self.adc_values_time.iter().rev() {
+            sum += value;
+        }
+
+        sum / len
+    }
+
+    pub fn weighten_average(&mut self, duration: Duration) -> u16 {
+        // Werte Tuppel kürzen
+        self.adc_values_time.retain(|&(_, x)| x.elapsed() <= duration);
+
+        // Länge des Werte Tuppels ist finden
+        let len = self.adc_values_time.len() as u16;
+        let mut weight = len;
+        let mut sum: u16 = 0;
+
+        for &(value, _) in self.adc_values_time.iter().rev() {
+            sum += (value * (weight / len));
+            weight -= 1;
+        }
+
+        sum
+    }
+
+    pub fn get_concentration_from_adc(&self, adc_value: &u16) -> f64 {
+        // Damit wir in der Formel nicht durch Null teilen,
+        // wird der Wert adc_value_at_messgas auf 1 gesetzt, sollte er Null sein
+        let adc_value_at_messgas = if self.adc_value_at_messgas == 0 { 1 } else { self.adc_value_at_messgas };
+
+        let concentration = (self.concentration_at_messgas as f64 - self.concentration_at_nullgas as f64) /
+            (adc_value_at_messgas as f64 - self.adc_value_at_nullgas as f64) *
+            (*adc_value as f64 - self.adc_value_at_nullgas as f64) + self.concentration_at_nullgas as f64;
+
+        // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonsten die berechnete Konzentration
+        if concentration < 0.0 { 0.0 } else { concentration }
     }
 }
