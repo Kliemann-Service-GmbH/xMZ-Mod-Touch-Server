@@ -1,7 +1,9 @@
 //! Dieses Modul representiert eine Messzelle, eines [CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod) der Firma RA-GAS
 //! `Firmware Version: 0.13.10`
 use std::fmt;
+use std::time::{Duration, Instant};
 // use errors::*;
+
 
 /// Typ der Messzelle
 #[derive(Clone, Debug)]
@@ -61,6 +63,8 @@ pub struct Sensor {
     si: SI,
     #[serde(default)]
     config: u16,
+    #[serde(skip_serializing, skip_deserializing)]
+    adc_values_time: Vec<(u16, Instant)>,
 }
 
 impl Default for SensorType {
@@ -89,6 +93,7 @@ impl Default for Sensor {
             sensor_type: SensorType::NemotoNO2,
             si: SI::ppm,
             config: 0,
+            adc_values_time: vec![],
         }
     }
 }
@@ -341,21 +346,6 @@ impl Sensor {
         self.adc_value = if adc_value > 1023.0 { 1023.0 as u16 } else { adc_value as u16 };
     }
 
-    /// Setzt die Sensor Nummer
-    ///
-    /// # Examples
-    /// ```
-    /// use xmz_server::*;
-    ///
-    /// let mut sensor = Sensor::new();
-    /// assert_eq!(sensor.get_number(), 0);
-    /// sensor.set_number(100);
-    /// assert_eq!(sensor.get_number(), 100);
-    /// ```
-    pub fn set_number(&mut self, number: u16) {
-        self.number = number;
-    }
-
     /// Setzt den ADC Wert des Sensors
     ///
     /// # Examples
@@ -369,6 +359,21 @@ impl Sensor {
     /// ```
     pub fn set_adc_value(&mut self, value: u16) {
         self.adc_value = value
+    }
+
+    /// Setzt die Sensor Nummer
+    ///
+    /// # Examples
+    /// ```
+    /// use xmz_server::*;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// assert_eq!(sensor.get_number(), 0);
+    /// sensor.set_number(100);
+    /// assert_eq!(sensor.get_number(), 100);
+    /// ```
+    pub fn set_number(&mut self, number: u16) {
+        self.number = number;
     }
 
     /// Setzt minimalen Sensormesswert des Sensors
@@ -494,5 +499,62 @@ impl Sensor {
             0 => false,
             _ => true,
         }
+    }
+
+    /// Update die Values, Timestamp Tuppel
+    ///
+    pub fn update_adc_values_time(&mut self) {
+        self.adc_values_time.push( (self.adc_value, Instant::now()) );
+    }
+
+    // zu Gettern
+    pub fn get_adc_values_time(&self) -> &Vec<(u16, Instant)> {
+        &self.adc_values_time
+    }
+
+    pub fn average(&mut self, duration: Duration) -> u16 {
+        // Werte Tuppel kürzen
+        self.adc_values_time.retain(|&(_, x)| x.elapsed() <= duration);
+
+        // Länge des Werte Tuppels ist finden
+        let len = self.adc_values_time.len() as u16;
+        let mut weight = len;
+        let mut sum: u16 = 0;
+
+        for &(value, _) in self.adc_values_time.iter().rev() {
+            sum += value;
+        }
+
+        sum / len
+    }
+
+    pub fn weighten_average(&mut self, duration: Duration) -> u16 {
+        // Werte Tuppel kürzen
+        self.adc_values_time.retain(|&(_, x)| x.elapsed() <= duration);
+
+        // Länge des Werte Tuppels ist finden
+        let len = self.adc_values_time.len() as u16;
+        let mut weight = len;
+        let mut sum: u16 = 0;
+
+        for &(value, _) in self.adc_values_time.iter().rev() {
+            sum += (value * (weight / len));
+            weight -= 1;
+        }
+
+        sum
+    }
+
+    pub fn get_concentration_from_adc(&self, adc_value: &u16) -> f64 {
+        // Damit wir in der Formel nicht durch Null teilen,
+        // wird der Wert adc_value_at_messgas auf 1 gesetzt, sollte er Null sein
+        let adc_value_at_messgas = if self.adc_value_at_messgas == 0 { 1 } else { self.adc_value_at_messgas };
+
+        let concentration = (self.concentration_at_messgas as f64 - self.concentration_at_nullgas as f64) /
+            (adc_value_at_messgas as f64 - self.adc_value_at_nullgas as f64) *
+            (*adc_value as f64 - self.adc_value_at_nullgas as f64) + self.concentration_at_nullgas as f64;
+
+        // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonsten die berechnete Konzentration
+        if concentration < 0.0 { 0.0 } else { concentration }
     }
 }
