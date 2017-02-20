@@ -51,7 +51,7 @@ impl Default for KombisensorType {
 impl fmt::Display for KombisensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            &KombisensorType::RAGasCoNo2 => write!(f, "RA-Gas GmbH CO/ NO2 Kombisensor Modbus"),
+            &KombisensorType::RAGasCoNo2 => write!(f, "RA-GAS GmbH CO/ NO2 Kombisensor Modbus"),
         }
     }
 }
