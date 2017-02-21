@@ -1,4 +1,4 @@
-//! CO/ NO2 Kombisensor mit Modbus Interface der Firma RA-Gas GmbH
+//! CO/ NO2 Kombisensor mit Modbus Interface der Firma RA-GAS GmbH
 //!
 //! Die Senosr Platine verfügt über einen Modbus Transceiver und 2 Messzellen, je eine, für
 //! Kohlenmonoxid (CO) und Stickstoffdioxid (NO2).

@@ -88,7 +88,7 @@ impl Kombisensor {
     /// use xmz_server::*;
     ///
     /// let kombisensor = Kombisensor::new();
-    /// assert_eq!("RA-Gas GmbH CO/ NO2 Kombisensor Modbus", format!("{}", kombisensor.get_kombisensor_type()));
+    /// assert_eq!("RA-GAS GmbH CO/ NO2 Kombisensor Modbus", format!("{}", kombisensor.get_kombisensor_type()));
     /// ```
     pub fn get_kombisensor_type(&self) -> String {
         format!("{}", self.kombisensor_type)
