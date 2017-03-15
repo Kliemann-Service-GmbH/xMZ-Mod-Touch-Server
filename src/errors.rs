@@ -12,8 +12,8 @@ error_chain! {
         Fmt(::std::fmt::Error);
         Gpio(::sysfs_gpio::Error) #[cfg(unix)];
         Io(::std::io::Error) #[cfg(unix)];
-        SerdeJson(::serde_json::Error);
         Modbus(::libmodbus_rs::Error);
+        SerdeJson(::serde_json::Error);
     }
 
     // Define additional `ErrorKind` variants. The syntax here is

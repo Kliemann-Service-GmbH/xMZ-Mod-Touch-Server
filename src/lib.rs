@@ -15,6 +15,7 @@
 #[macro_use] extern crate nom;
 #[macro_use] extern crate serde_derive;
 extern crate env_logger;
+extern crate iron;
 extern crate libmodbus_rs;
 extern crate rand;
 extern crate serde_json;
