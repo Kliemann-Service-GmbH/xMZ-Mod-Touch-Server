@@ -1,7 +1,7 @@
 # FIXME: Umbenennen nach 'xmz_mod_touch_server'
 [package]
 name = "xmz_server"
-version = "0.21.4"
+version = "0.30.0"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "xMZ-Mod-Touch Server"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
@@ -18,20 +18,5 @@ doc = false
 development = []
 
 [dependencies]
-clap = "2.20.0"
-env_logger = "0.3"
-error-chain = "^0"
-iron = "0.5.1"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
-log = "0.3.6"
-nom = "2.0.1"
-rand="0.3"
-router = "*"
-serde = "0.9"
-serde_derive = "0.9"
-serde_json = "0.9"
 sysfs_gpio = "0.4"
-
-# Aktiviere Log in Tests: https://github.com/rust-lang-nursery/log#in-tests
-[dev-dependencies]
-env_logger = "0.3"
