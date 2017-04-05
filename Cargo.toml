@@ -19,4 +19,6 @@ development = []
 
 [dependencies]
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
-sysfs_gpio = "0.4"
+sysfs_gpio = "*"
+log = "*"
+env_logger = "*"

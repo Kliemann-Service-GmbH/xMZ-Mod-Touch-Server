@@ -13,8 +13,27 @@
 //! [repo]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
 //! [doku]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html
 
+#[macro_use] extern crate log;
+extern crate env_logger;
+
+mod exceptions;
+mod kombisensors;
+mod sensors;
+mod server;
+mod shift_register;
+mod zones;
+
 
 fn main() {
-    println!("xMZ-Mod-Touch-Server startet ...");
+    env_logger::init().unwrap();
 
+    let mut server = server::Server::new();
+
+    loop {
+        server.update();
+
+        server.check_exceptions();
+
+        println!("Ausnahmen\n{:#?}", server.exceptions());
+    }
 }
