@@ -12,7 +12,7 @@ license = "GPL-2.0"
 [[bin]]
 name = "xmz-server"
 path = "src/main.rs"
-doc = false
+# doc = false
 
 [features]
 development = []
