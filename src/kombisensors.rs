@@ -15,7 +15,7 @@ impl Kombisensor {
     }
 
     pub fn update(&mut self, num: usize) {
-        println!("Kombisensor[{}]::update() ...", num);
+        info!("Kombisensor[{}]::update() ...", num);
 
         for (num, sensor) in &mut self.sensors.iter_mut().enumerate() {
             sensor.update(num);

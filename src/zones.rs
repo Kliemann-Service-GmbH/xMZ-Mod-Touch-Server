@@ -16,7 +16,7 @@ impl Zone {
 
     /// Siehe `Server::update()`
     pub fn update(&mut self, num: usize) {
-        println!("Zone[{}]::update() ...", num);
+        info!("Zone[{}]::update() ...", num);
 
         for (num, kombisensor) in &mut self.kombisensors.iter_mut().enumerate() {
             kombisensor.update(num);

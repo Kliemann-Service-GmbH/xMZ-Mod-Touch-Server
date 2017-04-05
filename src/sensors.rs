@@ -17,6 +17,6 @@ impl Sensor {
     }
 
     pub fn update(&mut self, num: usize) {
-        println!("Sensor[{}]::update() ...", num);
+        info!("Sensor[{}]::update() ...", num);
     }
 }
