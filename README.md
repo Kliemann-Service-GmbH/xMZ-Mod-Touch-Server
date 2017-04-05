@@ -1,4 +1,6 @@
-# Serverteil der 'xMZ-Mod-Touch'-Platform [![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)&nbsp;[Projektseite |][homepage]&nbsp;[Dokumentation |][doku]&nbsp;[Repo auf Github.com |][repo]
+# Serverteil der 'xMZ-Mod-Touch'-Platform [![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)
+
+[Projektseite |][homepage]&nbsp;[Dokumentation |][doku]&nbsp;[Repo auf Github.com |][repo]
 
 Dies ist der Hauptprozess der sehr früh, noch vor der GUI, gestartet wird.
 Er steuert die Hardware (LEDs, Relais, Akku usw.) und händelt die angeschlossenen
