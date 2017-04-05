@@ -235,6 +235,7 @@ impl Server {
 
     /// Simulation 1
     /// FIXME: Doku fehlt
+    /// FIXME: kombisensors::sensors_mut() nach kombisensors::get_sensors_mut() umbenennen
     pub fn simulation(&mut self) {
         extern crate rand;
         use rand::Rng;
