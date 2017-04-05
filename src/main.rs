@@ -11,7 +11,7 @@
 //! [1]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
 //! [homepage]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server
 //! [repo]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
-//! [doku]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/target/doc/xmz_server/index.html
+//! [doku]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html
 
 
 fn main() {
