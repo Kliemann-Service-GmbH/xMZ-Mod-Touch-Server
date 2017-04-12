@@ -16,7 +16,7 @@
 #[macro_use] extern crate log;
 extern crate env_logger;
 
-mod exceptions;
+pub mod exceptions;
 mod kombisensors;
 mod sensors;
 mod server;
@@ -33,7 +33,6 @@ fn main() {
         server.update();
 
         server.check_exceptions();
-
-        println!("Ausnahmen\n{:#?}", server.exceptions());
+        info!("Ausnahmen\n{:#?}", server.exceptions());
     }
 }

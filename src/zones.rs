@@ -1,5 +1,9 @@
+use server::Server;
 use kombisensors::Kombisensor;
+use std::rc::Rc;
 
+#[derive(Clone)]
+#[derive(Debug)]
 pub struct Zone {
     kombisensors: Vec<Kombisensor>,
 }
@@ -16,10 +20,14 @@ impl Zone {
 
     /// Siehe `Server::update()`
     pub fn update(&mut self, num: usize) {
-        info!("Zone[{}]::update() ...", num);
+        debug!("Zone[{}]::update() ...", num);
 
         for (num, kombisensor) in &mut self.kombisensors.iter_mut().enumerate() {
             kombisensor.update(num);
         }
+    }
+
+    pub fn check_exceptions(&self, server: Rc<&mut Server>) {
+        println!("Check Exception in Zone");
     }
 }

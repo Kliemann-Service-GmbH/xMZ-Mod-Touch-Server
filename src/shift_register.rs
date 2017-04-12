@@ -1,9 +1,13 @@
 
+#[derive(Clone)]
+#[derive(Debug)]
 pub enum ShiftRegisterType {
     LED,
     Relais,
 }
 
+#[derive(Clone)]
+#[derive(Debug)]
 pub struct ShiftRegister {
     shift_register_type: ShiftRegisterType,
 }

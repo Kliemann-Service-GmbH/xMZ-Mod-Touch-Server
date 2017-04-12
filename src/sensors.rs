@@ -1,9 +1,13 @@
 
+#[derive(Clone)]
+#[derive(Debug)]
 pub enum SensorType {
     NemotoNO2,
     NemotoCO,
 }
 
+#[derive(Clone)]
+#[derive(Debug)]
 pub struct Sensor {
     sensor_type: SensorType,
 }
@@ -17,6 +21,6 @@ impl Sensor {
     }
 
     pub fn update(&mut self, num: usize) {
-        info!("Sensor[{}]::update() ...", num);
+        debug!("Sensor[{}]::update() ...", num);
     }
 }

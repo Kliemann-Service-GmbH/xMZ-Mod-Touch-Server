@@ -1,12 +1,15 @@
-use exceptions::{Exception, ExceptionType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
+use std::collections::HashSet;
+use std::rc::Rc;
 use std::thread;
 use std::time::Duration;
 use std::time::Instant;
 use zones::Zone;
-use std::collections::HashSet;
 
+use exceptions::{Action, Exception, ExceptionType};
 
+#[derive(Clone)]
+#[derive(Debug)]
 pub struct Server {
     zones: Vec<Zone>,
     leds: ShiftRegister,
@@ -34,7 +37,7 @@ impl Server {
     }
 
     pub fn update(&mut self) {
-        info!("Server::update() ...");
+        debug!("Server::update() ...");
 
         for (num, zone) in &mut self.zones.iter_mut().enumerate() {
             zone.update(num);
@@ -50,18 +53,34 @@ impl Server {
     }
 
     pub fn check_exceptions(&mut self) {
-        info!("Server::check_exceptions() ...");
+        debug!("Server::check_exceptions() ...");
+        let mut server = Rc::new(self);
 
         // Wartungsintervall
-        // if self.uptime() > 365.0f64*24.0*60.0*60.0 { info!("Ein Jahr is rumm!"); }
-        // info!("{} {}", 1.0f64*1.0*1.0*10.0, self.uptime());
-        if self.uptime() > 1.0f64*1.0*1.0*10.0 {
-            let exception = Exception::new(ExceptionType::Wartungsintervall);
-            if !self.exceptions.contains(&exception) {
-                self.exceptions.insert(exception);
-            }
+        let server1 = server.clone();
+        {
+            check_wartungsintervall(server1);
         }
 
+        // Zonen -> Kombisensoren
+        let server1 = server.clone();
+        {
+            check_zones(server1);
+        }
+
+        // Zonen -> Kombisensoren -> Sensore
         thread::sleep(Duration::from_millis(100));
     }
+}
+
+
+fn check_wartungsintervall(server: Rc<&mut Server>) {
+    let mut server = server;
+
+    println!("{:?}", server)
+}
+
+
+fn check_zones(server: Rc<&mut Server>) {
+    println!("{:?}", server)
 }
