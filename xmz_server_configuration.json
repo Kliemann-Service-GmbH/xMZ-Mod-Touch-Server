@@ -1,0 +1,46 @@
+{
+  "start_time": "2017-04-20T14:27:47.435380607Z",
+  "exceptions": [],
+  "zones": [
+    {
+      "kombisensors": [
+        {
+          "sensors": [
+            {
+              "value": 0,
+              "reverse": false,
+              "error_count": 5
+            },
+            {
+              "value": 0,
+              "reverse": false,
+              "error_count": 5
+            }
+          ]
+        },
+        {
+          "sensors": [
+            {
+              "value": 0,
+              "reverse": false,
+              "error_count": 5
+            },
+            {
+              "value": 0,
+              "reverse": false,
+              "error_count": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "leds": {
+    "shift_register_type": "LED",
+    "data": 0
+  },
+  "relais": {
+    "shift_register_type": "Relais",
+    "data": 0
+  }
+}
