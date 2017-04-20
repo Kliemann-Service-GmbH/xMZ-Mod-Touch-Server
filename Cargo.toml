@@ -1,7 +1,7 @@
 # FIXME: Umbenennen nach 'xmz_mod_touch_server'
 [package]
 name = "xmz_server"
-version = "0.30.0"
+version = "0.31.0"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "xMZ-Mod-Touch Server"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
@@ -10,23 +10,22 @@ repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git"
 license = "GPL-2.0"
 
 [[bin]]
-name = "xmz-server"
-path = "src/main.rs"
-# doc = false
+name = "xmz_server"
+path = "src/bin/xmz_server.rs"
+doc = false
 
 [features]
 development = []
 
 [dependencies]
-chrono = { version = "0.3", features = ["serde"] }
+chrono = { version = "0.3", features = ["serde"] } # zum serialisieren der Timestamps im Server (uptime usw.)
 env_logger = "0.4"
+iron = "0.5.1"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git" }
 log = "0.3"
 num = "0.1"
 rand = "0.3"
-rocket = "0.2.4"
-rocket_codegen = "0.2.4"
-rocket_contrib = "0.2.4"
+router = "0.5.1"
 serde = "0.9"
 serde_derive = "0.9"
 serde_json = "0.9"
