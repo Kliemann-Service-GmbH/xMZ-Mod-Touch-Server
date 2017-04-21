@@ -31,17 +31,17 @@ impl Error for StringError {
 // This is my shared state example. It's a very reduced version ><
 #[derive(Debug)]
 #[derive(Deserialize, Serialize)]
-struct SharedStruct {
+pub struct SharedStruct {
     data: u64,
 }
 impl SharedStruct {
-    fn new() -> Self {
+    pub fn new() -> Self {
         SharedStruct { data: 0 }
     }
-    fn set(&mut self, data: u64) {
+    pub fn set(&mut self, data: u64) {
         self.data = data;
     }
-    fn clear(&mut self) {
+    pub fn clear(&mut self) {
         self.data = 0;
     }
 }
@@ -73,7 +73,7 @@ fn start_web_interface(shared_struct: Arc<Mutex<SharedStruct>>) -> Result<(), Bo
     router.put("/data/set/:value", move |req: &mut Request| put_data(req, shared_struct_clone.clone()), "put_data");
 
     /// curl http://localhost:3000
-    fn index(req: &mut Request, shared_struct: Arc<Mutex<SharedStruct>>) -> IronResult<Response> {
+    fn index(_req: &mut Request, shared_struct: Arc<Mutex<SharedStruct>>) -> IronResult<Response> {
         if let Ok(shared_struct) = shared_struct.lock() {
             let payload = serde_json::to_string(&*shared_struct).unwrap();
             Ok(Response::with((ContentType::json().0, status::Ok, payload)))
@@ -83,7 +83,7 @@ fn start_web_interface(shared_struct: Arc<Mutex<SharedStruct>>) -> Result<(), Bo
     }
 
     /// curl http://localhost:3000/data
-    fn get_data(req: &mut Request, shared_struct: Arc<Mutex<SharedStruct>>) -> IronResult<Response> {
+    fn get_data(_req: &mut Request, shared_struct: Arc<Mutex<SharedStruct>>) -> IronResult<Response> {
         if let Ok(shared_struct) = shared_struct.lock() {
             let payload = serde_json::to_string(&shared_struct.data).unwrap();
             Ok(Response::with((ContentType::json().0, status::Ok, payload)))

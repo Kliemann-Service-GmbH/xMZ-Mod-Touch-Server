@@ -18,10 +18,9 @@ pub enum ExceptionType {
 pub struct Exception {
     exception_type: ExceptionType,
 }
+
 impl Exception {
     pub fn new(exception_type: ExceptionType) -> Self {
-        Exception {
-            exception_type: exception_type,
-        }
+        Exception { exception_type: exception_type }
     }
 }

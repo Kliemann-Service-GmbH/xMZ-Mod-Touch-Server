@@ -26,7 +26,7 @@ impl XMZServer {
             zones: vec![
                 Zone::new(),
             ],
-            leds:   ShiftRegister::new(ShiftRegisterType::LED),
+            leds: ShiftRegister::new(ShiftRegisterType::LED),
             relais: ShiftRegister::new(ShiftRegisterType::Relais),
         }
     }
@@ -59,16 +59,17 @@ impl XMZServer {
     }
 
     pub fn get_zone(&self, id: usize) -> Option<&Zone> {
-        *&self.zones.get(id)
+        self.zones.get(id)
     }
 
 
     fn check_uptime(&mut self) {
-        if ::chrono::UTC::now().signed_duration_since(self.start_time) > ::chrono::Duration::seconds(SERVER_MAX_UPTIME_SEC) {
+        if ::chrono::UTC::now().signed_duration_since(self.start_time) >
+           ::chrono::Duration::seconds(SERVER_MAX_UPTIME_SEC) {
             self.leds.set(2);
             self.leds.set(3);
             self.relais.clear(1);
-            self.add_exception( Exception::new(ExceptionType::WartungsintervalReached) );
+            self.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
         }
     }
 
@@ -77,5 +78,9 @@ impl XMZServer {
             self.exceptions.insert(exception);
         }
     }
-
+}
+impl Default for XMZServer {
+    fn default() -> Self {
+        Self::new()
+    }
 }

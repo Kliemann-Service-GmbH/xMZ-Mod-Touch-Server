@@ -15,8 +15,9 @@ fn start_update(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError>
     thread::spawn(move || {
         loop {
 
-            { // DIESER SCOPE IST SEHR WICHTIG! Ohne diesen würde der xmz_server.lock() niemals beendet!
-            
+            {
+                // DIESER SCOPE IST SEHR WICHTIG! Ohne diesen würde der xmz_server.lock() niemals beendet!
+
                 if let Ok(mut xmz_server) = xmz_server.lock() {
                     // Ausnahmen prüfen
                     xmz_server.check();
@@ -41,7 +42,7 @@ fn start_web_interface(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServe
     Ok(())
 }
 
-fn run() -> Result<(), XMZServerError> {   
+fn run() -> Result<(), XMZServerError> {
     /// Create a XMZServer and write it to a file
     ///
     /// This if for bootstrapping purposes
@@ -53,10 +54,11 @@ fn run() -> Result<(), XMZServerError> {
     config.write_all(xmz_server_json.as_bytes())?;
 
     /// Server Konfiguration aus Konfig File auslesen
-    let xmz_server: XMZServer = serde_json::from_str(include_str!("../../xmz_server_configuration.json"))?;
+    let xmz_server: XMZServer = serde_json::from_str(include_str!("../../xmz_server_configuration.\
+                                                                   json"))?;
     let xmz_server = Arc::new(Mutex::new(xmz_server));
     /// Manuelle Erstellung des Servers
-    // let mut xmz_server = Arc::new(Mutex::new(XMZServer::new()));
+    /// let mut xmz_server = Arc::new(Mutex::new(XMZServer::new()));
 
     // Update thread
     start_update(xmz_server.clone())?;
@@ -72,8 +74,8 @@ fn main() {
     env_logger::init().unwrap();
 
     println!("Starte '{}' Version: {}\n",
-        env!("CARGO_PKG_NAME"),
-        env!("CARGO_PKG_VERSION"));
+             env!("CARGO_PKG_NAME"),
+             env!("CARGO_PKG_VERSION"));
 
     if let Err(ref e) = run() {
         println!("error: {}", e);

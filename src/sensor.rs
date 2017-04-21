@@ -8,7 +8,7 @@ use shift_register::ShiftRegister;
 #[derive(Serialize, Deserialize)]
 pub struct Sensor {
     value: u64,
-    reverse: bool,   // Boolen um die Richtung bei der Simulation zu halten.
+    reverse: bool, // Boolen um die Richtung bei der Simulation zu halten.
     error_count: u64,
 }
 impl Sensor {
@@ -20,33 +20,75 @@ impl Sensor {
         }
     }
 
-    pub fn check(&mut self, num_zone: usize, num: usize, exceptions: &mut HashSet<Exception>, leds: &mut ShiftRegister, relais: &mut ShiftRegister) {
+    pub fn check(&mut self,
+                 num_zone: usize,
+                 num: usize,
+                 exceptions: &mut HashSet<Exception>,
+                 leds: &mut ShiftRegister,
+                 relais: &mut ShiftRegister) {
         debug!("\t\t\t\tcheck() Sensor ...");
         self.check_direct_value(num_zone, num, exceptions, leds, relais);
     }
 
-    pub fn update(&mut self, num_zone: usize, num: usize, exceptions: &mut HashSet<Exception>, leds: &mut ShiftRegister, relais: &mut ShiftRegister) {
+    pub fn update(&mut self,
+                  _num_zone: usize,
+                  _num: usize,
+                  _exceptions: &mut HashSet<Exception>,
+                  _leds: &mut ShiftRegister,
+                  _relais: &mut ShiftRegister) {
         debug!("\t\t\t\tupdate() Sensor ...");
-        if self.value == 300 { self.reverse = true }
-        if !self.reverse { self.value += 1 } else { self.value -= 1 }
-        if self.value == 0 { self.reverse = false }
+        if self.value == 300 {
+            self.reverse = true
+        }
+        if !self.reverse {
+            self.value += 1
+        } else {
+            self.value -= 1
+        }
+        if self.value == 0 {
+            self.reverse = false
+        }
     }
 
-
-    fn reset_error_count(&mut self) {
+    /// # Examples
+    /// 
+    /// ```rust
+    /// use xmz_server::sensor::Sensor;
+    ///
+    /// let mut sensor = Sensor::new();
+    /// sensor.reset_error_count();
+    /// ```
+    pub fn reset_error_count(&mut self) {
         self.error_count = 0;
     }
 
-    fn check_direct_value(&mut self, num_zone: usize, num: usize, exceptions: &mut HashSet<Exception>, leds: &mut ShiftRegister, relais: &mut ShiftRegister) {
-        let direktwert_ueberschritten = Exception::new(ExceptionType::SensorDirectValue { zone: num_zone, sensor: num });
+    fn check_direct_value(&mut self,
+                          num_zone: usize,
+                          num: usize,
+                          exceptions: &mut HashSet<Exception>,
+                          leds: &mut ShiftRegister,
+                          relais: &mut ShiftRegister) {
+        let direktwert_ueberschritten = Exception::new(ExceptionType::SensorDirectValue {
+            zone: num_zone,
+            sensor: num,
+        });
         if self.value >= 150 {
-            if !exceptions.contains(&direktwert_ueberschritten) { exceptions.insert(direktwert_ueberschritten); }
+            if !exceptions.contains(&direktwert_ueberschritten) {
+                exceptions.insert(direktwert_ueberschritten);
+            }
             leds.set(1);
             relais.set(3);
         } else if self.value < 150 {
-            if exceptions.contains(&direktwert_ueberschritten) { exceptions.remove(&direktwert_ueberschritten); }
+            if exceptions.contains(&direktwert_ueberschritten) {
+                exceptions.remove(&direktwert_ueberschritten);
+            }
             leds.clear(1);
             relais.clear(3);
         }
+    }
+}
+impl Default for Sensor {
+    fn default() -> Self {
+        Self::new()
     }
 }
