@@ -36,11 +36,13 @@ impl Error for XMZServerError {
         }
     }
 }
+
 impl From<io::Error> for XMZServerError {
     fn from(err: io::Error) -> XMZServerError {
         XMZServerError::IoError(err)
     }
 }
+
 impl From<serde_json::Error> for XMZServerError {
     fn from(err: serde_json::Error) -> XMZServerError {
         XMZServerError::SerdeJson(err)
