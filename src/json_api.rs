@@ -28,10 +28,15 @@ impl<'a> Error for StringError<'a> {
     }
 }
 
+
 pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     let mut router = Router::new();
 
     /// Catch All Route
+    ///
+    /// Die so genannte "Catch All" Route leitet alle GET Anfragen, für die es keine 
+    /// handler Funktionen (index, zones_index, kombisensor_get, ...) existieren 
+    /// auf die Index Funktion weiter.
     ///
     /// `curl http://localhost:3000`
     let xmz_server_clone = xmz_server.clone();
@@ -61,6 +66,12 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     router.get("/api/v1/zone/:zone_id/kombisensors",
                move |req: &mut Request| kombisensors_index(req, xmz_server_clone.clone()),
                "kombisensors_index");
+
+    /// `curl http://localhost:3000/api/v1/zone/0/kombisensor/0`
+    let xmz_server_clone = xmz_server.clone();
+    router.get("/api/v1/zone/:zone_id/kombisensor/:kombisensor_id",
+               move |req: &mut Request| kombisensor_get(req, xmz_server_clone.clone()),
+               "kombisensor_get");
 
     /// `curl http://localhost:3000/api/v1/exceptions`
     let xmz_server_clone = xmz_server.clone();
@@ -105,9 +116,29 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
             let zone_id = req.extensions.get::<Router>()
                 .unwrap().find("zone_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
 
+            // Get Kombisensors
+            let kombisensors = &xmz_server.get_zone(zone_id).map(|zone| {
+                zone.get_kombisensors()
+            });
+
+            let payload = serde_json::to_string_pretty(kombisensors).unwrap();
+            Ok(Response::with((status::Ok, payload)))
+        } else {
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+        }
+    }
+
+    fn kombisensor_get(req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
+        if let Ok(xmz_server) = xmz_server.lock() {
+            // Extract the parameter(s)
+            let zone_id = req.extensions.get::<Router>()
+                .unwrap().find("zone_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
+            let kombisensor_id = req.extensions.get::<Router>()
+                .unwrap().find("kombisensor_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
+
             // Get Kombisensor
             let kombisensor = &xmz_server.get_zone(zone_id).map(|zone| {
-                zone.get_kombisensors()
+                zone.get_kombisensor(kombisensor_id)
             });
 
             let payload = serde_json::to_string_pretty(kombisensor).unwrap();
