@@ -14,15 +14,15 @@ use xmz_server::XMZServer;
 
 // Json Web Interface
 #[derive(Debug)]
-pub struct StringError(String);
+pub struct StringError<'a>(&'a str);
 
-impl fmt::Display for StringError {
+impl<'a> fmt::Display for StringError<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Debug::fmt(self, f)
     }
 }
 
-impl Error for StringError {
+impl<'a> Error for StringError<'a> {
     fn description(&self) -> &str {
         &*self.0
     }
@@ -33,7 +33,7 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
 
     /// curl http://localhost:3000
     let xmz_server_clone = xmz_server.clone();
-    router.get("/",
+    router.get("/*",
                move |req: &mut Request| index(req, xmz_server_clone.clone()),
                "index");
     /// curl http://localhost:3000/api/v1
@@ -42,12 +42,27 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
                move |req: &mut Request| index(req, xmz_server_clone.clone()),
                "index_with_api");
 
+    /// curl http://localhost:3000/api/v1/zones
+    let xmz_server_clone = xmz_server.clone();
+    router.get("/api/v1/zones",
+               move |req: &mut Request| zones_index(req, xmz_server_clone.clone()),
+               "zones_index");
+
     fn index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             let payload = serde_json::to_string_pretty(&*xmz_server).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(XMZServerError::ConfigNotFound, status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+        }
+    }
+
+    fn zones_index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
+        if let Ok(xmz_server) = xmz_server.lock() {
+            let payload = serde_json::to_string_pretty(&*xmz_server.get_zones()).unwrap();
+            Ok(Response::with((status::Ok, payload)))
+        } else {
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
         }
     }
 

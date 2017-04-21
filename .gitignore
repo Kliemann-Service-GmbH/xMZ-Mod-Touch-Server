@@ -1,4 +1,5 @@
 target
 *.bk
 
-_scaffolding
+# git worktrees
+_*
