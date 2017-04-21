@@ -41,7 +41,14 @@ impl Kombisensor {
         }
     }
 
+    pub fn get_sensors(&self) -> &Vec<Sensor> {
+        &self.sensors
+    }
 
+    pub fn get_sensor(&self, id: usize) -> Option<&Sensor> {
+        self.sensors.get(id)
+    }
+    
     pub fn is_online(&self) -> bool {
         false
     }
