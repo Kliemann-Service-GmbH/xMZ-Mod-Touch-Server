@@ -26,7 +26,8 @@
     To clean up the backup files call something like:
     
     ```bash
-    find . -type f -name '*.bk'
+    #find . -type f -name '*.bk' -exec rm {}
+    find . -type f -name '*.bk' -delete
     ```
 
 * Additional we suggest to run `cargo clippy` to find common programming errors

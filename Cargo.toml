@@ -1,7 +1,7 @@
 # FIXME: Umbenennen nach 'xmz_mod_touch_server'
 [package]
-name = "xmz_server"
-version = "0.31.1"
+name = "xmz_mod_touch_server"
+version = "0.32.0"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "xMZ-Mod-Touch Server"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
@@ -10,8 +10,8 @@ repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git"
 license = "GPL-2.0"
 
 [[bin]]
-name = "xmz_server"
-path = "src/bin/xmz_server.rs"
+name = "xmz_mod_touch_server"
+path = "src/bin/xmz_mod_touch_server.rs"
 doc = false
 
 [features]
