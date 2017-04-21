@@ -15,7 +15,8 @@ pub struct ShiftRegister {
 impl ShiftRegister {
     pub fn new(shift_register_type: ShiftRegisterType) -> Self {
         match shift_register_type {
-            ShiftRegisterType::LED | ShiftRegisterType::Relais => {
+            ShiftRegisterType::LED |
+            ShiftRegisterType::Relais => {
                 ShiftRegister {
                     shift_register_type: shift_register_type,
                     data: 0,

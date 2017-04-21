@@ -18,6 +18,7 @@ pub struct XMZServer {
     leds: ShiftRegister,
     relais: ShiftRegister,
 }
+
 impl XMZServer {
     pub fn new() -> Self {
         XMZServer {

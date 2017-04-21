@@ -20,6 +20,7 @@ impl Zone {
             ],
         }
     }
+
     pub fn check(&mut self,
                  exceptions: &mut HashSet<Exception>,
                  leds: &mut ShiftRegister,
@@ -29,6 +30,7 @@ impl Zone {
             kombisensor.check(num, exceptions, leds, relais);
         }
     }
+
     pub fn update(&mut self,
                   exceptions: &mut HashSet<Exception>,
                   leds: &mut ShiftRegister,
@@ -37,6 +39,14 @@ impl Zone {
         for (num, mut kombisensor) in &mut self.kombisensors.iter_mut().enumerate() {
             kombisensor.update(num, exceptions, leds, relais);
         }
+    }
+
+    pub fn get_kombisensors(&self) -> &Vec<Kombisensor> {
+        &self.kombisensors
+    }
+
+    pub fn get_kombisensor(&self, id: usize) -> Option<&Kombisensor> {
+        self.kombisensors.get(id)
     }
 }
 

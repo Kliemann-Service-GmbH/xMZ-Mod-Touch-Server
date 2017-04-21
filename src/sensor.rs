@@ -51,7 +51,7 @@ impl Sensor {
     }
 
     /// # Examples
-    /// 
+    ///
     /// ```rust
     /// use xmz_server::sensor::Sensor;
     ///
