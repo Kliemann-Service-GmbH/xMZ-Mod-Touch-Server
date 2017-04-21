@@ -23,5 +23,5 @@ pub mod json_api;
 pub mod kombisensor;
 pub mod sensor;
 pub mod shift_register;
-pub mod xmz_server;
+pub mod xmz_mod_touch_server;
 pub mod zone;

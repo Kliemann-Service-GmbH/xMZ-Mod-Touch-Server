@@ -11,7 +11,7 @@ pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
 
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
-pub struct XMZServer {
+pub struct XMZModTouchServer {
     start_time: DateTime<UTC>,
     exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
@@ -19,9 +19,9 @@ pub struct XMZServer {
     relais: ShiftRegister,
 }
 
-impl XMZServer {
+impl XMZModTouchServer {
     pub fn new() -> Self {
-        XMZServer {
+        XMZModTouchServer {
             start_time: UTC::now(),
             exceptions: HashSet::new(),
             zones: vec![
@@ -33,7 +33,7 @@ impl XMZServer {
     }
 
     pub fn check(&mut self) {
-        debug!("\tcheck() XMZServer ...");
+        debug!("\tcheck() XMZModTouchServer ...");
         self.check_uptime();
         for (_num, mut zone) in &mut self.zones.iter_mut().enumerate() {
             zone.check(&mut self.exceptions, &mut self.leds, &mut self.relais);
@@ -41,7 +41,7 @@ impl XMZServer {
     }
 
     pub fn update(&mut self) {
-        debug!("\tupdate() XMZServer ...");
+        debug!("\tupdate() XMZModTouchServer ...");
         for (_num, mut zone) in &mut self.zones.iter_mut().enumerate() {
             zone.update(&mut self.exceptions, &mut self.leds, &mut self.relais);
         }
@@ -80,7 +80,7 @@ impl XMZServer {
         }
     }
 }
-impl Default for XMZServer {
+impl Default for XMZModTouchServer {
     fn default() -> Self {
         Self::new()
     }

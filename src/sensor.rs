@@ -53,7 +53,7 @@ impl Sensor {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::sensor::Sensor;
+    /// use xmz_mod_touch_server::sensor::Sensor;
     ///
     /// let mut sensor = Sensor::new();
     /// sensor.reset_error_count();
