@@ -36,8 +36,8 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
 
     /// Catch All Route
     ///
-    /// Die so genannte "Catch All" Route leitet alle GET Anfragen, für die es keine 
-    /// handler Funktionen (index, zones_index, kombisensor_get, ...) existieren 
+    /// Die so genannte "Catch All" Route leitet alle GET Anfragen, für die es keine
+    /// handler Funktionen (index, zones_index, kombisensor_get, ...) existieren
     /// auf die Index Funktion weiter.
     ///
     /// `curl http://localhost:3000`
@@ -99,17 +99,19 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
             let payload = serde_json::to_string_pretty(&*xmz_server).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"),
+                               status::BadRequest))
         }
     }
 
     /// Beispiel URL: http://localhost:3000/api/v1/zones
-   fn zones_index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
+    fn zones_index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             let payload = serde_json::to_string_pretty(&*xmz_server.get_zones()).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"),
+                               status::BadRequest))
         }
     }
 
@@ -117,53 +119,77 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     fn zone_get(req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             // Extract the parameter(s)
-            let zone_id = req.extensions.get::<Router>()
-                .unwrap().find("zone_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
+            let zone_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("zone_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
 
             let payload = serde_json::to_string_pretty(&xmz_server.get_zone(zone_id)).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"),
+                               status::BadRequest))
         }
     }
 
     /// Beispiel URL: http://localhost:3000/api/v1/zone/0/kombisensors
-    fn kombisensors_index(req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
+    fn kombisensors_index(req: &mut Request,
+                          xmz_server: Arc<Mutex<XMZServer>>)
+                          -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             // Extract the parameter(s)
-            let zone_id = req.extensions.get::<Router>()
-                .unwrap().find("zone_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
+            let zone_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("zone_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
 
             // Get Kombisensors
-            let kombisensors = &xmz_server.get_zone(zone_id).map(|zone| {
-                zone.get_kombisensors()
-            });
+            let kombisensors = &xmz_server.get_zone(zone_id).map(|zone| zone.get_kombisensors());
 
             let payload = serde_json::to_string_pretty(kombisensors).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"),
+                               status::BadRequest))
         }
     }
 
     /// Beispiel URL: http://localhost:3000/api/v1/zone/0/kombisensor/0
-    fn kombisensor_get(req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
+    fn kombisensor_get(req: &mut Request,
+                       xmz_server: Arc<Mutex<XMZServer>>)
+                       -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             // Extract the parameter(s)
-            let zone_id = req.extensions.get::<Router>()
-                .unwrap().find("zone_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
-            let kombisensor_id = req.extensions.get::<Router>()
-                .unwrap().find("kombisensor_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
+            let zone_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("zone_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
+            let kombisensor_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("kombisensor_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
 
             // Get Kombisensor
-            let kombisensor = &xmz_server.get_zone(zone_id).map(|zone| {
-                zone.get_kombisensor(kombisensor_id)
-            });
+            let kombisensor = &xmz_server.get_zone(zone_id)
+                .map(|zone| zone.get_kombisensor(kombisensor_id));
 
             let payload = serde_json::to_string_pretty(kombisensor).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"),
+                               status::BadRequest))
         }
     }
 
@@ -171,22 +197,31 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     fn sensors_index(req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             // Extract the parameter(s)
-            let zone_id = req.extensions.get::<Router>()
-                .unwrap().find("zone_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
-            let kombisensor_id = req.extensions.get::<Router>()
-                .unwrap().find("kombisensor_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
+            let zone_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("zone_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
+            let kombisensor_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("kombisensor_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
 
             // Get Sensors
             let sensors = &xmz_server.get_zone(zone_id).map(|zone| {
-                zone.get_kombisensor(kombisensor_id).map(|kombisensor| {
-                    kombisensor.get_sensors()
-                })
+                zone.get_kombisensor(kombisensor_id).map(|kombisensor| kombisensor.get_sensors())
             });
 
             let payload = serde_json::to_string_pretty(sensors).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"),
+                               status::BadRequest))
         }
     }
 
@@ -194,34 +229,52 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     fn sensor_get(req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             // Extract the parameter(s)
-            let zone_id = req.extensions.get::<Router>()
-                .unwrap().find("zone_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
-            let kombisensor_id = req.extensions.get::<Router>()
-                .unwrap().find("kombisensor_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
-            let sensor_id = req.extensions.get::<Router>()
-                .unwrap().find("sensor_id").unwrap_or("0").parse::<usize>().unwrap_or(0);
+            let zone_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("zone_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
+            let kombisensor_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("kombisensor_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
+            let sensor_id = req.extensions
+                .get::<Router>()
+                .unwrap()
+                .find("sensor_id")
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap_or(0);
 
             // Get Sensor
             let sensor = &xmz_server.get_zone(zone_id).map(|zone| {
-                zone.get_kombisensor(kombisensor_id).map(|kombisensor| {
-                    kombisensor.get_sensor(sensor_id)
-                })
+                zone.get_kombisensor(kombisensor_id)
+                    .map(|kombisensor| kombisensor.get_sensor(sensor_id))
             });
 
             let payload = serde_json::to_string_pretty(sensor).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"),
+                               status::BadRequest))
         }
     }
 
     /// Beispiel URL: http://localhost:3000/api/v1/exceptions
-    fn exceptions_index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
+    fn exceptions_index(_req: &mut Request,
+                        xmz_server: Arc<Mutex<XMZServer>>)
+                        -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             let payload = serde_json::to_string_pretty(&*xmz_server.get_exceptions()).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
-            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"),
+                               status::BadRequest))
         }
     }
 
