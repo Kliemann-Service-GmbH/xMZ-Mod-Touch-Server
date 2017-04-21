@@ -7,6 +7,7 @@ use std::collections::HashSet;
 
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
+#[derive(Default)]
 pub struct Zone {
     kombisensors: Vec<Kombisensor>,
 }
@@ -16,16 +17,22 @@ impl Zone {
             kombisensors: vec![
                 Kombisensor::new(),
                 Kombisensor::new(),
-            ]
+            ],
         }
     }
-    pub fn check(&mut self, exceptions: &mut HashSet<Exception>, leds: &mut ShiftRegister, relais: &mut ShiftRegister) {
+    pub fn check(&mut self,
+                 exceptions: &mut HashSet<Exception>,
+                 leds: &mut ShiftRegister,
+                 relais: &mut ShiftRegister) {
         debug!("\t\tcheck() Zone ...");
         for (num, mut kombisensor) in &mut self.kombisensors.iter_mut().enumerate() {
             kombisensor.check(num, exceptions, leds, relais);
         }
     }
-    pub fn update(&mut self, exceptions: &mut HashSet<Exception>, leds: &mut ShiftRegister, relais: &mut ShiftRegister) {
+    pub fn update(&mut self,
+                  exceptions: &mut HashSet<Exception>,
+                  leds: &mut ShiftRegister,
+                  relais: &mut ShiftRegister) {
         debug!("\t\tupdate() Zone ...");
         for (num, mut kombisensor) in &mut self.kombisensors.iter_mut().enumerate() {
             kombisensor.update(num, exceptions, leds, relais);

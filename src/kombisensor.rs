@@ -16,17 +16,25 @@ impl Kombisensor {
             sensors: vec![
                 Sensor::new(),
                 Sensor::new(),
-            ]
+            ],
         }
     }
-    pub fn check(&mut self, num_zone: usize, exceptions: &mut HashSet<Exception>, leds: &mut ShiftRegister, relais: &mut ShiftRegister) {
+    pub fn check(&mut self,
+                 num_zone: usize,
+                 exceptions: &mut HashSet<Exception>,
+                 leds: &mut ShiftRegister,
+                 relais: &mut ShiftRegister) {
         debug!("\t\t\tcheck() Kombisensor ...");
         for (num, mut sensor) in &mut self.sensors.iter_mut().enumerate() {
             sensor.check(num_zone, num, exceptions, leds, relais);
         }
     }
-    
-    pub fn update(&mut self, num_zone: usize, exceptions: &mut HashSet<Exception>, leds: &mut ShiftRegister, relais: &mut ShiftRegister) {
+
+    pub fn update(&mut self,
+                  num_zone: usize,
+                  exceptions: &mut HashSet<Exception>,
+                  leds: &mut ShiftRegister,
+                  relais: &mut ShiftRegister) {
         debug!("\t\t\tupdate() Kombisensor ...");
         for (num, mut sensor) in &mut self.sensors.iter_mut().enumerate() {
             sensor.update(num_zone, num, exceptions, leds, relais);
@@ -34,7 +42,13 @@ impl Kombisensor {
     }
 
 
-    fn is_online(&self) -> bool {
+    pub fn is_online(&self) -> bool {
         false
+    }
+}
+
+impl Default for Kombisensor {
+    fn default() -> Self {
+        Self::new()
     }
 }

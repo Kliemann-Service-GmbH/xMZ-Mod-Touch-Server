@@ -14,27 +14,34 @@ use xmz_server::XMZServer;
 
 // Json Web Interface
 #[derive(Debug)]
-struct StringError(String);
+pub struct StringError(String);
+
 impl fmt::Display for StringError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Debug::fmt(self, f)
     }
 }
-impl Error for StringError {
-    fn description(&self) -> &str { &*self.0 }
-}
 
+impl Error for StringError {
+    fn description(&self) -> &str {
+        &*self.0
+    }
+}
 
 pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     let mut router = Router::new();
 
     let xmz_server_clone = xmz_server.clone();
-    router.get("/",         move |req: &mut Request| index(req, xmz_server_clone.clone()), "index");
+    router.get("/",
+               move |req: &mut Request| index(req, xmz_server_clone.clone()),
+               "index");
     let xmz_server_clone = xmz_server.clone();
-    router.get("/api/v1",  move |req: &mut Request| index(req, xmz_server_clone.clone()), "index_with_api");
+    router.get("/api/v1",
+               move |req: &mut Request| index(req, xmz_server_clone.clone()),
+               "index_with_api");
 
-    fn index(req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
-        if let Ok(mut xmz_server) = xmz_server.lock() {
+    fn index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
+        if let Ok(xmz_server) = xmz_server.lock() {
             let payload = serde_json::to_string_pretty(&*xmz_server).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
