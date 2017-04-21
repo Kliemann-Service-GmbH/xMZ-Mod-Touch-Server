@@ -18,19 +18,19 @@ Module und deren Sensoren.
     * Komplette Zone
     `curl http://localhost:3000/api/v1/zones`
     * ZoneID als Parameter übergeben 
-        * http://localhost:3000/api/v1/zone/**[:zone_id]**
+        * `http://localhost:3000/api/v1/zone/[:zone_id]`
         `curl http://localhost:3000/api/v1/zone/0`
 * Kombisensoren einer Zone abfragen
     * Alle Kombisensoren
     `curl http://localhost:3000/api/v1/zone/0/kombisensors`
     * KombisensorID als weiteren Parameter mit übergeben
-        * http://localhost:3000/api/v1/zone/**[:zone_id]**/kombisensor/**[:kombisensor_id]**
+        * `http://localhost:3000/api/v1/zone/[:zone_id]/kombisensor/[:kombisensor_id]`
         `curl http://localhost:3000/api/v1/zone/0/kombisensor/0`
 * Sensoren eines Kombisensors abfragen
     * Alle Sensoren des Kombisensors abfragen        
     `curl http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors`
     * SensorID als weiteren Parameter mit übergeben
-        * http://localhost:3000/api/v1/zone/**[:zone_id]**/kombisensor/**[:kombisensor_id]**/sensor/**[:sensor_id]**
+        * `http://localhost:3000/api/v1/zone/[:zone_id]/kombisensor/[:kombisensor_id]/sensor/[:sensor_id]`
         `curl http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0`
 * Ausnahmen des Servers erfragen
     `curl http://localhost:3000/api/v1/exceptions`
