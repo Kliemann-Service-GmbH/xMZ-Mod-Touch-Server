@@ -35,6 +35,14 @@ pub fn init(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
             -> Result<(), XMZModTouchServerError> {
     let mut router = Router::new();
 
+    /// Index Route
+    ///
+    /// `curl http://localhost:3000`
+    let xmz_mod_touch_server_clone = xmz_mod_touch_server.clone();
+    router.get("/",
+               move |req: &mut Request| index(req, xmz_mod_touch_server_clone.clone()),
+               "index");
+    
     /// Catch All Route
     ///
     /// Die so genannte "Catch All" Route leitet alle GET Anfragen, für die es keine
@@ -45,7 +53,8 @@ pub fn init(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
     let xmz_mod_touch_server_clone = xmz_mod_touch_server.clone();
     router.get("/*",
                move |req: &mut Request| index(req, xmz_mod_touch_server_clone.clone()),
-               "index");
+               "catch_all");
+    
     /// `curl http://localhost:3000/api/v1`
     let xmz_mod_touch_server_clone = xmz_mod_touch_server.clone();
     router.get("/api/v1",
