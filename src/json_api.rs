@@ -31,6 +31,8 @@ impl<'a> Error for StringError<'a> {
 pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     let mut router = Router::new();
 
+    /// Catch All Route
+    ///
     /// curl http://localhost:3000
     let xmz_server_clone = xmz_server.clone();
     router.get("/*",
@@ -48,6 +50,12 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
                move |req: &mut Request| zones_index(req, xmz_server_clone.clone()),
                "zones_index");
 
+    /// curl http://localhost:3000/api/v1/exceptions
+    let xmz_server_clone = xmz_server.clone();
+    router.get("/api/v1/exceptions",
+               move |req: &mut Request| exceptions_index(req, xmz_server_clone.clone()),
+               "exceptions_index");
+
     fn index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             let payload = serde_json::to_string_pretty(&*xmz_server).unwrap();
@@ -60,6 +68,15 @@ pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     fn zones_index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
         if let Ok(xmz_server) = xmz_server.lock() {
             let payload = serde_json::to_string_pretty(&*xmz_server.get_zones()).unwrap();
+            Ok(Response::with((status::Ok, payload)))
+        } else {
+            Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
+        }
+    }
+
+    fn exceptions_index(_req: &mut Request, xmz_server: Arc<Mutex<XMZServer>>) -> IronResult<Response> {
+        if let Ok(xmz_server) = xmz_server.lock() {
+            let payload = serde_json::to_string_pretty(&*xmz_server.get_exceptions()).unwrap();
             Ok(Response::with((status::Ok, payload)))
         } else {
             Err(IronError::new(StringError("Mutex XMZServer lock failed"), status::BadRequest))
