@@ -1,4 +1,5 @@
-# Serverteil der 'xMZ-Mod-Touch'-Platform [![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)
+# Serverteil 
+## 'xMZ-Mod-Touch'-Platform [![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)
 
 [Projektseite |][homepage]&nbsp;[Dokumentation |][doku]&nbsp;[Repo auf Github.com |][repo]
 
@@ -7,7 +8,7 @@ Er steuert die Hardware (LEDs, Relais, Akku usw.) und händelt die angeschlossen
 Module und deren Sensoren.
 
 
-# JSON Web Api
+## JSON Web Api
 Übersicht über die möglichen URL's
 
 * Index, komplette Server Datenstruktur wird als JSON Objekt zurück gegeben
@@ -53,7 +54,7 @@ Module und deren Sensoren.
     http://localhost:3000/api/v1/exceptions
 
 
-# Tests
+## Tests
 Optional können auch die Tests aufgerufen werden.
 
 ```bash
@@ -63,7 +64,7 @@ cargo test
 ```
 
 
-# Links
+## Links
 
 * https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
 * Dokumentation http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html
