@@ -7,10 +7,10 @@ use std::collections::HashSet;
 
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
-#[derive(Default)]
 pub struct Zone {
     kombisensors: Vec<Kombisensor>,
 }
+
 impl Zone {
     pub fn new() -> Self {
         Zone {
@@ -37,5 +37,11 @@ impl Zone {
         for (num, mut kombisensor) in &mut self.kombisensors.iter_mut().enumerate() {
             kombisensor.update(num, exceptions, leds, relais);
         }
+    }
+}
+
+impl Default for Zone {
+    fn default() -> Self {
+        Self::new()
     }
 }

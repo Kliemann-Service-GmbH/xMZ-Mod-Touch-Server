@@ -7,6 +7,11 @@ Er steuert die Hardware (LEDs, Relais, Akku usw.) und händelt die angeschlossen
 Module und deren Sensoren.
 
 
+# JSON Web Api
+Übersicht über die möglichen URL's
+
+* `curl http://localhost:3000` -> Index, komplette Server Datenstruktur wird als JSON Objekt zurück gegeben
+
 # Tests
 Optional können auch die Tests aufgerufen werden.
 

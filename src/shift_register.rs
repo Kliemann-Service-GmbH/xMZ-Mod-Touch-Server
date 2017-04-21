@@ -4,12 +4,14 @@ pub enum ShiftRegisterType {
     LED,
     Relais,
 }
+
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct ShiftRegister {
     shift_register_type: ShiftRegisterType,
     data: u64,
 }
+
 impl ShiftRegister {
     pub fn new(shift_register_type: ShiftRegisterType) -> Self {
         match shift_register_type {

@@ -31,10 +31,12 @@ impl Error for StringError {
 pub fn init(xmz_server: Arc<Mutex<XMZServer>>) -> Result<(), XMZServerError> {
     let mut router = Router::new();
 
+    /// curl http://localhost:3000
     let xmz_server_clone = xmz_server.clone();
     router.get("/",
                move |req: &mut Request| index(req, xmz_server_clone.clone()),
                "index");
+    /// curl http://localhost:3000/api/v1
     let xmz_server_clone = xmz_server.clone();
     router.get("/api/v1",
                move |req: &mut Request| index(req, xmz_server_clone.clone()),
