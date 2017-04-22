@@ -13,45 +13,45 @@ Module und deren Sensoren.
 
 * Index, komplette Server Datenstruktur wird als JSON Objekt zurück gegeben
 
-    http://localhost:3000
+    [http://localhost:3000](http://localhost:3000)
 
     oder
 
-    http://localhost:3000/api/v1
+    [http://localhost:3000/api/v1](http://localhost:3000/api/v1)
 
 * Zonen abfragen
     * Komplette Zone
 
-    http://localhost:3000/api/v1/zones
+    [http://localhost:3000/api/v1/zones](http://localhost:3000/api/v1/zones)
 
     * ZoneID als Parameter übergeben
         * `http://localhost:3000/api/v1/zone/[:zone_id]`
 
-        http://localhost:3000/api/v1/zone/0
+        [http://localhost:3000/api/v1/zone/0](http://localhost:3000/api/v1/zone/0)
 
 * Kombisensoren einer Zone abfragen
     * Alle Kombisensoren
 
-    http://localhost:3000/api/v1/zone/0/kombisensors
+    [http://localhost:3000/api/v1/zone/0/kombisensors](http://localhost:3000/api/v1/zone/0/kombisensors)
 
     * KombisensorID als weiteren Parameter mit übergeben
         * `http://localhost:3000/api/v1/zone/[:zone_id]/kombisensor/[:kombisensor_id]`
 
-        http://localhost:3000/api/v1/zone/0/kombisensor/0
+        [http://localhost:3000/api/v1/zone/0/kombisensor/0](http://localhost:3000/api/v1/zone/0/kombisensor/0)
 
 * Sensoren eines Kombisensors abfragen
     * Alle Sensoren des Kombisensors abfragen
 
-    http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors
+    [http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors](http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors)
 
     * SensorID als weiteren Parameter mit übergeben
         * `http://localhost:3000/api/v1/zone/[:zone_id]/kombisensor/[:kombisensor_id]/sensor/[:sensor_id]`
 
-        http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0
+        [http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0](http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0)
 
 * Ausnahmen des Servers erfragen
 
-    http://localhost:3000/api/v1/exceptions
+    [http://localhost:3000/api/v1/exceptions](http://localhost:3000/api/v1/exceptions)
 
 
 ## Tests
@@ -66,10 +66,10 @@ cargo test
 
 ## Links
 
-* https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
-* Dokumentation http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html
-* Command Line Parser https://github.com/kbknapp/clap-rs
-* RA-GAS CO-NO2-Kombisensor-Mod https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod
+* [https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software](https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software)
+* Dokumentation [http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html](http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html)
+* Command Line Parser [https://github.com/kbknapp/clap-rs](https://github.com/kbknapp/clap-rs)
+* RA-GAS CO-NO2-Kombisensor-Mod [https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod)
 
 ##
 Das verwendete [CSS File](http://s3.jfh.me/css/john-full.css) hier [Excample](http://s3.jfh.me/css/README.md.html)

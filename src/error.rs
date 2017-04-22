@@ -1,9 +1,11 @@
-extern crate serde_json;
-
+use serde_json;
 use std::error::Error;
 use std::fmt;
 use std::io;
+use std::result;
 
+
+pub type Result<T> = result::Result<T, XMZModTouchServerError>;
 
 #[derive(Debug)]
 pub enum XMZModTouchServerError {
