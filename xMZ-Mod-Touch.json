@@ -1,5 +1,5 @@
 {
-  "start_time": "2017-04-22T05:27:47.786299832Z",
+  "start_time": "2017-04-22T08:31:39.976733177Z",
   "exceptions": [],
   "zones": [
     {
@@ -36,11 +36,19 @@
     }
   ],
   "leds": {
-    "shift_register_type": "LED",
+    "register_type": "LED",
+    "oe_pin": 276,
+    "ds_pin": 38,
+    "clock_pin": 44,
+    "latch_pin": 40,
     "data": 0
   },
   "relais": {
-    "shift_register_type": "Relais",
+    "register_type": "Relais",
+    "oe_pin": 277,
+    "ds_pin": 45,
+    "clock_pin": 39,
+    "latch_pin": 37,
     "data": 0
   }
 }
