@@ -76,14 +76,14 @@ impl Sensor {
             if !exceptions.contains(&direktwert_ueberschritten) {
                 exceptions.insert(direktwert_ueberschritten);
             }
-            leds.set(1);
-            relais.set(3);
+            leds.set(1).ok();
+            relais.set(3).ok();
         } else if self.value < 150 {
             if exceptions.contains(&direktwert_ueberschritten) {
                 exceptions.remove(&direktwert_ueberschritten);
             }
-            leds.clear(1);
-            relais.clear(3);
+            leds.clear(1).ok();
+            relais.clear(3).ok();
         }
     }
 }

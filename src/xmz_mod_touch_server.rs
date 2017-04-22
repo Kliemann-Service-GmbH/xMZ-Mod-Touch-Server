@@ -67,9 +67,9 @@ impl XMZModTouchServer {
     fn check_uptime(&mut self) {
         if ::chrono::UTC::now().signed_duration_since(self.start_time) >
            ::chrono::Duration::seconds(SERVER_MAX_UPTIME_SEC) {
-            self.leds.set(2);
-            self.leds.set(3);
-            self.relais.clear(1);
+            self.leds.set(2).ok();
+            self.leds.set(3).ok();
+            self.relais.clear(1).ok();
             self.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
         }
     }

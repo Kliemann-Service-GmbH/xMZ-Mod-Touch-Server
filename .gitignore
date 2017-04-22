@@ -1,5 +1,5 @@
 target
 *.bk
-
+.vscode/
 # git worktrees
 _*
