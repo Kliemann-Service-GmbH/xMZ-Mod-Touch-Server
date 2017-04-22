@@ -6,9 +6,10 @@ use std::error::Error;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
+use xmz_mod_touch_server::configuration;
 use xmz_mod_touch_server::error::XMZModTouchServerError;
 use xmz_mod_touch_server::json_api;
-use xmz_mod_touch_server::xmz_mod_touch_server::XMZModTouchServer;
+use xmz_mod_touch_server::XMZModTouchServer;
 
 
 fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
@@ -46,8 +47,7 @@ fn start_web_interface(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
 
 fn run() -> Result<(), XMZModTouchServerError> {
     /// Server Konfiguration aus Konfig File auslesen
-    let xmz_mod_touch_server: XMZModTouchServer = serde_json::from_str(include_str!("../../xMZ-Mod-Touch.json"))?;
-    let xmz_mod_touch_server = Arc::new(Mutex::new(xmz_mod_touch_server));
+    let xmz_mod_touch_server = configuration::parse();
 
     // Update thread
     start_update(xmz_mod_touch_server.clone())?;
