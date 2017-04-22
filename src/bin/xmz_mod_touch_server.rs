@@ -2,13 +2,13 @@ extern crate env_logger;
 extern crate xmz_mod_touch_server;
 extern crate serde_json;
 
-use xmz_mod_touch_server::xmz_mod_touch_server::XMZModTouchServer;
-use xmz_mod_touch_server::error::XMZModTouchServerError;
-use xmz_mod_touch_server::json_api;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
-use std::time::Duration;
 use std::thread;
+use std::time::Duration;
+use xmz_mod_touch_server::error::XMZModTouchServerError;
+use xmz_mod_touch_server::json_api;
+use xmz_mod_touch_server::xmz_mod_touch_server::XMZModTouchServer;
 
 
 fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
@@ -45,22 +45,9 @@ fn start_web_interface(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
 }
 
 fn run() -> Result<(), XMZModTouchServerError> {
-    /// Create a XMZModTouchServer and write it to a file
-    ///
-    /// This if for bootstrapping purposes
-    use std::fs::File;
-    use std::io::prelude::*;
-    let mut config = File::create("xmz_mod_touch_server_configuration.json")?;
-    let xmz_mod_touch_server = XMZModTouchServer::new();
-    let xmz_mod_touch_server_json = serde_json::to_string_pretty(&xmz_mod_touch_server)?;
-    config.write_all(xmz_mod_touch_server_json.as_bytes())?;
-
     /// Server Konfiguration aus Konfig File auslesen
-    let xmz_mod_touch_server: XMZModTouchServer = serde_json::from_str(include_str!("../../xmz_mod_touch_server_configuration.\
-                                                                                     json"))?;
+    let xmz_mod_touch_server: XMZModTouchServer = serde_json::from_str(include_str!("../../xMZ-Mod-Touch.json"))?;
     let xmz_mod_touch_server = Arc::new(Mutex::new(xmz_mod_touch_server));
-    /// Manuelle Erstellung des Servers
-    /// let mut xmz_mod_touch_server = Arc::new(Mutex::new(XMZModTouchServer::new()));
 
     // Update thread
     start_update(xmz_mod_touch_server.clone())?;

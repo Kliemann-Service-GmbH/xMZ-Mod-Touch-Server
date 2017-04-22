@@ -13,6 +13,11 @@ name = "xmz_mod_touch_server"
 path = "src/bin/xmz_mod_touch_server.rs"
 doc = false
 
+[[bin]]
+name = "generate_server_config"
+path = "src/bin/generate_server_config.rs"
+doc = false
+
 [features]
 development = []
 

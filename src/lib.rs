@@ -25,3 +25,5 @@ pub mod sensor;
 pub mod shift_register;
 pub mod xmz_mod_touch_server;
 pub mod zone;
+
+pub use self::xmz_mod_touch_server::XMZModTouchServer;
