@@ -36,7 +36,7 @@ fn get_config() -> Result<String> {
 pub fn parse() -> Arc<Mutex<XMZModTouchServer>> {
     let xmz_mod_touch_server = match serde_json::from_str(&get_config().unwrap()) {
         Ok(xmz_mod_touch_server) => xmz_mod_touch_server,
-        _ => panic!(""),
+        _ => panic!("Konnte Konfigurationsdatei nicht lesen. Server konnte nicht erstellt werden."),
     };
     Arc::new(Mutex::new(xmz_mod_touch_server))
 }
