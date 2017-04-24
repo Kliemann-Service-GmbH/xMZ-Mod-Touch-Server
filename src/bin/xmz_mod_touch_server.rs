@@ -12,14 +12,24 @@ use xmz_mod_touch_server::json_api;
 use xmz_mod_touch_server::XMZModTouchServer;
 
 
+fn start_basis_configuration(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+                -> Result<(), XMZModTouchServerError>
+{
+    if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        xmz_mod_touch_server.basis_configuration();
+    }
+
+    Ok(())
+}
+
 fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                -> Result<(), XMZModTouchServerError> {
+                -> Result<(), XMZModTouchServerError>
+{
     thread::spawn(move || {
         loop {
 
             {
                 // DIESER SCOPE IST SEHR WICHTIG! Ohne diesen würde der xmz_mod_touch_server.lock() niemals beendet!
-
                 if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
                     // Ausnahmen prüfen
                     xmz_mod_touch_server.check();
@@ -45,9 +55,12 @@ fn start_web_interface(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
     Ok(())
 }
 
+// Starte die Aufgaben des Server Prozesses
 fn run() -> Result<(), XMZModTouchServerError> {
     /// Server Konfiguration aus Konfig File auslesen
     let xmz_mod_touch_server = configuration::parse();
+
+    start_basis_configuration(xmz_mod_touch_server.clone())?;
 
     // Update thread
     start_update(xmz_mod_touch_server.clone())?;
