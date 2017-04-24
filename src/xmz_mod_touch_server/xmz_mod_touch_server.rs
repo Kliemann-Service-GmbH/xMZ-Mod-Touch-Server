@@ -12,6 +12,7 @@ pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct XMZModTouchServer {
+    version: String,
     start_time: DateTime<UTC>,
     exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
@@ -22,6 +23,7 @@ pub struct XMZModTouchServer {
 impl XMZModTouchServer {
     pub fn new() -> Self {
         XMZModTouchServer {
+            version: env!("CARGO_PKG_VERSION").to_string(),
             start_time: UTC::now(),
             exceptions: HashSet::new(),
             zones: vec![
