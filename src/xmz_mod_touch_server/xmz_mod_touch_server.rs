@@ -32,6 +32,16 @@ impl XMZModTouchServer {
         }
     }
 
+    pub fn basis_configuration(&mut self) {
+        // Grundzustand definieren
+        self.leds.reset();
+        self.relais.reset();
+        // Power LED an
+        self.leds.set(1);
+        // Relais Störung anziehen (normal closed)
+        self.relais.set(1);
+    }
+
     pub fn check(&mut self) {
         debug!("\tcheck() XMZModTouchServer ...");
         self.check_uptime();
@@ -67,8 +77,8 @@ impl XMZModTouchServer {
     fn check_uptime(&mut self) {
         if ::chrono::UTC::now().signed_duration_since(self.start_time) >
            ::chrono::Duration::seconds(SERVER_MAX_UPTIME_SEC) {
-            self.leds.set(2).ok();
-            self.leds.set(3).ok();
+           self.leds.set(2).ok();
+           self.leds.set(3).ok();
             self.relais.clear(1).ok();
             self.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
         }
