@@ -11,47 +11,17 @@ Module und deren Sensoren.
 ## JSON Web Api
 Übersicht über die möglichen URL's
 
-* Index, komplette Server Datenstruktur wird als JSON Objekt zurück gegeben
-
-    [http://localhost:3000](http://localhost:3000)
-
-    oder
-
-    [http://localhost:3000/api/v1](http://localhost:3000/api/v1)
-
-* Zonen abfragen
-    * Komplette Zone
-
-    [http://localhost:3000/api/v1/zones](http://localhost:3000/api/v1/zones)
-
-    * ZoneID als Parameter übergeben
-        * `http://localhost:3000/api/v1/zone/[:zone_id]`
-
-        [http://localhost:3000/api/v1/zone/0](http://localhost:3000/api/v1/zone/0)
-
-* Kombisensoren einer Zone abfragen
-    * Alle Kombisensoren
-
-    [http://localhost:3000/api/v1/zone/0/kombisensors](http://localhost:3000/api/v1/zone/0/kombisensors)
-
-    * KombisensorID als weiteren Parameter mit übergeben
-        * `http://localhost:3000/api/v1/zone/[:zone_id]/kombisensor/[:kombisensor_id]`
-
-        [http://localhost:3000/api/v1/zone/0/kombisensor/0](http://localhost:3000/api/v1/zone/0/kombisensor/0)
-
-* Sensoren eines Kombisensors abfragen
-    * Alle Sensoren des Kombisensors abfragen
-
-    [http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors](http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors)
-
-    * SensorID als weiteren Parameter mit übergeben
-        * `http://localhost:3000/api/v1/zone/[:zone_id]/kombisensor/[:kombisensor_id]/sensor/[:sensor_id]`
-
-        [http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0](http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0)
-
-* Ausnahmen des Servers erfragen
-
-    [http://localhost:3000/api/v1/exceptions](http://localhost:3000/api/v1/exceptions)
+|URL|Beschreibung|
+|------------------------------------------------------------------------|------------------------------------------------------------------------|
+|[http://localhost:3000](http://localhost:3000)|Index, komplette Server Datenstruktur wird als JSON Objekt zurück gegeben|
+|[http://localhost:3000/api/v1](http://localhost:3000/api/v1)|Index, komplette Server Datenstruktur wird als JSON Objekt zurück gegeben|
+|[http://localhost:3000/api/v1/zones](http://localhost:3000/api/v1/zones)|Alle Zonen abfragen|
+|[http://localhost:3000/api/v1/zone/0](http://localhost:3000/api/v1/zone/0)|Eine Zone abfragen, ZoneID als Parameter übergeben|
+|[http://localhost:3000/api/v1/zone/0/kombisensors](http://localhost:3000/api/v1/zone/0/kombisensors)|Alle Sensoren des Kombisensors abfragen|
+|[http://localhost:3000/api/v1/zone/0/kombisensor/0](http://localhost:3000/api/v1/zone/0/kombisensor/0)||
+|[http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors](http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors)|Alle Sensoren des Kombisensors abfragen|
+|[http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0](http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0)|Ein Sensor abfragen, SensorID als weiteren Parameter mit übergeben|
+|[http://localhost:3000/api/v1/exceptions](http://localhost:3000/api/v1/exceptions)|Ausnahmen des Servers erfragen|
 
 
 ## Tests
@@ -62,7 +32,6 @@ cd
 cd xMZ-Mod-Touch-Software/xMZ-Mod-Touch-Server
 cargo test
 ```
-
 
 ## Links
 

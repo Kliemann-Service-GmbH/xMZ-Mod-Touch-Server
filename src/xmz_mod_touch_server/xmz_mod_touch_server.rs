@@ -75,6 +75,10 @@ impl XMZModTouchServer {
         self.zones.get(id)
     }
 
+    pub fn get_zone_mut(&mut self, id: usize) -> Option<&mut Zone> {
+        self.zones.get_mut(id)
+    }
+
 
     fn check_uptime(&mut self) {
         if ::chrono::UTC::now().signed_duration_since(self.start_time) >

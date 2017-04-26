@@ -45,8 +45,16 @@ impl Zone {
         &self.kombisensors
     }
 
+    pub fn get_kombisensors_mut(&mut self) -> &mut Vec<Kombisensor> {
+        &mut self.kombisensors
+    }
+
     pub fn get_kombisensor(&self, id: usize) -> Option<&Kombisensor> {
         self.kombisensors.get(id)
+    }
+
+    pub fn get_kombisensor_mut(&mut self, id: usize) -> Option<&mut Kombisensor> {
+        self.kombisensors.get_mut(id)
     }
 }
 
