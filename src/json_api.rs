@@ -28,6 +28,254 @@ impl<'a> Error for StringError<'a> {
     }
 }
 
+
+/// Beispiel URL: http://0.0.0.0:3000/api/v1
+fn index(_req: &mut Request,
+         xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+         -> IronResult<Response> {
+    if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        let payload = serde_json::to_string_pretty(&*xmz_mod_touch_server).unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+/// Beispiel URL: http://0.0.0.0:3000/api/v1/zones
+fn zones_index(_req: &mut Request,
+               xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+               -> IronResult<Response> {
+    if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        let payload = serde_json::to_string_pretty(&*xmz_mod_touch_server.get_zones()).unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+/// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0
+fn zone_get(req: &mut Request,
+            xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+            -> IronResult<Response> {
+    if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        // Extract the parameter(s)
+        let zone_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("zone_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+
+        let payload = serde_json::to_string_pretty(&xmz_mod_touch_server.get_zone(zone_id))
+            .unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+/// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0/kombisensors
+fn kombisensors_index(req: &mut Request,
+                      xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+                      -> IronResult<Response> {
+    if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        // Extract the parameter(s)
+        let zone_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("zone_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+
+        // Get Kombisensors
+        let kombisensors = &xmz_mod_touch_server.get_zone(zone_id)
+            .map(|zone| zone.get_kombisensors());
+
+        let payload = serde_json::to_string_pretty(kombisensors).unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+/// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0
+fn kombisensor_get(req: &mut Request,
+                   xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+                   -> IronResult<Response> {
+    if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        // Extract the parameter(s)
+        let zone_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("zone_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+        let kombisensor_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("kombisensor_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+
+        // Get Kombisensor
+        let kombisensor = &xmz_mod_touch_server.get_zone(zone_id)
+            .map(|zone| zone.get_kombisensor(kombisensor_id));
+
+        let payload = serde_json::to_string_pretty(kombisensor).unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+/// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0/sensors
+fn sensors_index(req: &mut Request,
+                 xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+                 -> IronResult<Response> {
+    if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        // Extract the parameter(s)
+        let zone_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("zone_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+        let kombisensor_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("kombisensor_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+
+        // Get Sensors
+        let sensors = &xmz_mod_touch_server.get_zone(zone_id).map(|zone| {
+            zone.get_kombisensor(kombisensor_id).map(|kombisensor| kombisensor.get_sensors())
+        });
+
+        let payload = serde_json::to_string_pretty(sensors).unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+/// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0/sensor/0
+fn sensor_get(req: &mut Request,
+              xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+              -> IronResult<Response> {
+    if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        // Extract the parameter(s)
+        let zone_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("zone_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+        let kombisensor_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("kombisensor_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+        let sensor_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("sensor_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+
+        // Get Sensor
+        let sensor = &xmz_mod_touch_server.get_zone(zone_id).map(|zone| {
+            zone.get_kombisensor(kombisensor_id)
+                .map(|kombisensor| kombisensor.get_sensor(sensor_id))
+        });
+
+        let payload = serde_json::to_string_pretty(sensor).unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+/// Beispiel Aufruf: `curl -X PUT http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0/sensor/0/reset_error_count`
+fn reset_error_count(req: &mut Request,
+              xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+              -> IronResult<Response> {
+    if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        // Extract the parameter(s)
+        let zone_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("zone_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+        let kombisensor_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("kombisensor_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+        let sensor_id = req.extensions
+            .get::<Router>()
+            .unwrap()
+            .find("sensor_id")
+            .unwrap_or("0")
+            .parse::<usize>()
+            .unwrap_or(0);
+
+        // Get Sensor
+        let sensor = &xmz_mod_touch_server.get_zone_mut(zone_id).map(|zone| {
+            zone.get_kombisensor_mut(kombisensor_id)
+                .map(|kombisensor| kombisensor.get_sensor_mut(sensor_id))
+                .map(|sensor| {
+                    match sensor {
+                        Some(sensor) => sensor.reset_error_count(),
+                        None => {}
+                    }
+                })
+        });
+
+
+        Ok(Response::with(status::Ok))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+/// Beispiel URL: http://0.0.0.0:3000/api/v1/exceptions
+fn exceptions_index(_req: &mut Request,
+                    xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
+                    -> IronResult<Response> {
+    if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        let payload = serde_json::to_string_pretty(&*xmz_mod_touch_server.get_exceptions())
+            .unwrap();
+        Ok(Response::with((status::Ok, payload)))
+    } else {
+        Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
+                           status::BadRequest))
+    }
+}
+
+
 /// Initialisiert das Webinterface
 ///
 /// In dieser Funktion ist das gesammte Webinterface definiert.
@@ -99,209 +347,18 @@ pub fn init(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
                move |req: &mut Request| sensor_get(req, xmz_mod_touch_server_clone.clone()),
                "sensor_get");
 
-    /// `curl http://0.0.0.0:3000/api/v1/exceptions`
+    /// `curl -X PUT http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0/sensor/0/reset_error_count`
     let xmz_mod_touch_server_clone = xmz_mod_touch_server.clone();
-    router.get("/api/v1/exceptions",
-               move |req: &mut Request| exceptions_index(req, xmz_mod_touch_server_clone.clone()),
-               "exceptions_index");
+    router.put("/api/v1/zone/:zone_id/kombisensor/:kombisensor_id/sensor/:sensor_id/reset_error_count",
+             move |req: &mut Request| reset_error_count(req, xmz_mod_touch_server_clone.clone()),
+             "reset_error_count");
 
-    /// Beispiel URL: http://0.0.0.0:3000/api/v1
-    fn index(_req: &mut Request,
-             xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-             -> IronResult<Response> {
-        if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-            let payload = serde_json::to_string_pretty(&*xmz_mod_touch_server).unwrap();
-            Ok(Response::with((status::Ok, payload)))
-        } else {
-            Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
-                               status::BadRequest))
-        }
-    }
+     /// `curl http://0.0.0.0:3000/api/v1/exceptions`
+     let xmz_mod_touch_server_clone = xmz_mod_touch_server.clone();
+     router.get("/api/v1/exceptions",
+             move |req: &mut Request| exceptions_index(req, xmz_mod_touch_server_clone.clone()),
+             "exceptions_index");
 
-    /// Beispiel URL: http://0.0.0.0:3000/api/v1/zones
-    fn zones_index(_req: &mut Request,
-                   xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                   -> IronResult<Response> {
-        if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-            let payload = serde_json::to_string_pretty(&*xmz_mod_touch_server.get_zones()).unwrap();
-            Ok(Response::with((status::Ok, payload)))
-        } else {
-            Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
-                               status::BadRequest))
-        }
-    }
-
-    /// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0
-    fn zone_get(req: &mut Request,
-                xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                -> IronResult<Response> {
-        if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-            // Extract the parameter(s)
-            let zone_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("zone_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-
-            let payload = serde_json::to_string_pretty(&xmz_mod_touch_server.get_zone(zone_id))
-                .unwrap();
-            Ok(Response::with((status::Ok, payload)))
-        } else {
-            Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
-                               status::BadRequest))
-        }
-    }
-
-    /// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0/kombisensors
-    fn kombisensors_index(req: &mut Request,
-                          xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                          -> IronResult<Response> {
-        if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-            // Extract the parameter(s)
-            let zone_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("zone_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-
-            // Get Kombisensors
-            let kombisensors = &xmz_mod_touch_server.get_zone(zone_id)
-                .map(|zone| zone.get_kombisensors());
-
-            let payload = serde_json::to_string_pretty(kombisensors).unwrap();
-            Ok(Response::with((status::Ok, payload)))
-        } else {
-            Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
-                               status::BadRequest))
-        }
-    }
-
-    /// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0
-    fn kombisensor_get(req: &mut Request,
-                       xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                       -> IronResult<Response> {
-        if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-            // Extract the parameter(s)
-            let zone_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("zone_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-            let kombisensor_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("kombisensor_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-
-            // Get Kombisensor
-            let kombisensor = &xmz_mod_touch_server.get_zone(zone_id)
-                .map(|zone| zone.get_kombisensor(kombisensor_id));
-
-            let payload = serde_json::to_string_pretty(kombisensor).unwrap();
-            Ok(Response::with((status::Ok, payload)))
-        } else {
-            Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
-                               status::BadRequest))
-        }
-    }
-
-    /// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0/sensors
-    fn sensors_index(req: &mut Request,
-                     xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                     -> IronResult<Response> {
-        if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-            // Extract the parameter(s)
-            let zone_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("zone_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-            let kombisensor_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("kombisensor_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-
-            // Get Sensors
-            let sensors = &xmz_mod_touch_server.get_zone(zone_id).map(|zone| {
-                zone.get_kombisensor(kombisensor_id).map(|kombisensor| kombisensor.get_sensors())
-            });
-
-            let payload = serde_json::to_string_pretty(sensors).unwrap();
-            Ok(Response::with((status::Ok, payload)))
-        } else {
-            Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
-                               status::BadRequest))
-        }
-    }
-
-    /// Beispiel URL: http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0/sensor/0
-    fn sensor_get(req: &mut Request,
-                  xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                  -> IronResult<Response> {
-        if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-            // Extract the parameter(s)
-            let zone_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("zone_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-            let kombisensor_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("kombisensor_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-            let sensor_id = req.extensions
-                .get::<Router>()
-                .unwrap()
-                .find("sensor_id")
-                .unwrap_or("0")
-                .parse::<usize>()
-                .unwrap_or(0);
-
-            // Get Sensor
-            let sensor = &xmz_mod_touch_server.get_zone(zone_id).map(|zone| {
-                zone.get_kombisensor(kombisensor_id)
-                    .map(|kombisensor| kombisensor.get_sensor(sensor_id))
-            });
-
-            let payload = serde_json::to_string_pretty(sensor).unwrap();
-            Ok(Response::with((status::Ok, payload)))
-        } else {
-            Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
-                               status::BadRequest))
-        }
-    }
-
-    /// Beispiel URL: http://0.0.0.0:3000/api/v1/exceptions
-    fn exceptions_index(_req: &mut Request,
-                        xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                        -> IronResult<Response> {
-        if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-            let payload = serde_json::to_string_pretty(&*xmz_mod_touch_server.get_exceptions())
-                .unwrap();
-            Ok(Response::with((status::Ok, payload)))
-        } else {
-            Err(IronError::new(StringError("Mutex XMZModTouchServer lock failed"),
-                               status::BadRequest))
-        }
-    }
 
     println!("Webinterface: http://0.0.0.0:3000");
     Iron::new(router).http("0.0.0.0:3000").unwrap();
