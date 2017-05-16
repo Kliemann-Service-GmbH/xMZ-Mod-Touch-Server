@@ -21,6 +21,13 @@ pub struct Exception {
 }
 
 impl Exception {
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn new(exception_type: ExceptionType) -> Self {
         Exception { exception_type: exception_type }
     }

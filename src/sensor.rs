@@ -1,5 +1,5 @@
 //! Sensormesszelle für CO oder NO2 Gas
-//! 
+//!
 use std::collections::HashSet;
 use exception::{Exception, ExceptionType};
 use shift_register::ShiftRegister;
@@ -14,6 +14,13 @@ pub struct Sensor {
 }
 
 impl Sensor {
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn new() -> Self {
         Sensor {
             value: 0,
@@ -22,6 +29,13 @@ impl Sensor {
         }
     }
 
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn check(&mut self,
                  num_zone: usize,
                  num: usize,
@@ -32,6 +46,13 @@ impl Sensor {
         self.check_direct_value(num_zone, num, exceptions, leds, relais);
     }
 
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn update(&mut self,
                   _num_zone: usize,
                   _num: usize,
@@ -97,6 +118,7 @@ impl Sensor {
         }
     }
 }
+
 impl Default for Sensor {
     fn default() -> Self {
         Self::new()

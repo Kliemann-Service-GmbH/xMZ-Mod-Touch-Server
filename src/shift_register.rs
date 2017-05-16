@@ -319,6 +319,7 @@ impl ShiftRegister {
 
 
     /// Toogelt den Clock Pin high->low
+    ///
     fn clock_in(&self) -> Result<()> {
         if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(1)) };
         if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(0)) };
@@ -327,6 +328,7 @@ impl ShiftRegister {
     }
 
     /// Toggelt den Latch Pin pin high->low,
+    ///
     fn latch_out(&self) -> Result<()> {
         if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(1)) };
         if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(0)) };
@@ -336,6 +338,7 @@ impl ShiftRegister {
 
     /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
     /// Schiebe Register (latch out)
+    ///
     fn shift_out(&self) -> Result<()> {
         // Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonsten passiert nix
         try!(self.export_pins());
@@ -353,6 +356,4 @@ impl ShiftRegister {
 
         Ok(())
     }
-
-
 }

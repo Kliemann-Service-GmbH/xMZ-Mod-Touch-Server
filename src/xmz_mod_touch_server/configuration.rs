@@ -57,8 +57,9 @@ fn get_config() -> Result<String> {
 ///
 /// # Examples
 ///
-/// ```rust
-/// assert!(true);
+/// ```rust,ignore
+/// // TODO: Write documentation
+/// assert!(false);
 /// ```
 pub fn parse() -> Arc<Mutex<XMZModTouchServer>> {
     let xmz_mod_touch_server = match serde_json::from_str(&get_config().unwrap()) {

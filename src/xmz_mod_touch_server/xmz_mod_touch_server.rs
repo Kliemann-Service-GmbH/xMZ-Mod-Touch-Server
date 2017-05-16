@@ -1,9 +1,8 @@
 use ::chrono::{DateTime, UTC};
 use std::collections::HashSet;
 use exception::{Exception, ExceptionType};
-use zone::Zone;
 use shift_register::{ShiftRegister, ShiftRegisterType};
-
+use xmz_mod_touch_server::Zone;
 
 
 pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
@@ -13,10 +12,10 @@ pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
 pub struct XMZModTouchServer {
     version: String,
     start_time: DateTime<UTC>,
-    exceptions: HashSet<Exception>,
+    pub exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
-    leds: ShiftRegister,
-    relais: ShiftRegister,
+    pub leds: ShiftRegister,
+    pub relais: ShiftRegister,
 }
 
 impl XMZModTouchServer {
@@ -31,7 +30,7 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::{XMZModTouchServer};
+    /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
     /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
@@ -62,7 +61,7 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::{XMZModTouchServer};
+    /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
     /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
@@ -77,7 +76,7 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::{XMZModTouchServer};
+    /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
     /// xmz_mod_touch_server.basic_configuration();
@@ -92,6 +91,18 @@ impl XMZModTouchServer {
         self.relais.set(1);
     }
 
+    /// Check Funktion des XMZModTouchServer
+    ///
+    /// Hier werden die Zonen durchlaufen, und deren `check()` Funktion aufgerufen.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// xmz_mod_touch_server.check();
+    /// ```
     pub fn check(&mut self) {
         debug!("\tcheck() XMZModTouchServer ...");
         self.check_uptime();
@@ -100,6 +111,18 @@ impl XMZModTouchServer {
         }
     }
 
+    /// Update Funktion des XMZModTouchServer
+    ///
+    /// Hier werden die Zonen durchlaufen, und deren `update()` Funktion aufgerufen.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// xmz_mod_touch_server.update();
+    /// ```
     pub fn update(&mut self) {
         debug!("\tupdate() XMZModTouchServer ...");
         for (_num, mut zone) in &mut self.zones.iter_mut().enumerate() {
@@ -107,28 +130,81 @@ impl XMZModTouchServer {
         }
     }
 
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn get_exceptions(&self) -> &HashSet<Exception> {
         &self.exceptions
     }
 
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn get_exception(&self, _id: usize) -> Option<&Exception> {
         None
     }
 
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn get_zones(&self) -> &Vec<Zone> {
         &self.zones
     }
 
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
+    pub fn get_zones_mut(&mut self) -> &mut Vec<Zone> {
+        &mut self.zones
+    }
+
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn get_zone(&self, id: usize) -> Option<&Zone> {
         self.zones.get(id)
     }
 
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     pub fn get_zone_mut(&mut self, id: usize) -> Option<&mut Zone> {
         self.zones.get_mut(id)
     }
 
-
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     fn check_uptime(&mut self) {
+        // Wartungsintervall erreicht?
         if ::chrono::UTC::now().signed_duration_since(self.start_time) >
            ::chrono::Duration::seconds(SERVER_MAX_UPTIME_SEC) {
            self.leds.set(2).ok();
@@ -138,6 +214,13 @@ impl XMZModTouchServer {
         }
     }
 
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
     fn add_exception(&mut self, exception: Exception) {
         if !self.exceptions.contains(&exception) {
             self.exceptions.insert(exception);

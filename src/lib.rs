@@ -28,8 +28,9 @@ pub mod kombisensor;
 pub mod sensor;
 pub mod shift_register;
 pub mod xmz_mod_touch_server;
-pub mod zone;
 
-pub use self::xmz_mod_touch_server::XMZModTouchServer;
-pub use self::xmz_mod_touch_server::configuration;
 pub use self::shift_register::{ShiftRegister, ShiftRegisterType};
+pub use self::xmz_mod_touch_server::configuration;
+pub use self::xmz_mod_touch_server::XMZModTouchServer;
+pub use self::xmz_mod_touch_server::Zone;
+pub use self::kombisensor::Kombisensor;
