@@ -30,7 +30,6 @@ impl<'a> Error for StringError<'a> {
     }
 }
 
-
 /// Beispiel URL: http://0.0.0.0:3000/api/v1
 fn index(_req: &mut Request,
          xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
@@ -276,7 +275,6 @@ fn exceptions_index(_req: &mut Request,
                            status::BadRequest))
     }
 }
-
 
 /// Initialisiert das Webinterface
 ///

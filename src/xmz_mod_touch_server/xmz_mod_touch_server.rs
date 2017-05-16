@@ -1,6 +1,5 @@
 use ::chrono::{DateTime, UTC};
 use std::collections::HashSet;
-
 use exception::{Exception, ExceptionType};
 use zone::Zone;
 use shift_register::{ShiftRegister, ShiftRegisterType};
