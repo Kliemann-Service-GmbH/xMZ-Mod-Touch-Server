@@ -1,3 +1,5 @@
+// TODO: https://disconnected.systems/blog/rover-rest-api/
+
 extern crate serde_json;
 extern crate iron;
 extern crate router;
@@ -27,7 +29,6 @@ impl<'a> Error for StringError<'a> {
         &*self.0
     }
 }
-
 
 /// Beispiel URL: http://0.0.0.0:3000/api/v1
 fn index(_req: &mut Request,
@@ -274,7 +275,6 @@ fn exceptions_index(_req: &mut Request,
                            status::BadRequest))
     }
 }
-
 
 /// Initialisiert das Webinterface
 ///
