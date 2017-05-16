@@ -1,7 +1,6 @@
-use shift_register::ShiftRegister;
 use exception::Exception;
 use kombisensor::Kombisensor;
-
+use shift_register::ShiftRegister;
 use std::collections::HashSet;
 
 

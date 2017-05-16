@@ -7,6 +7,10 @@
 //!
 //! Git Repository: [https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git](https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git)
 
+// `error_chain!` can recurse deeply(3)
+#![recursion_limit = "1024"]
+
+#[macro_use] extern crate error_chain;
 #[macro_use] extern crate log;
 #[macro_use] extern crate serde_derive;
 extern crate chrono;
@@ -17,7 +21,7 @@ extern crate router;
 extern crate serde_json;
 extern crate sysfs_gpio;
 
-pub mod error;
+pub mod errors;
 pub mod exception;
 pub mod json_api;
 pub mod kombisensor;

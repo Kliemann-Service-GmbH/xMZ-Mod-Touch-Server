@@ -1,8 +1,7 @@
-use std::collections::HashSet;
-
+use exception::Exception;
 use sensor::Sensor;
 use shift_register::ShiftRegister;
-use exception::Exception;
+use std::collections::HashSet;
 
 
 #[derive(Debug)]

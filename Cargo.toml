@@ -24,6 +24,7 @@ development = []
 [dependencies]
 chrono = { git = "https://github.com/chronotope/chrono.git", features = ["serde"] } # zum serialisieren der Timestamps im Server (uptime usw.)
 env_logger = "0.4"
+error-chain = "0.10"
 iron = "0.5.1"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git", version = "0.4" }
 log = "0.3"

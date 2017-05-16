@@ -1,10 +1,9 @@
 // TODO: https://disconnected.systems/blog/rover-rest-api/
-
-extern crate serde_json;
 extern crate iron;
 extern crate router;
+extern crate serde_json;
 
-use error::XMZModTouchServerError;
+use errors::*;
 use iron::prelude::*;
 use iron::status;
 use router::Router;
@@ -280,7 +279,7 @@ fn exceptions_index(_req: &mut Request,
 ///
 /// In dieser Funktion ist das gesammte Webinterface definiert.
 pub fn init(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-            -> Result<(), XMZModTouchServerError> {
+            -> Result<()> {
     let mut router = Router::new();
 
     /// Index Route

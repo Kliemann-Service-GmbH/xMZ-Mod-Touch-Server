@@ -1,7 +1,9 @@
+//! Konfiguration Datei Managment
+//!
 use std::sync::{Arc, Mutex};
 use serde_json;
 use xmz_mod_touch_server::XMZModTouchServer;
-use error::*;
+use errors::*;
 use std::fs::File;
 use std::path::Path;
 use std::io::Read;

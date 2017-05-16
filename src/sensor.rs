@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-
 use exception::{Exception, ExceptionType};
 use shift_register::ShiftRegister;
 

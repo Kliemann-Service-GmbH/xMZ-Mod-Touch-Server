@@ -5,7 +5,7 @@ extern crate xmz_mod_touch_server;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
-use xmz_mod_touch_server::error::*;
+use xmz_mod_touch_server::errors::*;
 use xmz_mod_touch_server::XMZModTouchServer;
 
 

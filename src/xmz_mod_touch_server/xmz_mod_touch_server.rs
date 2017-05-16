@@ -33,7 +33,9 @@ impl XMZModTouchServer {
         }
     }
 
-    pub fn basis_configuration(&mut self) {
+    /// `basic_configuration` - Grundeistellungen der LEDs und Relais
+    /// 
+    pub fn basic_configuration(&mut self) {
         // Grundzustand definieren
         self.leds.reset();
         self.relais.reset();

@@ -1,4 +1,4 @@
-use error::*;
+use errors::*;
 use rand::Rng;
 use std::thread;
 use std::time::Duration;
