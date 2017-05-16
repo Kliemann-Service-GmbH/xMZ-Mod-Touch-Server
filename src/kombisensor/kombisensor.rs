@@ -1,11 +1,12 @@
 //! CO-NO2 Kombisensor mit Modbus Transceiver
 //!
 use exception::Exception;
-use sensor::Sensor;
 use shift_register::ShiftRegister;
 use std::collections::HashSet;
+use kombisensor::Sensor;
 
-
+/// Ein Kombisensor kann `n` Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)
+///
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct Kombisensor {

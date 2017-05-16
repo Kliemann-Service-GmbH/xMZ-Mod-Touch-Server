@@ -1,5 +1,5 @@
 //! JSON Web API der XMZModTouchServer Platform
-//! 
+//!
 
 // TODO: https://disconnected.systems/blog/rover-rest-api/
 extern crate iron;
@@ -16,7 +16,8 @@ use std::sync::{Arc, Mutex};
 use xmz_mod_touch_server::XMZModTouchServer;
 
 
-// Json Web Interface
+/// Json Web Interface Fehler
+/// TODO: port to error-chain
 #[derive(Debug)]
 pub struct StringError<'a>(&'a str);
 

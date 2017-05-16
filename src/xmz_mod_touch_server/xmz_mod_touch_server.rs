@@ -1,3 +1,4 @@
+// Serverteil der XMZModTouchServer Platform
 use ::chrono::{DateTime, UTC};
 use std::collections::HashSet;
 use exception::{Exception, ExceptionType};
@@ -7,6 +8,8 @@ use xmz_mod_touch_server::Zone;
 
 pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
 
+/// Der XMZModTouchServer kann `n` [Zonen](struct.Zone.html) enthalten
+///
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct XMZModTouchServer {

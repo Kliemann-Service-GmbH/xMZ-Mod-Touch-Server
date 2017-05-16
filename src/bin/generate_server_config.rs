@@ -1,3 +1,11 @@
+/// Dies soll der Command Line Config Generator werden
+///
+/// TODO: Add clap trait
+/// TODO: Add parameters config_file name and path 
+/// TODO: Add parameter num_zones
+/// TODO: Add parameter num_kombisensors for zone_num
+/// TODO: Add parameter num_sensors for kombisensor_num
+/// TODO: Add parameter max_server_uptime
 extern crate env_logger;
 extern crate serde_json;
 extern crate xmz_mod_touch_server;
@@ -15,8 +23,14 @@ fn generate_config() -> Result<()> {
     /// Create a XMZModTouchServer and write it to a file
     ///
     /// This if for bootstrapping purposes
+
+    // Config file
     let mut config = File::create(CONFIG_NAME)?;
+
+    // The Server
     let xmz_mod_touch_server = XMZModTouchServer::new();
+
+    // write to config file
     let xmz_mod_touch_server_json = serde_json::to_string_pretty(&xmz_mod_touch_server)?;
     config.write_all(xmz_mod_touch_server_json.as_bytes())?;
 
