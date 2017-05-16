@@ -1,3 +1,6 @@
+//! JSON Web API der XMZModTouchServer Platform
+//! 
+
 // TODO: https://disconnected.systems/blog/rover-rest-api/
 extern crate iron;
 extern crate router;

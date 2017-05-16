@@ -1,3 +1,6 @@
+//! CO-NO2 Kombisensor mit Modbus Transceiver
+//!
+//! 
 use exception::Exception;
 use sensor::Sensor;
 use shift_register::ShiftRegister;

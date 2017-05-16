@@ -1,3 +1,5 @@
+//! Sensormesszelle für CO oder NO2 Gas
+//! 
 use std::collections::HashSet;
 use exception::{Exception, ExceptionType};
 use shift_register::ShiftRegister;
@@ -10,6 +12,7 @@ pub struct Sensor {
     reverse: bool, // Boolen um die Richtung bei der Simulation zu halten.
     error_count: u64,
 }
+
 impl Sensor {
     pub fn new() -> Self {
         Sensor {

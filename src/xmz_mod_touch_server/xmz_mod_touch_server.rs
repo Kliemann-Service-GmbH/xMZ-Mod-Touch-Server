@@ -20,6 +20,22 @@ pub struct XMZModTouchServer {
 }
 
 impl XMZModTouchServer {
+    /// Erzeugt eine neue XMZModTouchServer Instanz
+    ///
+    /// # Return values
+    ///
+    /// Diese Funktion liefert eine neue XMZModTouchServer Instanz
+    ///
+    /// # Parameters
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::{XMZModTouchServer};
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
+    /// ```
     pub fn new() -> Self {
         XMZModTouchServer {
             version: env!("CARGO_PKG_VERSION").to_string(),
@@ -33,8 +49,39 @@ impl XMZModTouchServer {
         }
     }
 
-    /// `basic_configuration` - Grundeistellungen der LEDs und Relais
-    /// 
+    /// Liefert die Versionsnummer des XMZModTouchServer's
+    ///
+    /// Die Versionsnummer entspricht der Crate Versionsnummer, wird aus dieser automatisch gebildet.
+    ///
+    /// # Return values
+    ///
+    /// Diese Funktion liefert eine neue XMZModTouchServer Instanz
+    ///
+    /// # Parameters
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::{XMZModTouchServer};
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
+    /// ```
+    pub fn get_version(&self) -> String {
+        self.version.clone()
+    }
+
+
+    /// `basic_configuration` - Grundkonfiguration/ Grundeistellungen der LEDs und Relais
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::{XMZModTouchServer};
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// xmz_mod_touch_server.basic_configuration();
+    /// ```
     pub fn basic_configuration(&mut self) {
         // Grundzustand definieren
         self.leds.reset();
@@ -86,8 +133,8 @@ impl XMZModTouchServer {
            ::chrono::Duration::seconds(SERVER_MAX_UPTIME_SEC) {
            self.leds.set(2).ok();
            self.leds.set(3).ok();
-            self.relais.clear(1).ok();
-            self.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
+           self.relais.clear(1).ok();
+           self.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
         }
     }
 
@@ -97,6 +144,7 @@ impl XMZModTouchServer {
         }
     }
 }
+
 impl Default for XMZModTouchServer {
     fn default() -> Self {
         Self::new()
