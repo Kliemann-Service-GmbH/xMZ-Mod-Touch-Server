@@ -12,6 +12,8 @@ rust:
   - stable
   - beta
   - nightly
+env:
+  - LLVM_VERSION=4.0 CLANG_VERSION=clang_4_0
 sudo: false
 cache: cargo
 before_install: . ./ci/before_install.sh
