@@ -1,7 +1,7 @@
 language: rust
 rust:
   - nightly
-sudo: required
+sudo: false
 cache: cargo
 
 script:
