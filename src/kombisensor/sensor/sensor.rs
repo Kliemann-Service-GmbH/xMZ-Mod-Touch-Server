@@ -5,6 +5,29 @@ use exception::{Exception, ExceptionType};
 use shift_register::ShiftRegister;
 
 
+/// Typ der Messzelle
+#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
+pub enum SensorType {
+    /// Nemoto NO2 Messzelle, EC NAP-550
+    /// Datenblatt: https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
+    NemotoNO2,
+    /// Nemote CO Messzelle, EC NAP-505
+    /// Datenblatt: https://www.nemoto.co.jp/nse/sensor-search/use/gas-alarm/nap-505.html?lang=en
+    NemotoCO,
+}
+
+/// SI Einheit des zu messenden Mediums
+#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_camel_case_types)]
+pub enum SI {
+    none,
+    ppm,
+    Vol,
+    UEG,
+}
+
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct Sensor {

@@ -1,11 +1,13 @@
 {
-  "version": "0.32.3",
-  "start_time": "2017-04-24T10:42:04.590195106Z",
+  "version": "0.50.0",
+  "start_time": "2017-05-16T16:10:51.435919497Z",
   "exceptions": [],
   "zones": [
     {
       "kombisensors": [
         {
+          "firmware_version": "0.0.0",
+          "modbus_address": 1,
           "sensors": [
             {
               "value": 0,
@@ -20,6 +22,8 @@
           ]
         },
         {
+          "firmware_version": "0.0.0",
+          "modbus_address": 2,
           "sensors": [
             {
               "value": 0,
