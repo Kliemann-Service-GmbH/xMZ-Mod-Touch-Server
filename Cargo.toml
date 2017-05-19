@@ -6,7 +6,7 @@ description = "Serverteil der 'xMZ-Mod-Touch'-Platform"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
 homepage = "https://gaswarnanlagen.com/xmz-mod-touch"
 repository = "https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git"
-license = "GPL-2.0"
+license = "GPLv2"
 
 [[bin]]
 name = "xmz_mod_touch_server"
@@ -22,8 +22,8 @@ doc = false
 development = []
 
 [dependencies]
-chrono = { git = "https://github.com/chronotope/chrono.git", features = ["serde"] } # zum serialisieren der Timestamps im Server (uptime usw.)
 env_logger = "0.4"
+chrono = { git = "https://github.com/chronotope/chrono.git", features = ["serde"] }
 error-chain = "0.10"
 iron = "0.5.1"
 libmodbus-rs = { git = "https://github.com/zzeroo/libmodbus-rs.git", version = "0.4" }
@@ -35,4 +35,3 @@ serde = "1"
 serde_derive = "1"
 serde_json = "1"
 sysfs_gpio = "0.5"
-

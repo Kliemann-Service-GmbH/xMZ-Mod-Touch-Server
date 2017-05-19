@@ -2,4 +2,4 @@ mod sensor;
 mod kombisensor;
 
 pub use self::kombisensor::Kombisensor;
-pub use self::sensor::Sensor;
+pub use self::sensor::{Sensor, SensorType, SI};

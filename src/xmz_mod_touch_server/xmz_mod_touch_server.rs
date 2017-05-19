@@ -17,8 +17,8 @@ pub struct XMZModTouchServer {
     start_time: DateTime<UTC>,
     pub exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
-    pub leds: ShiftRegister,
-    pub relais: ShiftRegister,
+    leds: ShiftRegister,
+    relais: ShiftRegister,
 }
 
 impl XMZModTouchServer {
@@ -107,10 +107,16 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.check();
     /// ```
     pub fn check(&mut self) {
-        debug!("\tcheck() XMZModTouchServer ...");
-        self.check_uptime();
-        for (_num, mut zone) in &mut self.zones.iter_mut().enumerate() {
-            zone.check(&mut self.exceptions, &mut self.leds, &mut self.relais);
+        debug!("\tCheck XMZModTouchServer ...");
+        for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
+            // debug!("\t\Check Zone {} ...", num_zone);
+            for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
+                // debug!("\t\t\Check Kombisensor {} ...", num_kombisensor);
+                for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
+                    // debug!("\t\t\t\Check Sensor {} ...", num_sensor);
+                    // Begin checks sensor ...
+                }
+            }
         }
     }
 
@@ -127,9 +133,16 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.update();
     /// ```
     pub fn update(&mut self) {
-        debug!("\tupdate() XMZModTouchServer ...");
-        for (_num, mut zone) in &mut self.zones.iter_mut().enumerate() {
-            zone.update(&mut self.exceptions, &mut self.leds, &mut self.relais);
+        // debug!("\tUpdate XMZModTouchServer ...");
+        for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
+            // debug!("\t\tUpdate Zone {} ...", num_zone);
+            for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
+                // debug!("\t\t\tUpdate Kombisensor {} ...", num_kombisensor);
+                for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
+                    // debug!("\t\t\t\tUpdate Sensor {} ...", num_sensor);
+                    // println!("{:?}", &self.get_relais_mut());
+                }
+            }
         }
     }
 
@@ -197,6 +210,50 @@ impl XMZModTouchServer {
     /// ```
     pub fn get_zone_mut(&mut self, id: usize) -> Option<&mut Zone> {
         self.zones.get_mut(id)
+    }
+
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
+    pub fn get_leds(&self) -> &ShiftRegister {
+        &self.leds
+    }
+
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
+    pub fn get_leds_mut(&mut self) -> &mut ShiftRegister {
+        &mut self.leds
+    }
+
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
+    pub fn get_relais(&self) -> &ShiftRegister {
+        &self.relais
+    }
+
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// // TODO: Write documentation
+    /// assert!(false);
+    /// ```
+    pub fn get_relais_mut(&mut self) -> &mut ShiftRegister {
+        &mut self.relais
     }
 
     ///

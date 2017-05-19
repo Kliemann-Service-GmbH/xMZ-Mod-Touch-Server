@@ -22,8 +22,6 @@ impl Kombisensor {
     ///
     /// Diese Funktion liefert eine neue Kombisensor Instanz
     ///
-    /// # Parameters
-    ///
     /// # Examples
     ///
     /// ```rust
@@ -41,54 +39,6 @@ impl Kombisensor {
                 Sensor::new(),
                 Sensor::new(),
             ],
-        }
-    }
-
-    /// Check Funktion der Kombisensor Instanz
-    ///
-    /// Hier werden die Sensoren durchlaufen, und deren `check` Funktion aufgerufen.
-    ///
-    /// # Parameters
-    ///
-    /// * `num_zone`    - Nummer der Zone, dieser Wert wird bei der Erstellung der Exception verwendet
-    /// * `exceptions`  - mutable Refernenz zum Exceptions Hash Set des Servers. Siehe [`check()`](../struct.Zone.html#method.check) Funktion des Zone Moduls
-    /// * `leds`        - mutable Refernenz zum LED's Shift Register des Servers
-    /// * `relais`      - mutable Refernenz zum RELAIS's Shift Register des Servers
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::Kombisensor;
-    ///
-    /// let kombisensor = Kombisensor::new();
-    /// assert_eq!(kombisensor.get_sensors().len(), 2); // 2 Kombisensoren sind default
-    /// ```
-    pub fn check(&mut self,
-                 num_zone: usize,
-                 exceptions: &mut HashSet<Exception>,
-                 leds: &mut ShiftRegister,
-                 relais: &mut ShiftRegister) {
-        debug!("\t\t\tcheck() Kombisensor ...");
-        for (num, mut sensor) in &mut self.sensors.iter_mut().enumerate() {
-            sensor.check(num_zone, num, exceptions, leds, relais);
-        }
-    }
-
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
-    /// ```
-    pub fn update(&mut self,
-                  num_zone: usize,
-                  exceptions: &mut HashSet<Exception>,
-                  leds: &mut ShiftRegister,
-                  relais: &mut ShiftRegister) {
-        debug!("\t\t\tupdate() Kombisensor ...");
-        for (num, mut sensor) in &mut self.sensors.iter_mut().enumerate() {
-            sensor.update(num_zone, num, exceptions, leds, relais);
         }
     }
 
@@ -123,6 +73,7 @@ impl Kombisensor {
     /// use xmz_mod_touch_server::Kombisensor;
     ///
     /// let mut kombisensor = Kombisensor::new();
+    ///
     /// assert_eq!(kombisensor.get_firmware_version(), "0.0.0");
     /// kombisensor.set_firmware_version("9.9.99".to_string());
     /// assert_eq!(kombisensor.get_firmware_version(), "9.9.99");
@@ -170,23 +121,29 @@ impl Kombisensor {
         self.modbus_address = modbus_address
     }
 
+    /// Liefert eine Referenz auf einen Vector mit den Sensoren
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert_eq!(kombisensor.get_sensors().len(), 2); // 2 Kombisensoren sind default
     /// ```
     pub fn get_sensors(&self) -> &Vec<Sensor> {
         &self.sensors
     }
 
+    /// Liefert eine mutable Referenz auf einen Vector mit den Sensoren
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    ///
+    /// let mut kombisensor = Kombisensor::new();
+    /// assert_eq!(kombisensor.get_sensors_mut().len(), 2); // 2 Kombisensoren sind default
     /// ```
     pub fn get_sensors_mut(&mut self) -> &mut Vec<Sensor> {
         &mut self.sensors

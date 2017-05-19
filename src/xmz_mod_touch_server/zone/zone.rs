@@ -1,7 +1,4 @@
-use exception::Exception;
 use kombisensor::Kombisensor;
-use shift_register::ShiftRegister;
-use std::collections::HashSet;
 
 
 ///! Eine `Zone` kann `n` [Kombisensoren](kombisensor/struct.Kombisensor.html) enthalten
@@ -33,56 +30,6 @@ impl Zone {
                 Kombisensor::new(),
                 Kombisensor::new(),
             ],
-        }
-    }
-
-    /// Check Funktion der Zone
-    ///
-    /// Hier werden die Kombisensoren, der Zone, durchlaufen, und deren `check()` Funktion aufgerufen.
-    ///
-    /// # Parameters
-    ///
-    /// * `exceptions`  - mutable Refernenz zum Exceptions Hash Set des Servers. Siehe [`check()`](struct.XMZModTouchServer.html#method.check) Funktion des XMZModTouchServer Moduls
-    /// * `leds`        - mutable Refernenz zum LED's Shift Register des Servers
-    /// * `relais`      - mutable Refernenz zum RELAIS's Shift Register des Servers
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
-    /// ```
-    pub fn check(&mut self,
-                 exceptions: &mut HashSet<Exception>,
-                 leds: &mut ShiftRegister,
-                 relais: &mut ShiftRegister) {
-        debug!("\t\tcheck() Zone ...");
-        for (num, mut kombisensor) in &mut self.kombisensors.iter_mut().enumerate() {
-            kombisensor.check(num, exceptions, leds, relais);
-        }
-    }
-
-    /// Update Funktion des Zone
-    ///
-    /// Hier werden die Zonen durchlaufen, und deren `update()` Funktion aufgerufen.
-    ///
-    /// # Parameters
-    ///
-    /// * `exceptions`  - mutable Refernenz zum Exceptions Hash Set des Servers. Siehe [`check()`](struct.XMZModTouchServer.html#method.check) Funktion des XMZModTouchServer Moduls
-    /// * `leds`        - mutable Refernenz zum LED's Shift Register des Servers
-    /// * `relais`      - mutable Refernenz zum RELAIS's Shift Register des Servers
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// ```
-    pub fn update(&mut self,
-                  exceptions: &mut HashSet<Exception>,
-                  leds: &mut ShiftRegister,
-                  relais: &mut ShiftRegister) {
-        debug!("\t\tupdate() Zone ...");
-        for (num, mut kombisensor) in &mut self.kombisensors.iter_mut().enumerate() {
-            kombisensor.update(num, exceptions, leds, relais);
         }
     }
 
