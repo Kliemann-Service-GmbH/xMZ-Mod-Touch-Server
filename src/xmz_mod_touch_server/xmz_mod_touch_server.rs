@@ -55,49 +55,6 @@ impl XMZModTouchServer {
         }
     }
 
-    /// Liefert die Versionsnummer des XMZModTouchServer's
-    ///
-    /// Die Versionsnummer entspricht der Crate Versionsnummer, wird aus dieser automatisch gebildet.
-    ///
-    /// # Return values
-    ///
-    /// Diese Funktion liefert eine neue XMZModTouchServer Instanz
-    ///
-    /// # Parameters
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
-    /// ```
-    pub fn get_version(&self) -> String {
-        self.version.clone()
-    }
-
-
-    /// `basic_configuration` - Grundkonfiguration/ Grundeistellungen der LEDs und Relais
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// xmz_mod_touch_server.basic_configuration();
-    /// ```
-    pub fn basic_configuration(&mut self) {
-        // Grundzustand definieren
-        self.leds.reset();
-        self.relais.reset();
-        // Power LED an
-        self.leds.set(1);
-        // Relais Störung anziehen (normal closed)
-        self.relais.set(1);
-    }
-
     /// Check Funktion des XMZModTouchServer
     ///
     /// Hier werden die Zonen durchlaufen, und deren `check()` Funktion aufgerufen.
@@ -142,12 +99,55 @@ impl XMZModTouchServer {
             // debug!("\t\tUpdate Zone {} ...", num_zone);
             for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
                 // debug!("\t\t\tUpdate Kombisensor {} ...", num_kombisensor);
+                kombisensor.get_from_modbus();
                 for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
                     // debug!("\t\t\t\tUpdate Sensor {} ...", num_sensor);
                     // println!("{:?}", &self.get_relais_mut());
                 }
             }
         }
+    }
+
+    /// `basic_configuration` - Grundkonfiguration/ Grundeistellungen der LEDs und Relais
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// xmz_mod_touch_server.basic_configuration();
+    /// ```
+    pub fn basic_configuration(&mut self) {
+        // Grundzustand definieren
+        self.leds.reset();
+        self.relais.reset();
+        // Power LED an
+        self.leds.set(1);
+        // Relais Störung anziehen (normal closed)
+        self.relais.set(1);
+    }
+
+    /// Liefert die Versionsnummer des XMZModTouchServer's
+    ///
+    /// Die Versionsnummer entspricht der Crate Versionsnummer, wird aus dieser automatisch gebildet.
+    ///
+    /// # Return values
+    ///
+    /// Diese Funktion liefert eine neue XMZModTouchServer Instanz
+    ///
+    /// # Parameters
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
+    /// ```
+    pub fn get_version(&self) -> String {
+        self.version.clone()
     }
 
     /// Liefert eine Refernz auf die Exception des Servers

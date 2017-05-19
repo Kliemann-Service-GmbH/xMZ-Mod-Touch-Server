@@ -10,6 +10,9 @@ use xmz_mod_touch_server::{XMZModTouchServer, json_api, configuration};
 use xmz_mod_touch_server::errors::*;
 
 
+pub const UPDATE_INTERVALL_MS: u64 = 100;
+
+
 /// `start_basic_configuration` - Aufruf der Basis Konfiguration des XMZModTouchServer
 ///
 fn start_basic_configuration(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
@@ -29,7 +32,6 @@ fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
 {
     thread::spawn(move || {
         loop {
-
             {
                 // DIESER SCOPE IST SEHR WICHTIG! Ohne diesen würde der xmz_mod_touch_server.lock() niemals beendet!
                 if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
@@ -37,13 +39,14 @@ fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
                     xmz_mod_touch_server.check();
                     // XMZModTouchServer Kombonenten aktualisieren, Kombisensoren auslesen, ....
                     xmz_mod_touch_server.update();
-
                     // println!("{:#?}", &*xmz_mod_touch_server);
+                    println!("{:?}", xmz_mod_touch_server.uptime());
+                    if xmz_mod_touch_server.uptime().num_seconds() > 10 { println!("Zeit zu gehen!"); }
                 }
 
             } // xmz_mod_touch_server.lock() frei gegeben
 
-            thread::sleep(Duration::from_millis(100));
+            thread::sleep(Duration::from_millis(UPDATE_INTERVALL_MS));
         }
     });
 

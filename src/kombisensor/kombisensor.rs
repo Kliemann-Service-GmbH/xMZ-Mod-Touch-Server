@@ -1,6 +1,8 @@
 //! CO-NO2 Kombisensor mit Modbus Transceiver
 //!
+use errors::*;
 use kombisensor::Sensor;
+
 
 /// Ein Kombisensor kann `n` Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)
 ///
@@ -10,6 +12,7 @@ pub struct Kombisensor {
     firmware_version: String,
     modbus_address: u8,
     sensors: Vec<Sensor>,
+    error_count: u64,
 }
 
 impl Kombisensor {
@@ -36,6 +39,7 @@ impl Kombisensor {
                 Sensor::new(),
                 Sensor::new(),
             ],
+            error_count: 0,
         }
     }
 
@@ -189,6 +193,91 @@ impl Kombisensor {
     pub fn get_sensor_mut(&mut self, id: usize) -> Option<&mut Sensor> {
         self.sensors.get_mut(id)
     }
+
+    /// Get Error Counter
+    ///
+    /// # Return values
+    ///
+    /// Liefert den aktuellen Stand des Fehlerzählers
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert_eq!(kombisensor.get_error_count(), 0);
+    /// ```
+    pub fn get_error_count(&self) -> u64 {
+        self.error_count
+    }
+
+    /// Erhöht den  Error Counter
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    ///
+    /// let mut kombisensor = Kombisensor::new();
+    ///
+    /// assert_eq!(kombisensor.get_error_count(), 0);
+    /// kombisensor.inc_error_count();
+    /// assert_eq!(kombisensor.get_error_count(), 1);
+    /// ```
+    pub fn inc_error_count(&mut self) {
+        self.error_count += 1
+    }
+
+    /// Reset den Error Counter
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    /// let mut kombisensor = Kombisensor::new();
+    /// kombisensor.inc_error_count();
+    /// assert_eq!(kombisensor.get_error_count(), 1);
+    ///
+    /// kombisensor.reset_error_count();
+    /// assert_eq!(kombisensor.get_error_count(), 0);
+    /// ```
+    pub fn reset_error_count(&mut self) {
+        self.error_count = 0
+    }
+
+    /// Fragt die Daten des Kombisensors via Modbus ab
+    ///
+    /// # Return values
+    ///
+    /// Die Funktion liefert ein Result
+    ///
+    /// # Examples
+    ///
+    /// ```rust,ignore
+    /// assert!(false);
+    /// ```
+    pub fn get_from_modbus(&self) -> Result<()> {
+        // use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH};
+        //
+        // let device: String = "/dev/ttyUSB0".to_string();
+        // let slave_id: u8 = 247;
+        //
+        // let mut modbus = Modbus::new_rtu(&device, 9600, 'N', 8, 1)?;
+        // modbus.set_slave(slave_id)?;
+        //
+        // // modbus.set_debug(true);
+        // modbus.connect()?;
+        //
+        // let mut response_register = vec![0u16; MODBUS_RTU_MAX_ADU_LENGTH as usize];
+        // modbus.read_registers(0, 30, &mut response_register)?;
+        //
+        // Ok(response_register)
+
+        Ok(())
+    }
+
+
 }
 
 impl Default for Kombisensor {
