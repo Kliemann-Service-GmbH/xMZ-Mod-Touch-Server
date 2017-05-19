@@ -146,37 +146,48 @@ impl Kombisensor {
         &mut self.sensors
     }
 
+    /// Sensor Messzellen des Kombisensors
+    ///
+    /// # Return values
+    ///
+    /// Liefert ein Option Type, mit den Sensoren
+    ///
+    /// # Parameters
+    ///
+    /// * `id`  - Id der Sensormesszelle
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert!(kombisensor.get_sensor(0).is_some());
     /// ```
     pub fn get_sensor(&self, id: usize) -> Option<&Sensor> {
         self.sensors.get(id)
     }
 
+    /// Mutable Refernz auf Sensor Messzellen des Kombisensors
+    ///
+    /// # Return values
+    ///
+    /// Liefert ein Option Type, mit den mut Sensoren
+    ///
+    /// # Parameters
+    ///
+    /// * `id`  - Id der Sensormesszelle
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    ///
+    /// let mut kombisensor = Kombisensor::new();
+    /// assert!(kombisensor.get_sensor_mut(0).is_some());
     /// ```
     pub fn get_sensor_mut(&mut self, id: usize) -> Option<&mut Sensor> {
         self.sensors.get_mut(id)
-    }
-
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
-    /// ```
-    pub fn is_online(&self) -> bool {
-        false
     }
 }
 

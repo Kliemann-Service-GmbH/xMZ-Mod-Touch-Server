@@ -2,7 +2,8 @@
 //!
 //! Hier werden alle Komponenten des Servers verwaltet.
 //!
-use ::chrono::{DateTime, UTC};
+use chrono;
+use chrono::prelude::*;
 use std::collections::HashSet;
 use exception::{Exception, ExceptionType};
 use shift_register::{ShiftRegister, ShiftRegisterType};
@@ -17,7 +18,7 @@ pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
 #[derive(Serialize, Deserialize)]
 pub struct XMZModTouchServer {
     version: String,
-    start_time: DateTime<UTC>,
+    start_time: chrono::DateTime<UTC>,
     pub exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
     leds: ShiftRegister,
@@ -44,7 +45,7 @@ impl XMZModTouchServer {
     pub fn new() -> Self {
         XMZModTouchServer {
             version: env!("CARGO_PKG_VERSION").to_string(),
-            start_time: UTC::now(),
+            start_time: chrono::UTC::now(),
             exceptions: HashSet::new(),
             zones: vec![
                 Zone::new(),
@@ -149,146 +150,229 @@ impl XMZModTouchServer {
         }
     }
 
+    /// Liefert eine Refernz auf die Exception des Servers
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 0);
     /// ```
     pub fn get_exceptions(&self) -> &HashSet<Exception> {
         &self.exceptions
     }
 
+    /// Finde eine Exception
+    ///
+    /// # Return values
+    ///
+    /// Liefert ein Option Type der entweder eine Refernz auf die Exception des Servers oder `None` enthält,
+    /// wenn eine Exception mit dieser Id nicht existiert
     ///
     /// # Examples
     ///
     /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// xmz_mod_touch_server.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
+    ///
+    /// assert!(xmz_mod_touch_server.get_exception(0).is_some());
     /// ```
-    pub fn get_exception(&self, _id: usize) -> Option<&Exception> {
-        None
+    pub fn get_exception(&self, id: usize) -> Option<&Exception> {
+        unimplemented!()
     }
 
+    /// Fügt eine Exception hinzu
+    ///
+    /// # Parameters
+    ///
+    /// * `exception`   - Exception die hinzugefügt werden soll
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::{XMZModTouchServer, Exception, ExceptionType};
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 0);
+    ///
+    /// xmz_mod_touch_server.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
+    /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 1);
+    ///
+    /// // if the exception is alreddy present, dont insert again
+    /// xmz_mod_touch_server.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
+    /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 1);
+    /// ```
+    pub fn add_exception(&mut self, exception: Exception) {
+        if !self.exceptions.contains(&exception) {
+            self.exceptions.insert(exception);
+        }
+    }
+
+
+    /// Zonen des Servers
+    ///
+    /// # Return values
+    ///
+    /// Liefert eine Refernz auf die Zonen des Servers
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_zones().len(), 1); // Eine Zone default
     /// ```
     pub fn get_zones(&self) -> &Vec<Zone> {
         &self.zones
     }
 
+    /// Mutable Refernz auf die Zonen des Servers
+    ///
+    /// # Return values
+    ///
+    /// Liefert eine mutable Refernz auf die Zonen des Servers
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_zones_mut().len(), 1); // Eine Zone default
     /// ```
     pub fn get_zones_mut(&mut self) -> &mut Vec<Zone> {
         &mut self.zones
     }
 
+    /// Finde Zone
+    ///
+    /// # Return values
+    ///
+    /// Liefert ein `Option` Typen, der eine Refernz auf die gesucht Zone oder `None` enthält
+    ///
+    /// # Parameters
+    ///
+    /// * `id`  - Id der gesuchten Zone
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert!(xmz_mod_touch_server.get_zone(0).is_some());
     /// ```
     pub fn get_zone(&self, id: usize) -> Option<&Zone> {
         self.zones.get(id)
     }
 
+    /// Finde mut Referenz auf Zone
+    ///
+    /// # Return values
+    ///
+    /// Liefert ein `Option` Typen, der eine mutable Refernz auf die gesucht Zone oder `None` enthält
+    ///
+    /// # Parameters
+    ///
+    /// * `id`  - Id der gesuchten Zone
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert!(xmz_mod_touch_server.get_zone_mut(0).is_some());
     /// ```
     pub fn get_zone_mut(&mut self, id: usize) -> Option<&mut Zone> {
         self.zones.get_mut(id)
     }
 
+    /// Referenz auf die LED's ShiftRegister
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let server_leds = xmz_mod_touch_server.get_leds();
+    /// assert_eq!(server_leds.data, 0);
     /// ```
     pub fn get_leds(&self) -> &ShiftRegister {
         &self.leds
     }
 
+    /// Mutable Referenz auf die LED's ShiftRegister
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let mut server_leds = xmz_mod_touch_server.get_leds();
+    /// assert_eq!(server_leds.data, 0);
     /// ```
     pub fn get_leds_mut(&mut self) -> &mut ShiftRegister {
         &mut self.leds
     }
 
+    /// Referenz auf die Relais ShiftRegister
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let server_relais = xmz_mod_touch_server.get_relais();
+    /// assert_eq!(server_relais.data, 0);
     /// ```
     pub fn get_relais(&self) -> &ShiftRegister {
         &self.relais
     }
 
+    /// Mutable Referenz auf die Relais ShiftRegister
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let mut server_relais = xmz_mod_touch_server.get_relais();
+    /// assert_eq!(server_relais.data, 0);
     /// ```
     pub fn get_relais_mut(&mut self) -> &mut ShiftRegister {
         &mut self.relais
     }
 
+
+    /// Uptime des Servers
+    ///
+    /// # Return values
+    ///
+    /// * `uptime`  - Die Uptime des Servers
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// ::std::thread::sleep(::std::time::Duration::from_millis(10));
+    /// assert!(xmz_mod_touch_server.uptime().num_milliseconds() >= 10);
     /// ```
-    fn check_uptime(&mut self) {
+    pub fn uptime(&self) -> chrono::Duration {
         // Wartungsintervall erreicht?
-        if ::chrono::UTC::now().signed_duration_since(self.start_time) >
-           ::chrono::Duration::seconds(SERVER_MAX_UPTIME_SEC) {
-           self.leds.set(2).ok();
-           self.leds.set(3).ok();
-           self.relais.clear(1).ok();
-           self.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
-        }
+        chrono::UTC::now().signed_duration_since(self.start_time)
     }
 
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
-    /// ```
-    fn add_exception(&mut self, exception: Exception) {
-        if !self.exceptions.contains(&exception) {
-            self.exceptions.insert(exception);
-        }
-    }
 }
 
 impl Default for XMZModTouchServer {

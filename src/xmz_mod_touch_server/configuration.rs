@@ -33,13 +33,12 @@ fn get_config() -> Result<String> {
     let mut ret = String::new();
     for p in possible_paths {
         if Path::new(p).exists() {
-            let display = p.display();
             match File::open(&p) {
                 Ok(mut file) => {
-                    println!("Verwende Konfigurationsdatei: {}", display);
+                    println!("Verwende Konfigurationsdatei: {}", p.display());
                     file.read_to_string(&mut ret);
                 }
-                Err(_) => panic!("Could not open file: {}", display),
+                Err(_) => panic!("Could not open file: {}", p.display()),
             };
             break;
         }

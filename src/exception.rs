@@ -21,12 +21,17 @@ pub struct Exception {
 }
 
 impl Exception {
+    /// Neue Ausnahme erstellen
+    ///
+    /// # Parameters
+    ///
+    /// * `exception_type`  - ExceptionType
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// // TODO: Write documentation
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::{Exception, ExceptionType};
+    /// let exception = Exception::new(ExceptionType::WartungsintervalReached);
     /// ```
     pub fn new(exception_type: ExceptionType) -> Self {
         Exception { exception_type: exception_type }
