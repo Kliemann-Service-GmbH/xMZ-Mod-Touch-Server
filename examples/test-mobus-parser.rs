@@ -48,7 +48,7 @@ pub struct ModbusData {
     sensor1_concentration_at_nullgas: u16,
     sensor1_concentration_at_messgas: u16,
     sensor1_configuration_bits: u16,
-    
+
     sensor2_num: u16,
     sensor2_adc_value: u16,
     sensor2_min_value: u16,
@@ -75,6 +75,7 @@ fn get_from_modbus() -> Result<Vec<u16>> {
 
     Ok(response_register)
 }
+
 fn parse(input: &[u16]) -> Result<ModbusData> {
     // Check input
     println!("{}", input.len());
@@ -130,7 +131,6 @@ fn parse(input: &[u16]) -> Result<ModbusData> {
 
     Ok(modbus_data)
 }
-
 
 
 fn run() -> Result<()> {

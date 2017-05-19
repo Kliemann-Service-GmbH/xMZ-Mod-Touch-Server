@@ -1,4 +1,7 @@
-// Serverteil der XMZModTouchServer Platform
+//! Serverteil der xMZ-Mod-Touch-Server Platform
+//!
+//! Hier werden alle Komponenten des Servers verwaltet.
+//!
 use ::chrono::{DateTime, UTC};
 use std::collections::HashSet;
 use exception::{Exception, ExceptionType};

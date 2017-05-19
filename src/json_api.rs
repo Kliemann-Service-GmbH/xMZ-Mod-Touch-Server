@@ -1,4 +1,4 @@
-//! JSON Web API der XMZModTouchServer Platform
+//! JSON Web API der xMZ-Mod-Touch-Server Platform
 //!
 
 // TODO: https://disconnected.systems/blog/rover-rest-api/
