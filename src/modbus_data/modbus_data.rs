@@ -1,30 +1,10 @@
-// `error_chain!` can recurse deeply(3)
-#![recursion_limit = "1024"]
-
-#[macro_use] extern crate error_chain;
-extern crate libmodbus_rs;
-extern crate xmz_mod_touch_server;
-
+use errors::*;
 use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH};
 
 
-mod errors {
-    error_chain!{
-        links {
-            Libmodbus(::libmodbus_rs::errors::Error, ::libmodbus_rs::errors::ErrorKind);
-        }
-
-        foreign_links {
-            Io(::std::io::Error) #[cfg(unix)];
-            ParseInt(::std::num::ParseIntError);
-        }
-    }
-
-}
-
-use errors::*;
-
-/// 256 u16 values
+/// Beispieldaten: 256 u16 values
+/// Firmware Version: 0.14.0
+/// Modbus Adresse: 247
 pub const SIMULATION_DATA_STATIC: &[u16] = &[0, 14, 0, 247, 0, 0, 0, 0, 0, 0, 1, 923, 0, 30, 920, 564, 0, 20, 1, 0, 2, 107, 0, 300, 112, 760, 0, 270, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -32,7 +12,8 @@ pub const SIMULATION_DATA_STATIC: &[u16] = &[0, 14, 0, 247, 0, 0, 0, 0, 0, 0, 1,
  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 
-#[derive(Debug,PartialEq,Eq)]
+#[derive(Debug)]
+#[derive(PartialEq,Eq)]
 pub struct ModbusData {
     firmware_version_major: u16,
     firmware_version_minor: u16,
@@ -58,6 +39,12 @@ pub struct ModbusData {
     sensor2_concentration_at_nullgas: u16,
     sensor2_concentration_at_messgas: u16,
     sensor2_configuration_bits: u16,
+}
+
+impl ModbusData {
+    pub fn new() -> Self {
+
+    }
 }
 
 fn get_from_modbus() -> Result<Vec<u16>> {
@@ -130,39 +117,4 @@ fn parse(input: &[u16]) -> Result<ModbusData> {
     };
 
     Ok(modbus_data)
-}
-
-
-fn run() -> Result<()> {
-    // let mut response_register = SIMULATION_DATA_STATIC;
-    let mut response_register = get_from_modbus()?;
-
-    println!("{:?}", &response_register);
-    println!();
-    println!(">> {:#?}",parse(&response_register)?);
-
-    Ok(())
-}
-
-
-fn main() {
-    if let Err(ref e) = run() {
-         use std::io::Write;
-         let stderr = &mut ::std::io::stderr();
-         let errmsg = "Error writing to stderr";
-
-         writeln!(stderr, "error: {}", e).expect(errmsg);
-
-         for e in e.iter().skip(1) {
-             writeln!(stderr, "caused by: {}", e).expect(errmsg);
-         }
-
-         // The backtrace is not always generated. Try to run this example
-         // with `RUST_BACKTRACE=1`.
-         if let Some(backtrace) = e.backtrace() {
-             writeln!(stderr, "backtrace: {:?}", backtrace).expect(errmsg);
-         }
-
-         ::std::process::exit(1);
-     }
 }

@@ -1,4 +1,9 @@
-use error::*;
+//! Shiftregister Steuerung
+//!
+//! Die Relais und LEDs der XMZModTouchServer Platform sind mit 8bit serial-in paralel-out Shiftregistern
+//! angeschlossen.
+//!
+use errors::*;
 use rand::Rng;
 use std::thread;
 use std::time::Duration;
@@ -41,7 +46,13 @@ impl Default for ShiftRegister {
 impl ShiftRegister {
     /// Erzeugt ein neuen Shift Register
     ///
-    /// # Arguments
+    /// # Return values
+    ///
+    /// Diese Funktion erzeugt eine ShiftRegister Datenstruktur. In dieser wird der aktuelle Zustand der ShiftRegister gespeichert `data`.
+    /// Zudem enthält sie die Implemetation div. Helper funktionen die den ShiftRegister verwalten können.
+    ///
+    /// # Parameters
+    ///
     /// * `register_type`     - Art des Shift Registers
     ///
     /// # Examples
@@ -83,7 +94,7 @@ impl ShiftRegister {
 
     /// Setzt das übergebene Bit im Shift Register `data` Buffer
     ///
-    /// # Arguments
+    /// # Parameters
     /// * `num`     - Nummer des zu setzenden Bits **Diese Nummer ist Eins basiert!**
     ///
     /// Der Parameter ist nicht Null basiert. Das bedeutet `set(1)` setzt das erste Bit(0) im `data`
@@ -109,7 +120,7 @@ impl ShiftRegister {
 
     /// Abfrage ob ein Bit gesetzt ist, `true` wenn ja, `false` wenn das bit nicht gesetzt ist
     ///
-    /// # Arguments
+    /// # Parameters
     /// * `num`     - Nummer des abzufragenden Bits **Diese Nummer ist Eins basiert!**
     ///
     /// Der Parameter ist nicht Null basiert. D.h. `get(1)` fragt das erste Bit(0) im `data`
@@ -137,7 +148,7 @@ impl ShiftRegister {
 
     /// Löscht das übergebene Bit
     ///
-    /// # Arguments
+    /// # Parameters
     /// * `num`     - Nummer des zu löschenden Bits **Diese Nummer ist Eins basiert!**
     ///
     /// Der Parameter ist nicht Null basiert. D.h. `clear(1)` löscht das erste Bit(0) im `data`
@@ -169,7 +180,7 @@ impl ShiftRegister {
 
     /// Schaltet das übergebene Bit um, war es Null dann wird es Eins und umgekehrt
     ///
-    /// # Arguments
+    /// # Parameters
     /// * `num`     - Nummer des zu wechselnden Bits **Diese Nummer ist Eins basiert!**
     ///
     /// Der Parameter ist nicht Null basiert. D.h. `toggle(1)` schaltet das erste Bit(0) im `data`
@@ -308,6 +319,7 @@ impl ShiftRegister {
 
 
     /// Toogelt den Clock Pin high->low
+    ///
     fn clock_in(&self) -> Result<()> {
         if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(1)) };
         if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(0)) };
@@ -316,6 +328,7 @@ impl ShiftRegister {
     }
 
     /// Toggelt den Latch Pin pin high->low,
+    ///
     fn latch_out(&self) -> Result<()> {
         if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(1)) };
         if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(0)) };
@@ -325,6 +338,7 @@ impl ShiftRegister {
 
     /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
     /// Schiebe Register (latch out)
+    ///
     fn shift_out(&self) -> Result<()> {
         // Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonsten passiert nix
         try!(self.export_pins());
@@ -342,6 +356,4 @@ impl ShiftRegister {
 
         Ok(())
     }
-
-
 }

@@ -1,37 +1,88 @@
 {
-  "version": "0.32.3",
-  "start_time": "2017-04-24T10:42:04.590195106Z",
+  "version": "0.50.0",
+  "create_time": "2017-05-21T08:33:19.854732397Z",
+  "start_time": "2017-05-21T08:33:19.854735865Z",
   "exceptions": [],
   "zones": [
     {
       "kombisensors": [
         {
+          "firmware_version": "0.0.0",
+          "modbus_address": 247,
           "sensors": [
             {
-              "value": 0,
-              "reverse": false,
-              "error_count": 5
+              "adc_value": 0,
+              "min_value": 0,
+              "max_value": 0,
+              "adc_value_at_nullgas": 0,
+              "adc_value_at_messgas": 0,
+              "concentration_at_nullgas": 0,
+              "concentration_at_messgas": 0,
+              "sensor_type": "NemotoNO2",
+              "si": "ppm",
+              "config": 0,
+              "error_count": 0,
+              "alarm1_average_15min": 0,
+              "alarm2_average_15min": 0,
+              "alarm3_direct_value": 0
             },
             {
-              "value": 0,
-              "reverse": false,
-              "error_count": 5
+              "adc_value": 0,
+              "min_value": 0,
+              "max_value": 0,
+              "adc_value_at_nullgas": 0,
+              "adc_value_at_messgas": 0,
+              "concentration_at_nullgas": 0,
+              "concentration_at_messgas": 0,
+              "sensor_type": "NemotoNO2",
+              "si": "ppm",
+              "config": 0,
+              "error_count": 0,
+              "alarm1_average_15min": 0,
+              "alarm2_average_15min": 0,
+              "alarm3_direct_value": 0
             }
-          ]
+          ],
+          "error_count": 0
         },
         {
+          "firmware_version": "0.0.0",
+          "modbus_address": 247,
           "sensors": [
             {
-              "value": 0,
-              "reverse": false,
-              "error_count": 5
+              "adc_value": 0,
+              "min_value": 0,
+              "max_value": 0,
+              "adc_value_at_nullgas": 0,
+              "adc_value_at_messgas": 0,
+              "concentration_at_nullgas": 0,
+              "concentration_at_messgas": 0,
+              "sensor_type": "NemotoNO2",
+              "si": "ppm",
+              "config": 0,
+              "error_count": 0,
+              "alarm1_average_15min": 0,
+              "alarm2_average_15min": 0,
+              "alarm3_direct_value": 0
             },
             {
-              "value": 0,
-              "reverse": false,
-              "error_count": 5
+              "adc_value": 0,
+              "min_value": 0,
+              "max_value": 0,
+              "adc_value_at_nullgas": 0,
+              "adc_value_at_messgas": 0,
+              "concentration_at_nullgas": 0,
+              "concentration_at_messgas": 0,
+              "sensor_type": "NemotoNO2",
+              "si": "ppm",
+              "config": 0,
+              "error_count": 0,
+              "alarm1_average_15min": 0,
+              "alarm2_average_15min": 0,
+              "alarm3_direct_value": 0
             }
-          ]
+          ],
+          "error_count": 0
         }
       ]
     }

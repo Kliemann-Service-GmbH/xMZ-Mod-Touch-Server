@@ -1,10 +1,12 @@
-// TODO: https://disconnected.systems/blog/rover-rest-api/
+//! JSON Web API der xMZ-Mod-Touch-Server Platform
+//!
 
-extern crate serde_json;
+// TODO: https://disconnected.systems/blog/rover-rest-api/
 extern crate iron;
 extern crate router;
+extern crate serde_json;
 
-use error::XMZModTouchServerError;
+use errors::*;
 use iron::prelude::*;
 use iron::status;
 use router::Router;
@@ -14,7 +16,8 @@ use std::sync::{Arc, Mutex};
 use xmz_mod_touch_server::XMZModTouchServer;
 
 
-// Json Web Interface
+/// Json Web Interface Fehler
+/// TODO: port to error-chain
 #[derive(Debug)]
 pub struct StringError<'a>(&'a str);
 
@@ -33,7 +36,8 @@ impl<'a> Error for StringError<'a> {
 /// Beispiel URL: http://0.0.0.0:3000/api/v1
 fn index(_req: &mut Request,
          xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-         -> IronResult<Response> {
+         -> IronResult<Response>
+{
     if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
         let payload = serde_json::to_string_pretty(&*xmz_mod_touch_server).unwrap();
         Ok(Response::with((status::Ok, payload)))
@@ -280,7 +284,7 @@ fn exceptions_index(_req: &mut Request,
 ///
 /// In dieser Funktion ist das gesammte Webinterface definiert.
 pub fn init(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-            -> Result<(), XMZModTouchServerError> {
+            -> Result<()> {
     let mut router = Router::new();
 
     /// Index Route

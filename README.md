@@ -41,7 +41,7 @@ cargo test
 * RA-GAS CO-NO2-Kombisensor-Mod [https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod)
 
 ##
-Das verwendete [CSS File](http://s3.jfh.me/css/john-full.css) hier [Excample](http://s3.jfh.me/css/README.md.html)
+Das verwendete [CSS File](http://s3.jfh.me/css/john-full.css) stammt von [http://s3.jfh.me/css/john-full.css](http://s3.jfh.me/css/john-full.css)
 
 [1]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
 [homepage]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server
