@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Kombisensor",""]]});
+initSidebarItems({"enum":[["SI","SI Einheit des zu messenden Mediums"],["SensorType","Typ der Messzelle"]],"struct":[["Kombisensor","Ein Kombisensor kann `n` Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)"],["Sensor","Representation der Firmware Daten einer Messzelle"]]});

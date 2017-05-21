@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ExceptionType","Exception"]],"struct":[["Exception",""]]});

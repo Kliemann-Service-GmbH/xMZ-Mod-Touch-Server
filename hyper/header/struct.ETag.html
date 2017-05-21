@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../index.html'>hyper</a>::<wbr><a href='index.html'>header</a></p><script>window.sidebarCurrent = {name: 'ETag', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct ETag</p><div class="block items"><ul><li><a href="#deref-methods">Methods from Deref&lt;Target=EntityTag&gt;</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>hyper</a>::<wbr><a href='index.html'>header</a></p><script>window.sidebarCurrent = {name: 'ETag', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -84,7 +84,7 @@ prefixed by a weakness indicator.</p>
 
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">Headers</span>::<span class="ident">new</span>();
 <span class="ident">headers</span>.<span class="ident">set</span>(<span class="ident">ETag</span>(<span class="ident">EntityTag</span>::<span class="ident">new</span>(<span class="bool-val">true</span>, <span class="string">&quot;xyzzy&quot;</span>.<span class="ident">to_owned</span>())));</pre>
-</div><h2 id='deref-methods'>Methods from <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Deref</a>&lt;Target=<a class="struct" href="../../hyper/header/struct.EntityTag.html" title="struct hyper::header::EntityTag">EntityTag</a>&gt;</h2><div class='impl-items'><h4 id='method.tag' class="method"><span id='tag.v' class='invisible'><code>fn <a href='#method.tag' class='fnname'>tag</a>(&amp;self) -&gt; &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a></code></span></h4>
+</div><h2 id='deref-methods'>Methods from <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Deref</a>&lt;Target = <a class="struct" href="../../hyper/header/struct.EntityTag.html" title="struct hyper::header::EntityTag">EntityTag</a>&gt;</h2><div class='impl-items'><h4 id='method.tag' class="method"><span id='tag.v' class='invisible'><code>fn <a href='#method.tag' class='fnname'>tag</a>(&amp;self) -&gt; &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a></code></span></h4>
 <div class='docblock'><p>Get the tag.</p>
 </div><h4 id='method.set_tag' class="method"><span id='set_tag.v' class='invisible'><code>fn <a href='#method.set_tag' class='fnname'>set_tag</a>(&amp;mut self, tag: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>)</code></span></h4>
 <div class='docblock'><p>Set the tag.</p>

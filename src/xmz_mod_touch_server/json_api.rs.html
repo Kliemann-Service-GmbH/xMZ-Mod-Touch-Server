@@ -410,14 +410,20 @@
 <span id="365">365</span>
 <span id="366">366</span>
 <span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
 </pre><pre class="rust ">
-<span class="comment">// TODO: https://disconnected.systems/blog/rover-rest-api/</span>
+<span class="doccomment">//! JSON Web API der xMZ-Mod-Touch-Server Platform</span>
+<span class="doccomment">//!</span>
 
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">serde_json</span>;
+<span class="comment">// TODO: https://disconnected.systems/blog/rover-rest-api/</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">iron</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">router</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">serde_json</span>;
 
-<span class="kw">use</span> <span class="ident">error</span>::<span class="ident">XMZModTouchServerError</span>;
+<span class="kw">use</span> <span class="ident">errors</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">iron</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">iron</span>::<span class="ident">status</span>;
 <span class="kw">use</span> <span class="ident">router</span>::<span class="ident">Router</span>;
@@ -427,7 +433,8 @@
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
 
-<span class="comment">// Json Web Interface</span>
+<span class="doccomment">/// Json Web Interface Fehler</span>
+<span class="doccomment">/// TODO: port to error-chain</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StringError</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>);
 
@@ -446,7 +453,8 @@
 <span class="doccomment">/// Beispiel URL: http://0.0.0.0:3000/api/v1</span>
 <span class="kw">fn</span> <span class="ident">index</span>(<span class="ident">_req</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Request</span>,
          <span class="ident">xmz_mod_touch_server</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">XMZModTouchServer</span><span class="op">&gt;&gt;</span>)
-         <span class="op">-&gt;</span> <span class="ident">IronResult</span><span class="op">&lt;</span><span class="ident">Response</span><span class="op">&gt;</span> {
+         <span class="op">-&gt;</span> <span class="ident">IronResult</span><span class="op">&lt;</span><span class="ident">Response</span><span class="op">&gt;</span>
+{
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">xmz_mod_touch_server</span>) <span class="op">=</span> <span class="ident">xmz_mod_touch_server</span>.<span class="ident">lock</span>() {
         <span class="kw">let</span> <span class="ident">payload</span> <span class="op">=</span> <span class="ident">serde_json</span>::<span class="ident">to_string_pretty</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">xmz_mod_touch_server</span>).<span class="ident">unwrap</span>();
         <span class="prelude-val">Ok</span>(<span class="ident">Response</span>::<span class="ident">with</span>((<span class="ident">status</span>::<span class="prelude-val">Ok</span>, <span class="ident">payload</span>)))
@@ -693,7 +701,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// In dieser Funktion ist das gesammte Webinterface definiert.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">xmz_mod_touch_server</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">XMZModTouchServer</span><span class="op">&gt;&gt;</span>)
-            <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">XMZModTouchServerError</span><span class="op">&gt;</span> {
+            <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">router</span> <span class="op">=</span> <span class="ident">Router</span>::<span class="ident">new</span>();
 
     <span class="doccomment">/// Index Route</span>

@@ -390,8 +390,25 @@
 <span id="345">345</span>
 <span id="346">346</span>
 <span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">error</span>::<span class="kw-2">*</span>;
+<span class="doccomment">//! Shiftregister Steuerung</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Die Relais und LEDs der XMZModTouchServer Platform sind mit 8bit serial-in paralel-out Shiftregistern</span>
+<span class="doccomment">//! angeschlossen.</span>
+<span class="doccomment">//!</span>
+<span class="kw">use</span> <span class="ident">errors</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">rand</span>::<span class="ident">Rng</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">thread</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
@@ -434,7 +451,13 @@
 <span class="kw">impl</span> <span class="ident">ShiftRegister</span> {
     <span class="doccomment">/// Erzeugt ein neuen Shift Register</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// # Arguments</span>
+    <span class="doccomment">/// # Return values</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Diese Funktion erzeugt eine ShiftRegister Datenstruktur. In dieser wird der aktuelle Zustand der ShiftRegister gespeichert `data`.</span>
+    <span class="doccomment">/// Zudem enthält sie die Implemetation div. Helper funktionen die den ShiftRegister verwalten können.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Parameters</span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// * `register_type`     - Art des Shift Registers</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
@@ -476,7 +499,7 @@
 
     <span class="doccomment">/// Setzt das übergebene Bit im Shift Register `data` Buffer</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// # Arguments</span>
+    <span class="doccomment">/// # Parameters</span>
     <span class="doccomment">/// * `num`     - Nummer des zu setzenden Bits **Diese Nummer ist Eins basiert!**</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Der Parameter ist nicht Null basiert. Das bedeutet `set(1)` setzt das erste Bit(0) im `data`</span>
@@ -502,7 +525,7 @@
 
     <span class="doccomment">/// Abfrage ob ein Bit gesetzt ist, `true` wenn ja, `false` wenn das bit nicht gesetzt ist</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// # Arguments</span>
+    <span class="doccomment">/// # Parameters</span>
     <span class="doccomment">/// * `num`     - Nummer des abzufragenden Bits **Diese Nummer ist Eins basiert!**</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Der Parameter ist nicht Null basiert. D.h. `get(1)` fragt das erste Bit(0) im `data`</span>
@@ -530,7 +553,7 @@
 
     <span class="doccomment">/// Löscht das übergebene Bit</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// # Arguments</span>
+    <span class="doccomment">/// # Parameters</span>
     <span class="doccomment">/// * `num`     - Nummer des zu löschenden Bits **Diese Nummer ist Eins basiert!**</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Der Parameter ist nicht Null basiert. D.h. `clear(1)` löscht das erste Bit(0) im `data`</span>
@@ -562,7 +585,7 @@
 
     <span class="doccomment">/// Schaltet das übergebene Bit um, war es Null dann wird es Eins und umgekehrt</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// # Arguments</span>
+    <span class="doccomment">/// # Parameters</span>
     <span class="doccomment">/// * `num`     - Nummer des zu wechselnden Bits **Diese Nummer ist Eins basiert!**</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Der Parameter ist nicht Null basiert. D.h. `toggle(1)` schaltet das erste Bit(0) im `data`</span>
@@ -701,6 +724,7 @@
 
 
     <span class="doccomment">/// Toogelt den Clock Pin high-&gt;low</span>
+    <span class="doccomment">///</span>
     <span class="kw">fn</span> <span class="ident">clock_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">clock_pin</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">clock_pin</span> { <span class="macro">try</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="ident">clock_pin</span>).<span class="ident">set_value</span>(<span class="number">1</span>)) };
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">clock_pin</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">clock_pin</span> { <span class="macro">try</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="ident">clock_pin</span>).<span class="ident">set_value</span>(<span class="number">0</span>)) };
@@ -709,6 +733,7 @@
     }
 
     <span class="doccomment">/// Toggelt den Latch Pin pin high-&gt;low,</span>
+    <span class="doccomment">///</span>
     <span class="kw">fn</span> <span class="ident">latch_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">latch_pin</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">latch_pin</span> { <span class="macro">try</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="ident">latch_pin</span>).<span class="ident">set_value</span>(<span class="number">1</span>)) };
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">latch_pin</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">latch_pin</span> { <span class="macro">try</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="ident">latch_pin</span>).<span class="ident">set_value</span>(<span class="number">0</span>)) };
@@ -718,6 +743,7 @@
 
     <span class="doccomment">/// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser</span>
     <span class="doccomment">/// Schiebe Register (latch out)</span>
+    <span class="doccomment">///</span>
     <span class="kw">fn</span> <span class="ident">shift_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="comment">// Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonsten passiert nix</span>
         <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">export_pins</span>());
@@ -735,8 +761,6 @@
 
         <span class="prelude-val">Ok</span>(())
     }
-
-
 }
 </pre>
 </section>

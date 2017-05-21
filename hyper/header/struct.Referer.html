@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../index.html'>hyper</a>::<wbr><a href='index.html'>header</a></p><script>window.sidebarCurrent = {name: 'Referer', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Referer</p><div class="block items"><ul><li><a href="#deref-methods">Methods from Deref&lt;Target=String&gt;</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>hyper</a>::<wbr><a href='index.html'>header</a></p><script>window.sidebarCurrent = {name: 'Referer', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -79,7 +79,7 @@ URI reference, if any, when generating the Referer field value.</p>
 
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">Headers</span>::<span class="ident">new</span>();
 <span class="ident">headers</span>.<span class="ident">set</span>(<span class="ident">Referer</span>(<span class="string">&quot;http://www.example.com/index.html&quot;</span>.<span class="ident">to_owned</span>()));</pre>
-</div><h2 id='deref-methods'>Methods from <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Deref</a>&lt;Target=<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</h2><div class='impl-items'><h4 id='method.into_bytes' class="method"><span id='into_bytes.v' class='invisible'><code>fn <a href='#method.into_bytes' class='fnname'>into_bytes</a>(self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
+</div><h2 id='deref-methods'>Methods from <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Deref</a>&lt;Target = <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</h2><div class='impl-items'><h4 id='method.into_bytes' class="method"><span id='into_bytes.v' class='invisible'><code>fn <a href='#method.into_bytes' class='fnname'>into_bytes</a>(self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
 <div class='docblock'><p>Converts a <code>String</code> into a byte vector.</p>
 
 <p>This consumes the <code>String</code>, so we do not need to copy its contents.</p>
@@ -125,7 +125,7 @@ larger than its length.</p>
 <p>The capacity may be increased by more than <code>additional</code> bytes if it
 chooses, to prevent frequent reallocations.</p>
 
-<p>If you do not want this &quot;at least&quot; behavior, see the <a href="#method.reserve_exact"><code>reserve_exact()</code></a>
+<p>If you do not want this &quot;at least&quot; behavior, see the <a href="#method.reserve_exact"><code>reserve_exact</code></a>
 method.</p>
 
 <h1 id='panics' class='section-header'><a href='#panics'>Panics</a></h1>
@@ -161,7 +161,7 @@ method.</p>
 <div class='docblock'><p>Ensures that this <code>String</code>&#39;s capacity is <code>additional</code> bytes
 larger than its length.</p>
 
-<p>Consider using the <a href="#method.reserve"><code>reserve()</code></a> method unless you absolutely know
+<p>Consider using the <a href="#method.reserve"><code>reserve</code></a> method unless you absolutely know
 better than the allocator.</p>
 
 <h1 id='panics-1' class='section-header'><a href='#panics-1'>Panics</a></h1>
@@ -411,8 +411,8 @@ touch its capacity.</p>
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">s</span>.<span class="ident">is_empty</span>());
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">s</span>.<span class="ident">len</span>());
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">s</span>.<span class="ident">capacity</span>());</pre>
-</div><h4 id='method.drain' class="method"><span id='drain.v' class='invisible'><code>fn <a href='#method.drain' class='fnname'>drain</a>&lt;R&gt;(&amp;mut self, range: R) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.Drain.html" title="struct collections::string::Drain">Drain</a> <span class="where fmt-newline">where R: <a class="trait" href="https://doc.rust-lang.org/nightly/collections/range/trait.RangeArgument.html" title="trait collections::range::RangeArgument">RangeArgument</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>&gt;</span></code><div class='since' title='Stable since Rust version 1.6.0'>1.6.0</div></span></h4>
-<div class='docblock'><p>Create a draining iterator that removes the specified range in the string
+</div><h4 id='method.drain' class="method"><span id='drain.v' class='invisible'><code>fn <a href='#method.drain' class='fnname'>drain</a>&lt;R&gt;(&amp;mut self, range: R) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.Drain.html" title="struct collections::string::Drain">Drain</a> <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;R: <a class="trait" href="https://doc.rust-lang.org/nightly/collections/range/trait.RangeArgument.html" title="trait collections::range::RangeArgument">RangeArgument</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>&gt;,&nbsp;</span></code><div class='since' title='Stable since Rust version 1.6.0'>1.6.0</div></span></h4>
+<div class='docblock'><p>Creates a draining iterator that removes the specified range in the string
 and yields the removed chars.</p>
 
 <p>Note: The element range is removed even if the iterator is not
@@ -437,12 +437,37 @@ boundary, or if they&#39;re out of bounds.</p>
 <span class="comment">// A full range clears the string</span>
 <span class="ident">s</span>.<span class="ident">drain</span>(..);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;&quot;</span>);</pre>
+</div><h4 id='method.splice' class="method"><span id='splice.v' class='invisible'><code>fn <a href='#method.splice' class='fnname'>splice</a>&lt;R&gt;(&amp;'a mut self, range: R, replace_with: &amp;'b <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.Splice.html" title="struct collections::string::Splice">Splice</a>&lt;'a, 'b&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;R: <a class="trait" href="https://doc.rust-lang.org/nightly/collections/range/trait.RangeArgument.html" title="trait collections::range::RangeArgument">RangeArgument</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>&gt;,&nbsp;</span></code></span></h4>
+<div class='stability'><div class='stab unstable'><details><summary><span class=microscope>🔬</span> This is a nightly-only experimental API.  (<code>splice</code>)</summary><p>recently added</p>
+</details></div></div><div class='docblock'><p>Creates a splicing iterator that removes the specified range in the string,
+replaces with the given string, and yields the removed chars.
+The given string doesn’t need to be the same length as the range.</p>
+
+<p>Note: The element range is removed when the <code>Splice</code> is dropped,
+even if the iterator is not consumed until the end.</p>
+
+<h1 id='panics-8' class='section-header'><a href='#panics-8'>Panics</a></h1>
+<p>Panics if the starting point or end point do not lie on a <a href="../../std/primitive.char.html"><code>char</code></a>
+boundary, or if they&#39;re out of bounds.</p>
+
+<h1 id='examples-20' class='section-header'><a href='#examples-20'>Examples</a></h1>
+<p>Basic usage:</p>
+
+<pre class="rust rust-example-rendered">
+<span class="attribute">#<span class="op">!</span>[<span class="ident">feature</span>(<span class="ident">splice</span>)]</span>
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;α is alpha, β is beta&quot;</span>);
+<span class="kw">let</span> <span class="ident">beta_offset</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">find</span>(<span class="string">&#39;β&#39;</span>).<span class="ident">unwrap_or</span>(<span class="ident">s</span>.<span class="ident">len</span>());
+
+<span class="comment">// Replace the range up until the β from the string</span>
+<span class="kw">let</span> <span class="ident">t</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">splice</span>(..<span class="ident">beta_offset</span>, <span class="string">&quot;Α is capital alpha; &quot;</span>).<span class="ident">collect</span>();
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>, <span class="string">&quot;α is alpha, &quot;</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">s</span>, <span class="string">&quot;Α is capital alpha; β is beta&quot;</span>);</pre>
 </div><h4 id='method.into_boxed_str' class="method"><span id='into_boxed_str.v' class='invisible'><code>fn <a href='#method.into_boxed_str' class='fnname'>into_boxed_str</a>(self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;</code><div class='since' title='Stable since Rust version 1.4.0'>1.4.0</div></span></h4>
 <div class='docblock'><p>Converts this <code>String</code> into a <code>Box&lt;str&gt;</code>.</p>
 
 <p>This will drop any excess capacity.</p>
 
-<h1 id='examples-20' class='section-header'><a href='#examples-20'>Examples</a></h1>
+<h1 id='examples-21' class='section-header'><a href='#examples-21'>Examples</a></h1>
 <p>Basic usage:</p>
 
 <pre class="rust rust-example-rendered">

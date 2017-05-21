@@ -1,5 +1,6 @@
 (function() {var implementors = {};
 implementors["chrono"] = [];
+implementors["cpp_demangle"] = [];
 implementors["error_chain"] = [];
 implementors["hyper"] = [];
 implementors["iron"] = [];

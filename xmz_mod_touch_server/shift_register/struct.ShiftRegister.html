@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         <a href='../../xmz_mod_touch_server/index.html'><img src='https://raw.githubusercontent.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server/master/share/xmz-logo.png' alt='logo' width='100'></a>
-        <p class='location'><a href='../index.html'>xmz_mod_touch_server</a>::<wbr><a href='index.html'>shift_register</a></p><script>window.sidebarCurrent = {name: 'ShiftRegister', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct ShiftRegister</p><div class="block items"><ul><li><a href="#fields">Fields</a></li><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>xmz_mod_touch_server</a>::<wbr><a href='index.html'>shift_register</a></p><script>window.sidebarCurrent = {name: 'ShiftRegister', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/xmz_mod_touch_server/shift_register.rs.html#18-26' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/xmz_mod_touch_server/shift_register.rs.html#23-31' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct ShiftRegister {
     pub oe_pin: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
     pub ds_pin: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
@@ -56,7 +56,7 @@
     pub latch_pin: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;,
     pub data: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>,
     // some fields omitted
-}</pre><h2 class='fields'>Fields</h2><span id='structfield.oe_pin' class="structfield">
+}</pre><h2 id='fields' class='fields'>Fields</h2><span id='structfield.oe_pin' class="structfield">
                            <span id='oe_pin.v' class='invisible'>
                            <code>oe_pin: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;</code>
                            </span></span><span id='structfield.ds_pin' class="structfield">
@@ -71,11 +71,15 @@
                            </span></span><span id='structfield.data' class="structfield">
                            <span id='data.v' class='invisible'>
                            <code>data: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a></code>
-                           </span></span><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/shift_register.rs.html#41-347' title='goto source code'>[src]</a></span></h3>
+                           </span></span><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/shift_register.rs.html#46-359' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(register_type: <a class="enum" href="../../xmz_mod_touch_server/shift_register/enum.ShiftRegisterType.html" title="enum xmz_mod_touch_server::shift_register::ShiftRegisterType">ShiftRegisterType</a>) -&gt; Self</code></span></h4>
 <div class='docblock'><p>Erzeugt ein neuen Shift Register</p>
 
-<h1 id='arguments' class='section-header'><a href='#arguments'>Arguments</a></h1>
+<h1 id='return-values' class='section-header'><a href='#return-values'>Return values</a></h1>
+<p>Diese Funktion erzeugt eine ShiftRegister Datenstruktur. In dieser wird der aktuelle Zustand der ShiftRegister gespeichert <code>data</code>.
+Zudem enthält sie die Implemetation div. Helper funktionen die den ShiftRegister verwalten können.</p>
+
+<h1 id='parameters' class='section-header'><a href='#parameters'>Parameters</a></h1>
 <ul>
 <li><code>register_type</code>     - Art des Shift Registers</li>
 </ul>
@@ -86,10 +90,10 @@
 
 <span class="kw">let</span> <span class="ident">sim</span> <span class="op">=</span> <span class="ident">ShiftRegister</span>::<span class="ident">new</span>(<span class="ident">ShiftRegisterType</span>::<span class="ident">Simulation</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">data</span>, <span class="number">0b0</span>);</pre>
-</div><h4 id='method.set' class="method"><span id='set.v' class='invisible'><code>fn <a href='#method.set' class='fnname'>set</a>(&amp;mut self, num: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="type" href="../../xmz_mod_touch_server/error/type.Result.html" title="type xmz_mod_touch_server::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
+</div><h4 id='method.set' class="method"><span id='set.v' class='invisible'><code>fn <a href='#method.set' class='fnname'>set</a>(&amp;mut self, num: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="type" href="../../xmz_mod_touch_server/errors/type.Result.html" title="type xmz_mod_touch_server::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
 <div class='docblock'><p>Setzt das übergebene Bit im Shift Register <code>data</code> Buffer</p>
 
-<h1 id='arguments-1' class='section-header'><a href='#arguments-1'>Arguments</a></h1>
+<h1 id='parameters-1' class='section-header'><a href='#parameters-1'>Parameters</a></h1>
 <ul>
 <li><code>num</code>     - Nummer des zu setzenden Bits <strong>Diese Nummer ist Eins basiert!</strong></li>
 </ul>
@@ -110,7 +114,7 @@ Buffer.</p>
 </div><h4 id='method.get' class="method"><span id='get.v' class='invisible'><code>fn <a href='#method.get' class='fnname'>get</a>(&amp;self, num: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
 <div class='docblock'><p>Abfrage ob ein Bit gesetzt ist, <code>true</code> wenn ja, <code>false</code> wenn das bit nicht gesetzt ist</p>
 
-<h1 id='arguments-2' class='section-header'><a href='#arguments-2'>Arguments</a></h1>
+<h1 id='parameters-2' class='section-header'><a href='#parameters-2'>Parameters</a></h1>
 <ul>
 <li><code>num</code>     - Nummer des abzufragenden Bits <strong>Diese Nummer ist Eins basiert!</strong></li>
 </ul>
@@ -130,10 +134,10 @@ Buffer ab.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">3</span>), <span class="bool-val">true</span>);</pre>
 
 <p>More info: <a href="http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c">http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c</a></p>
-</div><h4 id='method.clear' class="method"><span id='clear.v' class='invisible'><code>fn <a href='#method.clear' class='fnname'>clear</a>(&amp;mut self, num: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="type" href="../../xmz_mod_touch_server/error/type.Result.html" title="type xmz_mod_touch_server::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
+</div><h4 id='method.clear' class="method"><span id='clear.v' class='invisible'><code>fn <a href='#method.clear' class='fnname'>clear</a>(&amp;mut self, num: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="type" href="../../xmz_mod_touch_server/errors/type.Result.html" title="type xmz_mod_touch_server::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
 <div class='docblock'><p>Löscht das übergebene Bit</p>
 
-<h1 id='arguments-3' class='section-header'><a href='#arguments-3'>Arguments</a></h1>
+<h1 id='parameters-3' class='section-header'><a href='#parameters-3'>Parameters</a></h1>
 <ul>
 <li><code>num</code>     - Nummer des zu löschenden Bits <strong>Diese Nummer ist Eins basiert!</strong></li>
 </ul>
@@ -156,10 +160,10 @@ Buffer.</p>
 <span class="ident">sim</span>.<span class="ident">clear</span>(<span class="number">3</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">1</span>), <span class="bool-val">true</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">3</span>), <span class="bool-val">false</span>);</pre>
-</div><h4 id='method.toggle' class="method"><span id='toggle.v' class='invisible'><code>fn <a href='#method.toggle' class='fnname'>toggle</a>(&amp;mut self, num: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="type" href="../../xmz_mod_touch_server/error/type.Result.html" title="type xmz_mod_touch_server::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
+</div><h4 id='method.toggle' class="method"><span id='toggle.v' class='invisible'><code>fn <a href='#method.toggle' class='fnname'>toggle</a>(&amp;mut self, num: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="type" href="../../xmz_mod_touch_server/errors/type.Result.html" title="type xmz_mod_touch_server::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
 <div class='docblock'><p>Schaltet das übergebene Bit um, war es Null dann wird es Eins und umgekehrt</p>
 
-<h1 id='arguments-4' class='section-header'><a href='#arguments-4'>Arguments</a></h1>
+<h1 id='parameters-4' class='section-header'><a href='#parameters-4'>Parameters</a></h1>
 <ul>
 <li><code>num</code>     - Nummer des zu wechselnden Bits <strong>Diese Nummer ist Eins basiert!</strong></li>
 </ul>
@@ -178,7 +182,7 @@ Buffer um.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">3</span>), <span class="bool-val">true</span>);
 <span class="ident">sim</span>.<span class="ident">toggle</span>(<span class="number">3</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">3</span>), <span class="bool-val">false</span>);</pre>
-</div><h4 id='method.reset' class="method"><span id='reset.v' class='invisible'><code>fn <a href='#method.reset' class='fnname'>reset</a>(&amp;mut self) -&gt; <a class="type" href="../../xmz_mod_touch_server/error/type.Result.html" title="type xmz_mod_touch_server::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
+</div><h4 id='method.reset' class="method"><span id='reset.v' class='invisible'><code>fn <a href='#method.reset' class='fnname'>reset</a>(&amp;mut self) -&gt; <a class="type" href="../../xmz_mod_touch_server/errors/type.Result.html" title="type xmz_mod_touch_server::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
 <div class='docblock'><p>Reset nullt den Datenspeicher und gleicht ihn mit der Hardware ab.</p>
 
 <h1 id='examples-5' class='section-header'><a href='#examples-5'>Examples</a></h1>
@@ -191,7 +195,7 @@ Buffer um.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">1</span>), <span class="bool-val">true</span>);
 <span class="ident">sim</span>.<span class="ident">reset</span>();
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">1</span>), <span class="bool-val">false</span>);</pre>
-</div><h4 id='method.test' class="method"><span id='test.v' class='invisible'><code>fn <a href='#method.test' class='fnname'>test</a>(&amp;mut self) -&gt; <a class="type" href="../../xmz_mod_touch_server/error/type.Result.html" title="type xmz_mod_touch_server::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
+</div><h4 id='method.test' class="method"><span id='test.v' class='invisible'><code>fn <a href='#method.test' class='fnname'>test</a>(&amp;mut self) -&gt; <a class="type" href="../../xmz_mod_touch_server/errors/type.Result.html" title="type xmz_mod_touch_server::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
 <div class='docblock'><p>Lampentest testet alle Outputs</p>
 
 <p>Diese Funktion schaltet alle Ausgänge high, wartet eine Sekunde und schaltet danach alle
@@ -208,7 +212,7 @@ Ausgänge wieder aus.</p>
 <span class="ident">sim</span>.<span class="ident">test</span>();
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">1</span>), <span class="bool-val">true</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sim</span>.<span class="ident">get</span>(<span class="number">10</span>), <span class="bool-val">false</span>);</pre>
-</div><h4 id='method.test_random' class="method"><span id='test_random.v' class='invisible'><code>fn <a href='#method.test_random' class='fnname'>test_random</a>(&amp;mut self) -&gt; <a class="type" href="../../xmz_mod_touch_server/error/type.Result.html" title="type xmz_mod_touch_server::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
+</div><h4 id='method.test_random' class="method"><span id='test_random.v' class='invisible'><code>fn <a href='#method.test_random' class='fnname'>test_random</a>(&amp;mut self) -&gt; <a class="type" href="../../xmz_mod_touch_server/errors/type.Result.html" title="type xmz_mod_touch_server::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
 <div class='docblock'><p>Random Lampentest testet einige, wirklich vorhanden, Outputs, zufällig</p>
 
 <p>Diese Funktion schaltet alle Ausgänge high, wartet eine Sekunde und schaltet danach alle
@@ -221,10 +225,10 @@ Ausgänge wieder aus.</p>
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sim</span> <span class="op">=</span> <span class="ident">ShiftRegister</span>::<span class="ident">new</span>(<span class="ident">ShiftRegisterType</span>::<span class="ident">Simulation</span>);
 
 <span class="ident">sim</span>.<span class="ident">test_random</span>();</pre>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/shift_register.rs.html#16' title='goto source code'>[src]</a></span></h3>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/shift_register.rs.html#21' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
 <div class='docblock'><p>Formats the value using the given formatter.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/shift_register.rs.html#28-39' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/shift_register.rs.html#33-44' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.default' class="method"><span id='default.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default' class='fnname'>default</a>() -&gt; Self</code></span></h4>
 <div class='docblock'><p>Returns the &quot;default value&quot; for a type. <a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Read more</a></p>
 </div></div></section>

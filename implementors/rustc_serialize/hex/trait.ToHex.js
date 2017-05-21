@@ -1,6 +1,5 @@
 (function() {var implementors = {};
 implementors["chrono"] = [];
-implementors["hyper"] = [];
 implementors["iron"] = [];
 implementors["num"] = [];
 implementors["router"] = [];

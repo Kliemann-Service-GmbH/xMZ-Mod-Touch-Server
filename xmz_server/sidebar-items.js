@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["error",""],["exception",""],["json_api",""],["kombisensor",""],["sensor",""],["shift_register",""],["xmz_server",""],["zone",""]]});

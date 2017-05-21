@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["init","Initialisiert das Webinterface"]],"struct":[["StringError",""]]});
+initSidebarItems({"fn":[["init","Initialisiert das Webinterface"]],"struct":[["StringError","Json Web Interface Fehler TODO: port to error-chain"]]});

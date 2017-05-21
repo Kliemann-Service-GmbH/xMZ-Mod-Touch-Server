@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../index.html'>hyper</a>::<wbr><a href='index.html'>header</a></p><script>window.sidebarCurrent = {name: 'AccessControlRequestMethod', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct AccessControlRequestMethod</p><div class="block items"><ul><li><a href="#deref-methods">Methods from Deref&lt;Target=Method&gt;</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>hyper</a>::<wbr><a href='index.html'>header</a></p><script>window.sidebarCurrent = {name: 'AccessControlRequestMethod', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -71,7 +71,7 @@ used in the actual request as part of the preflight request.</p>
  
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">Headers</span>::<span class="ident">new</span>();
 <span class="ident">headers</span>.<span class="ident">set</span>(<span class="ident">AccessControlRequestMethod</span>(<span class="ident">Method</span>::<span class="ident">Get</span>));</pre>
-</div><h2 id='deref-methods'>Methods from <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Deref</a>&lt;Target=<a class="enum" href="../../hyper/method/enum.Method.html" title="enum hyper::method::Method">Method</a>&gt;</h2><div class='impl-items'><h4 id='method.safe' class="method"><span id='safe.v' class='invisible'><code>fn <a href='#method.safe' class='fnname'>safe</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+</div><h2 id='deref-methods'>Methods from <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/trait.Deref.html" title="trait core::ops::Deref">Deref</a>&lt;Target = <a class="enum" href="../../hyper/method/enum.Method.html" title="enum hyper::method::Method">Method</a>&gt;</h2><div class='impl-items'><h4 id='method.safe' class="method"><span id='safe.v' class='invisible'><code>fn <a href='#method.safe' class='fnname'>safe</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
 <div class='docblock'><p>Whether a method is considered &quot;safe&quot;, meaning the request is
 essentially read-only.</p>
 

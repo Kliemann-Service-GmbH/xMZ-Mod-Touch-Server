@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         <a href='../../xmz_mod_touch_server/index.html'><img src='https://raw.githubusercontent.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server/master/share/xmz-logo.png' alt='logo' width='100'></a>
-        <p class='location'><a href='../index.html'>xmz_mod_touch_server</a></p><script>window.sidebarCurrent = {name: 'kombisensor', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'>Module kombisensor</p><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li></ul></div><p class='location'><a href='../index.html'>xmz_mod_touch_server</a></p><script>window.sidebarCurrent = {name: 'kombisensor', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -48,14 +48,37 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/xmz_mod_touch_server/kombisensor.rs.html#1-69' title='goto source code'>[src]</a></span></h1>
-<h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+               </span><a class='srclink' href='../../src/xmz_mod_touch_server/kombisensor/mod.rs.html#1-7' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>CO-NO2 Kombisensor mit Modbus Transceiver</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.Kombisensor.html"
                                   title='struct xmz_mod_touch_server::kombisensor::Kombisensor'>Kombisensor</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Ein Kombisensor kann <code>n</code> Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Sensor.html"
+                                  title='struct xmz_mod_touch_server::kombisensor::Sensor'>Sensor</a></td>
+                           <td class='docblock-short'>
+                                <p>Representation der Firmware Daten einer Messzelle</p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SI.html"
+                                  title='enum xmz_mod_touch_server::kombisensor::SI'>SI</a></td>
+                           <td class='docblock-short'>
+                                <p>SI Einheit des zu messenden Mediums</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SensorType.html"
+                                  title='enum xmz_mod_touch_server::kombisensor::SensorType'>SensorType</a></td>
+                           <td class='docblock-short'>
+                                <p>Typ der Messzelle</p>
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>

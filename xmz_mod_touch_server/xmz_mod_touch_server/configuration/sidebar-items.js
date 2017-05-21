@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["parse",""]]});
+initSidebarItems({"struct":[["Configuration",""]]});

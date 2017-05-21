@@ -145,9 +145,34 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
 </pre><pre class="rust ">
+<span class="doccomment">//! Sensormesszelle für CO oder NO2 Gas</span>
+<span class="doccomment">//!</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
-
 <span class="kw">use</span> <span class="ident">exception</span>::{<span class="ident">Exception</span>, <span class="ident">ExceptionType</span>};
 <span class="kw">use</span> <span class="ident">shift_register</span>::<span class="ident">ShiftRegister</span>;
 
@@ -159,7 +184,15 @@
     <span class="ident">reverse</span>: <span class="ident">bool</span>, <span class="comment">// Boolen um die Richtung bei der Simulation zu halten.</span>
     <span class="ident">error_count</span>: <span class="ident">u64</span>,
 }
+
 <span class="kw">impl</span> <span class="ident">Sensor</span> {
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust,ignore</span>
+    <span class="doccomment">/// // TODO: Write documentation</span>
+    <span class="doccomment">/// assert!(false);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="ident">Sensor</span> {
             <span class="ident">value</span>: <span class="number">0</span>,
@@ -168,6 +201,13 @@
         }
     }
 
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust,ignore</span>
+    <span class="doccomment">/// // TODO: Write documentation</span>
+    <span class="doccomment">/// assert!(false);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">check</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
                  <span class="ident">num_zone</span>: <span class="ident">usize</span>,
                  <span class="ident">num</span>: <span class="ident">usize</span>,
@@ -178,6 +218,13 @@
         <span class="self">self</span>.<span class="ident">check_direct_value</span>(<span class="ident">num_zone</span>, <span class="ident">num</span>, <span class="ident">exceptions</span>, <span class="ident">leds</span>, <span class="ident">relais</span>);
     }
 
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust,ignore</span>
+    <span class="doccomment">/// // TODO: Write documentation</span>
+    <span class="doccomment">/// assert!(false);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
                   <span class="ident">_num_zone</span>: <span class="ident">usize</span>,
                   <span class="ident">_num</span>: <span class="ident">usize</span>,
@@ -243,6 +290,7 @@
         }
     }
 }
+
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Sensor</span> {
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span>::<span class="ident">new</span>()

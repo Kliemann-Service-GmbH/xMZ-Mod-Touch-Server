@@ -43,15 +43,32 @@
         </form>
     </nav>
 
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">1</span>
-<span id="2">2</span>
-<span id="3">3</span>
-<span id="4">4</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<span id="2"> 2</span>
+<span id="3"> 3</span>
+<span id="4"> 4</span>
+<span id="5"> 5</span>
+<span id="6"> 6</span>
+<span id="7"> 7</span>
+<span id="8"> 8</span>
+<span id="9"> 9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
 </pre><pre class="rust ">
+<span class="doccomment">//! Serverteil der xMZ-Mod-Touch-Server Platform</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Hier werden alle Komponenten des Servers verwaltet.</span>
+<span class="doccomment">//!</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">chrono</span>;
+
 <span class="kw">mod</span> <span class="ident">xmz_mod_touch_server</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">configuration</span>;
+<span class="kw">mod</span> <span class="ident">zone</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;</pre>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">zone</span>::<span class="ident">Zone</span>;
+</pre>
 </section>
     <section id='search' class="content hidden"></section>
 

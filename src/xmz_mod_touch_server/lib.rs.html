@@ -74,6 +74,12 @@
 <span id="29">29</span>
 <span id="30">30</span>
 <span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
 </pre><pre class="rust ">
 <span class="attribute">#<span class="op">!</span>[<span class="ident">doc</span>(<span class="ident">html_logo_url</span> <span class="op">=</span> <span class="string">&quot;https://raw.githubusercontent.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server/master/share/xmz-logo.png&quot;</span>,
        <span class="ident">html_favicon_url</span> <span class="op">=</span> <span class="string">&quot;https://raw.githubusercontent.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server/master/share/favicon.ico&quot;</span>,
@@ -84,28 +90,35 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! Git Repository: [https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git](https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.git)</span>
 
+<span class="comment">// `error_chain!` can recurse deeply(3)</span>
+<span class="attribute">#<span class="op">!</span>[<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;1024&quot;</span>]</span>
+
+<span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">error_chain</span>;
 <span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">log</span>;
 <span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">serde_derive</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">chrono</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">env_logger</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">iron</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">libmodbus_rs</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">rand</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">router</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">serde_json</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">sysfs_gpio</span>;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">error</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">errors</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">exception</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">json_api</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">kombisensor</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">sensor</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">shift_register</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">xmz_mod_touch_server</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">zone</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">exception</span>::{<span class="ident">Exception</span>, <span class="ident">ExceptionType</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">kombisensor</span>::<span class="ident">Kombisensor</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">shift_register</span>::{<span class="ident">ShiftRegister</span>, <span class="ident">ShiftRegisterType</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">xmz_mod_touch_server</span>::<span class="ident">configuration</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">shift_register</span>::{<span class="ident">ShiftRegister</span>, <span class="ident">ShiftRegisterType</span>};</pre>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">xmz_mod_touch_server</span>::<span class="ident">Zone</span>;
+</pre>
 </section>
     <section id='search' class="content hidden"></section>
 
