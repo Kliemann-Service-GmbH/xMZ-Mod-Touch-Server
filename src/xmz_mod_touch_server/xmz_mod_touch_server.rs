@@ -4,9 +4,12 @@
 //!
 use chrono;
 use chrono::prelude::*;
-use std::collections::HashSet;
+use configuration::Configuration;
+use errors::*;
 use exception::{Exception, ExceptionType};
+use serde_json;
 use shift_register::{ShiftRegister, ShiftRegisterType};
+use std::collections::HashSet;
 use xmz_mod_touch_server::Zone;
 
 
@@ -18,7 +21,12 @@ pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
 #[derive(Serialize, Deserialize)]
 pub struct XMZModTouchServer {
     version: String,
+    // `create_time` wird nur ein mal beim erstellen der Konfiguration gesetzt
+    create_time: chrono::DateTime<UTC>,
+    // Wird jedes mal wenn der Serverprozess gestartet wurde, gesetzt
+    // #[serde(skip_deserializing)]
     start_time: chrono::DateTime<UTC>,
+    // Ausnahmen
     pub exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
     leds: ShiftRegister,
@@ -45,6 +53,7 @@ impl XMZModTouchServer {
     pub fn new() -> Self {
         XMZModTouchServer {
             version: env!("CARGO_PKG_VERSION").to_string(),
+            create_time: chrono::UTC::now(),
             start_time: chrono::UTC::now(),
             exceptions: HashSet::new(),
             zones: vec![
@@ -54,6 +63,29 @@ impl XMZModTouchServer {
             relais: ShiftRegister::new(ShiftRegisterType::Relais),
         }
     }
+
+    /// Serverinstanz aus Konfigurationsdatei erstellen
+    ///
+    /// # Return values
+    ///
+    /// Diese Funktion liefert ein Result. Das Result enthält die Server Instanz, oder ein Error,
+    /// wenn die Konfiguration nicht ausgelesen werden konnte.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new_from_config();
+    /// ```
+    pub fn new_from_config() -> Result<XMZModTouchServer> {
+        let xmz_mod_touch_server = match serde_json::from_str(&Configuration::get_config()?) {
+            Ok(xmz_mod_touch_server) => xmz_mod_touch_server,
+            _ => panic!("Konnte Konfigurationsdatei nicht lesen. Server konnte nicht erstellt werden."),
+        };
+        Ok(xmz_mod_touch_server)
+    }
+
 
     /// Check Funktion des XMZModTouchServer
     ///

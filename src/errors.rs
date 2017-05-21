@@ -2,6 +2,8 @@
 //!
 //! https://github.com/brson/error-chain
 //!
+use serde_json::error::Error as SerdeError;
+
 error_chain!{
     links {
         Libmodbus(::libmodbus_rs::errors::Error, ::libmodbus_rs::errors::ErrorKind);
@@ -9,7 +11,7 @@ error_chain!{
 
     foreign_links {
         Io(::std::io::Error) #[cfg(unix)];
-        SerdeJson(::serde_json::Error);
         SysfsGpio(::sysfs_gpio::Error);
+        Json(SerdeError);
     }
 }
