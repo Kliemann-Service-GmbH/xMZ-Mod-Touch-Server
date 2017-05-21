@@ -36,7 +36,8 @@ impl<'a> Error for StringError<'a> {
 /// Beispiel URL: http://0.0.0.0:3000/api/v1
 fn index(_req: &mut Request,
          xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-         -> IronResult<Response> {
+         -> IronResult<Response>
+{
     if let Ok(xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
         let payload = serde_json::to_string_pretty(&*xmz_mod_touch_server).unwrap();
         Ok(Response::with((status::Ok, payload)))

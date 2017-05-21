@@ -40,8 +40,6 @@ fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
                     // XMZModTouchServer Kombonenten aktualisieren, Kombisensoren auslesen, ....
                     xmz_mod_touch_server.update();
                     // println!("{:#?}", &*xmz_mod_touch_server);
-                    println!("{:?} sec online", xmz_mod_touch_server.uptime().num_seconds());
-                    // if xmz_mod_touch_server.uptime().num_seconds() > 10 { println!("Zeit zu gehen!"); }
                 }
 
             } // xmz_mod_touch_server.lock() frei gegeben

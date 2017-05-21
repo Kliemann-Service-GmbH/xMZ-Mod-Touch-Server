@@ -79,10 +79,14 @@ impl XMZModTouchServer {
     /// let xmz_mod_touch_server = XMZModTouchServer::new_from_config();
     /// ```
     pub fn new_from_config() -> Result<XMZModTouchServer> {
-        let xmz_mod_touch_server = match serde_json::from_str(&Configuration::get_config()?) {
+        let mut xmz_mod_touch_server: XMZModTouchServer = match serde_json::from_str(&Configuration::get_config()?) {
             Ok(xmz_mod_touch_server) => xmz_mod_touch_server,
             _ => panic!("Konnte Konfigurationsdatei nicht lesen. Server konnte nicht erstellt werden."),
         };
+
+        // Update start_time to now
+        xmz_mod_touch_server.reset_start_time();
+
         Ok(xmz_mod_touch_server)
     }
 
@@ -403,6 +407,13 @@ impl XMZModTouchServer {
     pub fn uptime(&self) -> chrono::Duration {
         // Wartungsintervall erreicht?
         chrono::UTC::now().signed_duration_since(self.start_time)
+    }
+
+
+    // Macht was sie meint
+    // 
+    fn reset_start_time(&mut self) {
+        self.start_time = UTC::now();
     }
 
 }
