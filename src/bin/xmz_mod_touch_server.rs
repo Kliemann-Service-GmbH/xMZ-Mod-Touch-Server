@@ -31,7 +31,7 @@ fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
                 -> Result<()>
 {
     thread::spawn(move || {
-        for _ in 0..10 {
+        loop {
             {
                 // DIESER SCOPE IST SEHR WICHTIG! Ohne diesen würde der xmz_mod_touch_server.lock() niemals beendet!
                 if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {

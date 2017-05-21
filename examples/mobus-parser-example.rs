@@ -7,6 +7,7 @@ extern crate xmz_mod_touch_server;
 
 use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH};
 
+
 mod errors {
     error_chain!{
         links {
@@ -130,7 +131,6 @@ fn parse(input: &[u16]) -> Result<ModbusData> {
 
     Ok(modbus_data)
 }
-
 
 
 fn run() -> Result<()> {
