@@ -16,6 +16,7 @@
 extern crate chrono;
 extern crate env_logger;
 extern crate iron;
+extern crate libmodbus_rs;
 extern crate rand;
 extern crate router;
 extern crate serde_json;

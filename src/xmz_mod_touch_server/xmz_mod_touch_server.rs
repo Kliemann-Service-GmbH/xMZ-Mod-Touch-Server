@@ -4,9 +4,12 @@
 //!
 use chrono;
 use chrono::prelude::*;
-use std::collections::HashSet;
+use configuration::Configuration;
+use errors::*;
 use exception::{Exception, ExceptionType};
+use serde_json;
 use shift_register::{ShiftRegister, ShiftRegisterType};
+use std::collections::HashSet;
 use xmz_mod_touch_server::Zone;
 
 
@@ -18,7 +21,12 @@ pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
 #[derive(Serialize, Deserialize)]
 pub struct XMZModTouchServer {
     version: String,
+    // `create_time` wird nur ein mal beim erstellen der Konfiguration gesetzt
+    create_time: chrono::DateTime<UTC>,
+    // Wird jedes mal wenn der Serverprozess gestartet wurde, gesetzt
+    // #[serde(skip_deserializing)]
     start_time: chrono::DateTime<UTC>,
+    // Ausnahmen
     pub exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
     leds: ShiftRegister,
@@ -45,6 +53,7 @@ impl XMZModTouchServer {
     pub fn new() -> Self {
         XMZModTouchServer {
             version: env!("CARGO_PKG_VERSION").to_string(),
+            create_time: chrono::UTC::now(),
             start_time: chrono::UTC::now(),
             exceptions: HashSet::new(),
             zones: vec![
@@ -55,48 +64,28 @@ impl XMZModTouchServer {
         }
     }
 
-    /// Liefert die Versionsnummer des XMZModTouchServer's
-    ///
-    /// Die Versionsnummer entspricht der Crate Versionsnummer, wird aus dieser automatisch gebildet.
+    /// Serverinstanz aus Konfigurationsdatei erstellen
     ///
     /// # Return values
     ///
-    /// Diese Funktion liefert eine neue XMZModTouchServer Instanz
-    ///
-    /// # Parameters
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
-    /// ```
-    pub fn get_version(&self) -> String {
-        self.version.clone()
-    }
-
-
-    /// `basic_configuration` - Grundkonfiguration/ Grundeistellungen der LEDs und Relais
+    /// Diese Funktion liefert ein Result. Das Result enthält die Server Instanz, oder ein Error,
+    /// wenn die Konfiguration nicht ausgelesen werden konnte.
     ///
     /// # Examples
     ///
     /// ```rust
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// xmz_mod_touch_server.basic_configuration();
+    /// let xmz_mod_touch_server = XMZModTouchServer::new_from_config();
     /// ```
-    pub fn basic_configuration(&mut self) {
-        // Grundzustand definieren
-        self.leds.reset();
-        self.relais.reset();
-        // Power LED an
-        self.leds.set(1);
-        // Relais Störung anziehen (normal closed)
-        self.relais.set(1);
+    pub fn new_from_config() -> Result<XMZModTouchServer> {
+        let xmz_mod_touch_server = match serde_json::from_str(&Configuration::get_config()?) {
+            Ok(xmz_mod_touch_server) => xmz_mod_touch_server,
+            _ => panic!("Konnte Konfigurationsdatei nicht lesen. Server konnte nicht erstellt werden."),
+        };
+        Ok(xmz_mod_touch_server)
     }
+
 
     /// Check Funktion des XMZModTouchServer
     ///
@@ -142,12 +131,55 @@ impl XMZModTouchServer {
             // debug!("\t\tUpdate Zone {} ...", num_zone);
             for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
                 // debug!("\t\t\tUpdate Kombisensor {} ...", num_kombisensor);
+                kombisensor.get_from_modbus();
                 for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
                     // debug!("\t\t\t\tUpdate Sensor {} ...", num_sensor);
                     // println!("{:?}", &self.get_relais_mut());
                 }
             }
         }
+    }
+
+    /// `basic_configuration` - Grundkonfiguration/ Grundeistellungen der LEDs und Relais
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// xmz_mod_touch_server.basic_configuration();
+    /// ```
+    pub fn basic_configuration(&mut self) {
+        // Grundzustand definieren
+        self.leds.reset();
+        self.relais.reset();
+        // Power LED an
+        self.leds.set(1);
+        // Relais Störung anziehen (normal closed)
+        self.relais.set(1);
+    }
+
+    /// Liefert die Versionsnummer des XMZModTouchServer's
+    ///
+    /// Die Versionsnummer entspricht der Crate Versionsnummer, wird aus dieser automatisch gebildet.
+    ///
+    /// # Return values
+    ///
+    /// Diese Funktion liefert eine neue XMZModTouchServer Instanz
+    ///
+    /// # Parameters
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    ///
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
+    /// ```
+    pub fn get_version(&self) -> String {
+        self.version.clone()
     }
 
     /// Liefert eine Refernz auf die Exception des Servers
