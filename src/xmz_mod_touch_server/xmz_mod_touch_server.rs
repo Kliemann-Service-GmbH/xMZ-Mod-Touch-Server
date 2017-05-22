@@ -331,7 +331,7 @@ impl XMZModTouchServer {
     /// ```rust
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
     /// assert!(xmz_mod_touch_server.get_zone_mut(0).is_none());
     /// ```
     pub fn get_zone_mut(&mut self, id: usize) -> Option<&mut Zone> {
