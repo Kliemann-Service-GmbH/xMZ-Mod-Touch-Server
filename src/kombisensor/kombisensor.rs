@@ -124,6 +124,43 @@ impl Kombisensor {
         self.modbus_address = modbus_address
     }
 
+    /// Get modbus_device
+    ///
+    /// # Return values
+    ///
+    /// Liefert die Modbus Device Adresse als String
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyUSB0".to_string());
+    /// ```
+    pub fn get_modbus_device(&self) -> String {
+        self.modbus_device.clone()
+    }
+
+    /// Set modbus_device
+    ///
+    /// # Parameters
+    ///
+    /// * `modbus_device`    - String mit der neuen Modbus Device Adresse
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    /// let mut kombisensor = Kombisensor::new();
+    ///
+    /// kombisensor.set_modbus_device("/dev/ttyS0".to_string());
+    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS0".to_string());
+    /// ```
+    pub fn set_modbus_device(&mut self, modbus_device: String) {
+        self.modbus_device = modbus_device
+    }
+
     /// Liefert eine Referenz auf einen Vector mit den Sensoren
     ///
     /// # Examples
