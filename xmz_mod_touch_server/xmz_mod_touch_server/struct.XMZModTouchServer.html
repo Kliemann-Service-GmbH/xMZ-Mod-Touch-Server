@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/xmz_mod_touch_server/xmz_mod_touch_server/xmz_mod_touch_server.rs.html#22-34' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/xmz_mod_touch_server/xmz_mod_touch_server/xmz_mod_touch_server.rs.html#23-35' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct XMZModTouchServer {
     pub exceptions: <a class="struct" href="https://doc.rust-lang.org/nightly/std/collections/hash/set/struct.HashSet.html" title="struct std::collections::hash::set::HashSet">HashSet</a>&lt;<a class="struct" href="../../xmz_mod_touch_server/exception/struct.Exception.html" title="struct xmz_mod_touch_server::exception::Exception">Exception</a>&gt;,
     // some fields omitted
@@ -56,7 +56,7 @@
 </div><h2 id='fields' class='fields'>Fields</h2><span id='structfield.exceptions' class="structfield">
                            <span id='exceptions.v' class='invisible'>
                            <code>exceptions: <a class="struct" href="https://doc.rust-lang.org/nightly/std/collections/hash/set/struct.HashSet.html" title="struct std::collections::hash::set::HashSet">HashSet</a>&lt;<a class="struct" href="../../xmz_mod_touch_server/exception/struct.Exception.html" title="struct xmz_mod_touch_server::exception::Exception">Exception</a>&gt;</code>
-                           </span></span><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../xmz_mod_touch_server/struct.XMZModTouchServer.html" title="struct xmz_mod_touch_server::XMZModTouchServer">XMZModTouchServer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/xmz_mod_touch_server/xmz_mod_touch_server.rs.html#36-419' title='goto source code'>[src]</a></span></h3>
+                           </span></span><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../xmz_mod_touch_server/struct.XMZModTouchServer.html" title="struct xmz_mod_touch_server::XMZModTouchServer">XMZModTouchServer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/xmz_mod_touch_server/xmz_mod_touch_server.rs.html#37-448' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; Self</code></span></h4>
 <div class='docblock'><p>Erzeugt eine neue XMZModTouchServer Instanz</p>
 
@@ -183,7 +183,7 @@ wenn eine Exception mit dieser Id nicht existiert</p>
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
 <span class="kw">let</span> <span class="ident">xmz_mod_touch_server</span> <span class="op">=</span> <span class="ident">XMZModTouchServer</span>::<span class="ident">new</span>();
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zones</span>().<span class="ident">len</span>(), <span class="number">1</span>); <span class="comment">// Eine Zone default</span></pre>
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zones</span>().<span class="ident">len</span>(), <span class="number">0</span>); <span class="comment">// Eine Zone default</span></pre>
 </div><h4 id='method.get_zones_mut' class="method"><span id='get_zones_mut.v' class='invisible'><code>fn <a href='#method.get_zones_mut' class='fnname'>get_zones_mut</a>(&amp;mut self) -&gt; &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="struct" href="../../xmz_mod_touch_server/struct.Zone.html" title="struct xmz_mod_touch_server::Zone">Zone</a>&gt;</code></span></h4>
 <div class='docblock'><p>Mutable Refernz auf die Zonen des Servers</p>
 
@@ -195,7 +195,7 @@ wenn eine Exception mit dieser Id nicht existiert</p>
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">xmz_mod_touch_server</span> <span class="op">=</span> <span class="ident">XMZModTouchServer</span>::<span class="ident">new</span>();
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zones_mut</span>().<span class="ident">len</span>(), <span class="number">1</span>); <span class="comment">// Eine Zone default</span></pre>
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zones_mut</span>().<span class="ident">len</span>(), <span class="number">0</span>); <span class="comment">// Eine Zone default</span></pre>
 </div><h4 id='method.get_zone' class="method"><span id='get_zone.v' class='invisible'><code>fn <a href='#method.get_zone' class='fnname'>get_zone</a>(&amp;self, id: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="struct" href="../../xmz_mod_touch_server/struct.Zone.html" title="struct xmz_mod_touch_server::Zone">Zone</a>&gt;</code></span></h4>
 <div class='docblock'><p>Finde Zone</p>
 
@@ -212,7 +212,7 @@ wenn eine Exception mit dieser Id nicht existiert</p>
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
 <span class="kw">let</span> <span class="ident">xmz_mod_touch_server</span> <span class="op">=</span> <span class="ident">XMZModTouchServer</span>::<span class="ident">new</span>();
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zone</span>(<span class="number">0</span>).<span class="ident">is_some</span>());</pre>
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zone</span>(<span class="number">0</span>).<span class="ident">is_none</span>());</pre>
 </div><h4 id='method.get_zone_mut' class="method"><span id='get_zone_mut.v' class='invisible'><code>fn <a href='#method.get_zone_mut' class='fnname'>get_zone_mut</a>(&amp;mut self, id: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;mut <a class="struct" href="../../xmz_mod_touch_server/struct.Zone.html" title="struct xmz_mod_touch_server::Zone">Zone</a>&gt;</code></span></h4>
 <div class='docblock'><p>Finde mut Referenz auf Zone</p>
 
@@ -228,12 +228,23 @@ wenn eine Exception mit dieser Id nicht existiert</p>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
+<span class="kw">let</span> <span class="ident">xmz_mod_touch_server</span> <span class="op">=</span> <span class="ident">XMZModTouchServer</span>::<span class="ident">new</span>();
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zone_mut</span>(<span class="number">0</span>).<span class="ident">is_none</span>());</pre>
+</div><h4 id='method.add_zone' class="method"><span id='add_zone.v' class='invisible'><code>fn <a href='#method.add_zone' class='fnname'>add_zone</a>(&amp;mut self)</code></span></h4>
+<div class='docblock'><p>Erzeugt eine neu Zone</p>
+
+<h1 id='examples-13' class='section-header'><a href='#examples-13'>Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">xmz_mod_touch_server</span> <span class="op">=</span> <span class="ident">XMZModTouchServer</span>::<span class="ident">new</span>();
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zone_mut</span>(<span class="number">0</span>).<span class="ident">is_some</span>());</pre>
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zone</span>(<span class="number">0</span>).<span class="ident">is_none</span>());
+
+<span class="ident">xmz_mod_touch_server</span>.<span class="ident">add_zone</span>();
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">get_zone</span>(<span class="number">0</span>).<span class="ident">is_some</span>());</pre>
 </div><h4 id='method.get_leds' class="method"><span id='get_leds.v' class='invisible'><code>fn <a href='#method.get_leds' class='fnname'>get_leds</a>(&amp;self) -&gt; &amp;<a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span></h4>
 <div class='docblock'><p>Referenz auf die LED&#39;s ShiftRegister</p>
 
-<h1 id='examples-13' class='section-header'><a href='#examples-13'>Examples</a></h1>
+<h1 id='examples-14' class='section-header'><a href='#examples-14'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
@@ -243,7 +254,7 @@ wenn eine Exception mit dieser Id nicht existiert</p>
 </div><h4 id='method.get_leds_mut' class="method"><span id='get_leds_mut.v' class='invisible'><code>fn <a href='#method.get_leds_mut' class='fnname'>get_leds_mut</a>(&amp;mut self) -&gt; &amp;mut <a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span></h4>
 <div class='docblock'><p>Mutable Referenz auf die LED&#39;s ShiftRegister</p>
 
-<h1 id='examples-14' class='section-header'><a href='#examples-14'>Examples</a></h1>
+<h1 id='examples-15' class='section-header'><a href='#examples-15'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
@@ -253,7 +264,7 @@ wenn eine Exception mit dieser Id nicht existiert</p>
 </div><h4 id='method.get_relais' class="method"><span id='get_relais.v' class='invisible'><code>fn <a href='#method.get_relais' class='fnname'>get_relais</a>(&amp;self) -&gt; &amp;<a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span></h4>
 <div class='docblock'><p>Referenz auf die Relais ShiftRegister</p>
 
-<h1 id='examples-15' class='section-header'><a href='#examples-15'>Examples</a></h1>
+<h1 id='examples-16' class='section-header'><a href='#examples-16'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
@@ -263,7 +274,7 @@ wenn eine Exception mit dieser Id nicht existiert</p>
 </div><h4 id='method.get_relais_mut' class="method"><span id='get_relais_mut.v' class='invisible'><code>fn <a href='#method.get_relais_mut' class='fnname'>get_relais_mut</a>(&amp;mut self) -&gt; &amp;mut <a class="struct" href="../../xmz_mod_touch_server/shift_register/struct.ShiftRegister.html" title="struct xmz_mod_touch_server::shift_register::ShiftRegister">ShiftRegister</a></code></span></h4>
 <div class='docblock'><p>Mutable Referenz auf die Relais ShiftRegister</p>
 
-<h1 id='examples-16' class='section-header'><a href='#examples-16'>Examples</a></h1>
+<h1 id='examples-17' class='section-header'><a href='#examples-17'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
@@ -278,17 +289,17 @@ wenn eine Exception mit dieser Id nicht existiert</p>
 <li><code>uptime</code>  - Die Uptime des Servers</li>
 </ul>
 
-<h1 id='examples-17' class='section-header'><a href='#examples-17'>Examples</a></h1>
+<h1 id='examples-18' class='section-header'><a href='#examples-18'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">XMZModTouchServer</span>;
 
 <span class="kw">let</span> <span class="ident">xmz_mod_touch_server</span> <span class="op">=</span> <span class="ident">XMZModTouchServer</span>::<span class="ident">new</span>();
 ::<span class="ident">std</span>::<span class="ident">thread</span>::<span class="ident">sleep</span>(::<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>::<span class="ident">from_millis</span>(<span class="number">10</span>));
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">xmz_mod_touch_server</span>.<span class="ident">uptime</span>().<span class="ident">num_milliseconds</span>() <span class="op">&gt;=</span> <span class="number">10</span>);</pre>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../xmz_mod_touch_server/struct.XMZModTouchServer.html" title="struct xmz_mod_touch_server::XMZModTouchServer">XMZModTouchServer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/xmz_mod_touch_server/xmz_mod_touch_server.rs.html#20' title='goto source code'>[src]</a></span></h3>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../xmz_mod_touch_server/struct.XMZModTouchServer.html" title="struct xmz_mod_touch_server::XMZModTouchServer">XMZModTouchServer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/xmz_mod_touch_server/xmz_mod_touch_server.rs.html#21' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
 <div class='docblock'><p>Formats the value using the given formatter.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../../xmz_mod_touch_server/struct.XMZModTouchServer.html" title="struct xmz_mod_touch_server::XMZModTouchServer">XMZModTouchServer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/xmz_mod_touch_server/xmz_mod_touch_server.rs.html#421-425' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../../xmz_mod_touch_server/struct.XMZModTouchServer.html" title="struct xmz_mod_touch_server::XMZModTouchServer">XMZModTouchServer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/xmz_mod_touch_server/xmz_mod_touch_server/xmz_mod_touch_server.rs.html#450-454' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.default' class="method"><span id='default.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default' class='fnname'>default</a>() -&gt; Self</code></span></h4>
 <div class='docblock'><p>Returns the &quot;default value&quot; for a type. <a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Read more</a></p>
 </div></div></section>

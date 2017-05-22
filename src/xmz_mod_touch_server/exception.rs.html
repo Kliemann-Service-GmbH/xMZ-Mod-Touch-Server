@@ -82,6 +82,7 @@
 <span id="37">37</span>
 <span id="38">38</span>
 <span id="39">39</span>
+<span id="40">40</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Exceptions Ausnahmen/ Fehlerbehandlung</span>
 <span class="doccomment">//!</span>
@@ -94,8 +95,9 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ExceptionType</span> {
     <span class="ident">WartungsintervalReached</span>,
-    <span class="ident">KombisensorOffline</span> { <span class="ident">zone</span>: <span class="ident">usize</span> },
-    <span class="ident">SensorDirectValue</span> { <span class="ident">zone</span>: <span class="ident">usize</span>, <span class="ident">sensor</span>: <span class="ident">usize</span> },
+    <span class="ident">KombisensorOffline</span> { <span class="ident">num_zone</span>: <span class="ident">usize</span> },
+    <span class="ident">KombisensorModbusError</span> { <span class="ident">num_zone</span>: <span class="ident">usize</span>, <span class="ident">num_kombisensor</span>: <span class="ident">usize</span> },
+    <span class="ident">SensorDirectValue</span> { <span class="ident">num_zone</span>: <span class="ident">usize</span>, <span class="ident">sensor</span>: <span class="ident">usize</span> },
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>

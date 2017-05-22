@@ -48,9 +48,9 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/xmz_mod_touch_server/kombisensor/kombisensor.rs.html#11-16' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/xmz_mod_touch_server/kombisensor/kombisensor.rs.html#11-18' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Kombisensor { /* fields omitted */ }</pre><div class='docblock'><p>Ein Kombisensor kann <code>n</code> Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../xmz_mod_touch_server/struct.Kombisensor.html" title="struct xmz_mod_touch_server::Kombisensor">Kombisensor</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/xmz_mod_touch_server/kombisensor/kombisensor.rs.html#18-281' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../xmz_mod_touch_server/struct.Kombisensor.html" title="struct xmz_mod_touch_server::Kombisensor">Kombisensor</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/xmz_mod_touch_server/kombisensor/kombisensor.rs.html#28-410' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; Self</code></span></h4>
 <div class='docblock'><p>Erzeugt eine neue Kombisensor Instanz</p>
 
@@ -63,14 +63,31 @@
 
 <span class="kw">let</span> <span class="ident">kombisensor</span> <span class="op">=</span> <span class="ident">Kombisensor</span>::<span class="ident">new</span>();
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">kombisensor</span>.<span class="ident">get_sensors</span>().<span class="ident">len</span>(), <span class="number">2</span>); <span class="comment">// 2 Kombisensoren sind default</span></pre>
+</div><h4 id='method.new_with_type' class="method"><span id='new_with_type.v' class='invisible'><code>fn <a href='#method.new_with_type' class='fnname'>new_with_type</a>(kombisensor_type: <a class="enum" href="../xmz_mod_touch_server/enum.KombisensorType.html" title="enum xmz_mod_touch_server::KombisensorType">KombisensorType</a>) -&gt; Self</code></span></h4>
+<div class='docblock'><p>Erzeugt eine spezielle Kombisensor Instanz</p>
+
+<h1 id='parameters' class='section-header'><a href='#parameters'>Parameters</a></h1>
+<ul>
+<li><code>kombisensor_type</code>    - Typ des Kombisensors</li>
+</ul>
+
+<h1 id='return-values-1' class='section-header'><a href='#return-values-1'>Return values</a></h1>
+<p>Diese Funktion liefert eine neue Kombisensor Instanz vom gegebenen Typ</p>
+
+<h1 id='examples-1' class='section-header'><a href='#examples-1'>Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::{<span class="ident">Kombisensor</span>, <span class="ident">KombisensorType</span>};
+<span class="kw">let</span> <span class="ident">kombisensor</span> <span class="op">=</span> <span class="ident">Kombisensor</span>::<span class="ident">new_with_type</span>(<span class="ident">KombisensorType</span>::<span class="ident">RAGas</span>);
+
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">kombisensor</span>.<span class="ident">get_modbus_device</span>(), <span class="string">&quot;/dev/ttyS0&quot;</span>.<span class="ident">to_string</span>());</pre>
 </div><h4 id='method.get_firmware_version' class="method"><span id='get_firmware_version.v' class='invisible'><code>fn <a href='#method.get_firmware_version' class='fnname'>get_firmware_version</a>(&amp;self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
 <div class='docblock'><p>Get firmware version</p>
 
-<h1 id='return-values-1' class='section-header'><a href='#return-values-1'>Return values</a></h1>
+<h1 id='return-values-2' class='section-header'><a href='#return-values-2'>Return values</a></h1>
 <p>Liefert die aktuelle Firmware Version die aus dem Sensor ausgelesen wurde,
 eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie über Modbus ausgelesen wurde.</p>
 
-<h1 id='examples-1' class='section-header'><a href='#examples-1'>Examples</a></h1>
+<h1 id='examples-2' class='section-header'><a href='#examples-2'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -79,12 +96,12 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.set_firmware_version' class="method"><span id='set_firmware_version.v' class='invisible'><code>fn <a href='#method.set_firmware_version' class='fnname'>set_firmware_version</a>(&amp;mut self, firmware_version: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>)</code></span></h4>
 <div class='docblock'><p>Set firmware version</p>
 
-<h1 id='parameters' class='section-header'><a href='#parameters'>Parameters</a></h1>
+<h1 id='parameters-1' class='section-header'><a href='#parameters-1'>Parameters</a></h1>
 <ul>
 <li><code>firmware_version</code>    - String mit der neuen Firmware Version</li>
 </ul>
 
-<h1 id='examples-2' class='section-header'><a href='#examples-2'>Examples</a></h1>
+<h1 id='examples-3' class='section-header'><a href='#examples-3'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -96,11 +113,11 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.get_modbus_address' class="method"><span id='get_modbus_address.v' class='invisible'><code>fn <a href='#method.get_modbus_address' class='fnname'>get_modbus_address</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a></code></span></h4>
 <div class='docblock'><p>Get modbus_address</p>
 
-<h1 id='return-values-2' class='section-header'><a href='#return-values-2'>Return values</a></h1>
+<h1 id='return-values-3' class='section-header'><a href='#return-values-3'>Return values</a></h1>
 <p>Liefert die aktuelle Firmware Version die aus dem Sensor ausgelesen wurde,
 eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie über Modbus ausgelesen wurde.</p>
 
-<h1 id='examples-3' class='section-header'><a href='#examples-3'>Examples</a></h1>
+<h1 id='examples-4' class='section-header'><a href='#examples-4'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -109,12 +126,12 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.set_modbus_address' class="method"><span id='set_modbus_address.v' class='invisible'><code>fn <a href='#method.set_modbus_address' class='fnname'>set_modbus_address</a>(&amp;mut self, modbus_address: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>)</code></span></h4>
 <div class='docblock'><p>Set modbus_address</p>
 
-<h1 id='parameters-1' class='section-header'><a href='#parameters-1'>Parameters</a></h1>
+<h1 id='parameters-2' class='section-header'><a href='#parameters-2'>Parameters</a></h1>
 <ul>
 <li><code>modbus_address</code>    - u8 mit der neuen Modbus Adresse</li>
 </ul>
 
-<h1 id='examples-4' class='section-header'><a href='#examples-4'>Examples</a></h1>
+<h1 id='examples-5' class='section-header'><a href='#examples-5'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -122,10 +139,37 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">kombisensor</span>.<span class="ident">get_modbus_address</span>(), <span class="number">247</span>);
 <span class="ident">kombisensor</span>.<span class="ident">set_modbus_address</span>(<span class="number">1</span>);
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">kombisensor</span>.<span class="ident">get_modbus_address</span>(), <span class="number">1</span>);</pre>
+</div><h4 id='method.get_modbus_device' class="method"><span id='get_modbus_device.v' class='invisible'><code>fn <a href='#method.get_modbus_device' class='fnname'>get_modbus_device</a>(&amp;self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
+<div class='docblock'><p>Get modbus_device</p>
+
+<h1 id='return-values-4' class='section-header'><a href='#return-values-4'>Return values</a></h1>
+<p>Liefert die Modbus Device Adresse als String</p>
+
+<h1 id='examples-6' class='section-header'><a href='#examples-6'>Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
+
+<span class="kw">let</span> <span class="ident">kombisensor</span> <span class="op">=</span> <span class="ident">Kombisensor</span>::<span class="ident">new</span>();
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">kombisensor</span>.<span class="ident">get_modbus_device</span>(), <span class="string">&quot;/dev/ttyUSB0&quot;</span>.<span class="ident">to_string</span>());</pre>
+</div><h4 id='method.set_modbus_device' class="method"><span id='set_modbus_device.v' class='invisible'><code>fn <a href='#method.set_modbus_device' class='fnname'>set_modbus_device</a>(&amp;mut self, modbus_device: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>)</code></span></h4>
+<div class='docblock'><p>Set modbus_device</p>
+
+<h1 id='parameters-3' class='section-header'><a href='#parameters-3'>Parameters</a></h1>
+<ul>
+<li><code>modbus_device</code>    - String mit der neuen Modbus Device Adresse</li>
+</ul>
+
+<h1 id='examples-7' class='section-header'><a href='#examples-7'>Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kombisensor</span> <span class="op">=</span> <span class="ident">Kombisensor</span>::<span class="ident">new</span>();
+
+<span class="ident">kombisensor</span>.<span class="ident">set_modbus_device</span>(<span class="string">&quot;/dev/ttyS0&quot;</span>.<span class="ident">to_string</span>());
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">kombisensor</span>.<span class="ident">get_modbus_device</span>(), <span class="string">&quot;/dev/ttyS0&quot;</span>.<span class="ident">to_string</span>());</pre>
 </div><h4 id='method.get_sensors' class="method"><span id='get_sensors.v' class='invisible'><code>fn <a href='#method.get_sensors' class='fnname'>get_sensors</a>(&amp;self) -&gt; &amp;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="struct" href="../xmz_mod_touch_server/kombisensor/struct.Sensor.html" title="struct xmz_mod_touch_server::kombisensor::Sensor">Sensor</a>&gt;</code></span></h4>
 <div class='docblock'><p>Liefert eine Referenz auf einen Vector mit den Sensoren</p>
 
-<h1 id='examples-5' class='section-header'><a href='#examples-5'>Examples</a></h1>
+<h1 id='examples-8' class='section-header'><a href='#examples-8'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -134,7 +178,7 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.get_sensors_mut' class="method"><span id='get_sensors_mut.v' class='invisible'><code>fn <a href='#method.get_sensors_mut' class='fnname'>get_sensors_mut</a>(&amp;mut self) -&gt; &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="struct" href="../xmz_mod_touch_server/kombisensor/struct.Sensor.html" title="struct xmz_mod_touch_server::kombisensor::Sensor">Sensor</a>&gt;</code></span></h4>
 <div class='docblock'><p>Liefert eine mutable Referenz auf einen Vector mit den Sensoren</p>
 
-<h1 id='examples-6' class='section-header'><a href='#examples-6'>Examples</a></h1>
+<h1 id='examples-9' class='section-header'><a href='#examples-9'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -143,15 +187,15 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.get_sensor' class="method"><span id='get_sensor.v' class='invisible'><code>fn <a href='#method.get_sensor' class='fnname'>get_sensor</a>(&amp;self, id: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="struct" href="../xmz_mod_touch_server/kombisensor/struct.Sensor.html" title="struct xmz_mod_touch_server::kombisensor::Sensor">Sensor</a>&gt;</code></span></h4>
 <div class='docblock'><p>Sensor Messzellen des Kombisensors</p>
 
-<h1 id='return-values-3' class='section-header'><a href='#return-values-3'>Return values</a></h1>
+<h1 id='return-values-5' class='section-header'><a href='#return-values-5'>Return values</a></h1>
 <p>Liefert ein Option Type, mit den Sensoren</p>
 
-<h1 id='parameters-2' class='section-header'><a href='#parameters-2'>Parameters</a></h1>
+<h1 id='parameters-4' class='section-header'><a href='#parameters-4'>Parameters</a></h1>
 <ul>
 <li><code>id</code>  - Id der Sensormesszelle</li>
 </ul>
 
-<h1 id='examples-7' class='section-header'><a href='#examples-7'>Examples</a></h1>
+<h1 id='examples-10' class='section-header'><a href='#examples-10'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -160,15 +204,15 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.get_sensor_mut' class="method"><span id='get_sensor_mut.v' class='invisible'><code>fn <a href='#method.get_sensor_mut' class='fnname'>get_sensor_mut</a>(&amp;mut self, id: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;mut <a class="struct" href="../xmz_mod_touch_server/kombisensor/struct.Sensor.html" title="struct xmz_mod_touch_server::kombisensor::Sensor">Sensor</a>&gt;</code></span></h4>
 <div class='docblock'><p>Mutable Refernz auf Sensor Messzellen des Kombisensors</p>
 
-<h1 id='return-values-4' class='section-header'><a href='#return-values-4'>Return values</a></h1>
+<h1 id='return-values-6' class='section-header'><a href='#return-values-6'>Return values</a></h1>
 <p>Liefert ein Option Type, mit den mut Sensoren</p>
 
-<h1 id='parameters-3' class='section-header'><a href='#parameters-3'>Parameters</a></h1>
+<h1 id='parameters-5' class='section-header'><a href='#parameters-5'>Parameters</a></h1>
 <ul>
 <li><code>id</code>  - Id der Sensormesszelle</li>
 </ul>
 
-<h1 id='examples-8' class='section-header'><a href='#examples-8'>Examples</a></h1>
+<h1 id='examples-11' class='section-header'><a href='#examples-11'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -177,10 +221,10 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.get_error_count' class="method"><span id='get_error_count.v' class='invisible'><code>fn <a href='#method.get_error_count' class='fnname'>get_error_count</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a></code></span></h4>
 <div class='docblock'><p>Get Error Counter</p>
 
-<h1 id='return-values-5' class='section-header'><a href='#return-values-5'>Return values</a></h1>
+<h1 id='return-values-7' class='section-header'><a href='#return-values-7'>Return values</a></h1>
 <p>Liefert den aktuellen Stand des Fehlerzählers</p>
 
-<h1 id='examples-9' class='section-header'><a href='#examples-9'>Examples</a></h1>
+<h1 id='examples-12' class='section-header'><a href='#examples-12'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -189,7 +233,7 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.inc_error_count' class="method"><span id='inc_error_count.v' class='invisible'><code>fn <a href='#method.inc_error_count' class='fnname'>inc_error_count</a>(&amp;mut self)</code></span></h4>
 <div class='docblock'><p>Erhöht den  Error Counter</p>
 
-<h1 id='examples-10' class='section-header'><a href='#examples-10'>Examples</a></h1>
+<h1 id='examples-13' class='section-header'><a href='#examples-13'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 
@@ -201,7 +245,7 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 </div><h4 id='method.reset_error_count' class="method"><span id='reset_error_count.v' class='invisible'><code>fn <a href='#method.reset_error_count' class='fnname'>reset_error_count</a>(&amp;mut self)</code></span></h4>
 <div class='docblock'><p>Reset den Error Counter</p>
 
-<h1 id='examples-11' class='section-header'><a href='#examples-11'>Examples</a></h1>
+<h1 id='examples-14' class='section-header'><a href='#examples-14'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kombisensor</span> <span class="op">=</span> <span class="ident">Kombisensor</span>::<span class="ident">new</span>();
@@ -210,19 +254,22 @@ eine Version &quot;0.0.0&quot; deutet darauf hin das der Kombisensor noch nie ü
 
 <span class="ident">kombisensor</span>.<span class="ident">reset_error_count</span>();
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">kombisensor</span>.<span class="ident">get_error_count</span>(), <span class="number">0</span>);</pre>
-</div><h4 id='method.get_from_modbus' class="method"><span id='get_from_modbus.v' class='invisible'><code>fn <a href='#method.get_from_modbus' class='fnname'>get_from_modbus</a>(&amp;self) -&gt; <a class="type" href="../xmz_mod_touch_server/errors/type.Result.html" title="type xmz_mod_touch_server::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
+</div><h4 id='method.get_from_modbus' class="method"><span id='get_from_modbus.v' class='invisible'><code>fn <a href='#method.get_from_modbus' class='fnname'>get_from_modbus</a>(&amp;mut self) -&gt; <a class="type" href="../xmz_mod_touch_server/errors/type.Result.html" title="type xmz_mod_touch_server::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
 <div class='docblock'><p>Fragt die Daten des Kombisensors via Modbus ab</p>
 
-<h1 id='return-values-6' class='section-header'><a href='#return-values-6'>Return values</a></h1>
+<h1 id='return-values-8' class='section-header'><a href='#return-values-8'>Return values</a></h1>
 <p>Die Funktion liefert ein Result</p>
 
-<h1 id='examples-12' class='section-header'><a href='#examples-12'>Examples</a></h1>
+<h1 id='examples-15' class='section-header'><a href='#examples-15'>Examples</a></h1>
 <pre class="rust rust-example-rendered">
-<span class="macro">assert</span><span class="macro">!</span>(<span class="bool-val">false</span>);</pre>
+<span class="kw">use</span> <span class="ident">xmz_mod_touch_server</span>::<span class="ident">Kombisensor</span>;
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kombisensor</span> <span class="op">=</span> <span class="ident">Kombisensor</span>::<span class="ident">new</span>();
+
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">kombisensor</span>.<span class="ident">get_from_modbus</span>().<span class="ident">is_ok</span>());</pre>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../xmz_mod_touch_server/struct.Kombisensor.html" title="struct xmz_mod_touch_server::Kombisensor">Kombisensor</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/xmz_mod_touch_server/kombisensor/kombisensor.rs.html#9' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
 <div class='docblock'><p>Formats the value using the given formatter.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../xmz_mod_touch_server/struct.Kombisensor.html" title="struct xmz_mod_touch_server::Kombisensor">Kombisensor</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/xmz_mod_touch_server/kombisensor/kombisensor.rs.html#283-287' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../xmz_mod_touch_server/struct.Kombisensor.html" title="struct xmz_mod_touch_server::Kombisensor">Kombisensor</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/xmz_mod_touch_server/kombisensor/kombisensor.rs.html#412-416' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.default' class="method"><span id='default.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default' class='fnname'>default</a>() -&gt; Self</code></span></h4>
 <div class='docblock'><p>Returns the &quot;default value&quot; for a type. <a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Read more</a></p>
 </div></div></section>
