@@ -53,8 +53,8 @@ pub struct Sensor {
     max_value: u16,
     adc_value_at_nullgas: u16,
     adc_value_at_messgas: u16,
-    concentration_at_nullgas: u32,
-    concentration_at_messgas: u32,
+    concentration_at_nullgas: u16,
+    concentration_at_messgas: u16,
     // Typ der Messzelle
     sensor_type: SensorType,
     /// SI Einheit des Sensors (ppm, % UEG, Vol %)
@@ -193,7 +193,7 @@ impl Sensor {
         self.max_value
     }
 
-    /// Leifert den ADC Wert der bei der Kalibration, mit Nullgas, im Sensor gespeichert wurde
+    /// Liefert den ADC Wert der bei der Kalibration, mit Nullgas, im Sensor gespeichert wurde
     ///
     /// Ist der Wert 0 dann deutete das darauf hin das der Sensor noch nicht über Modbus ausgelesen wurde.
     ///
@@ -209,7 +209,7 @@ impl Sensor {
         self.adc_value_at_nullgas
     }
 
-    /// Leifert den ADC Wert der bei der Kalibration, mit Messgas, im Sensor gespeichert wurde
+    /// Liefert den ADC Wert der bei der Kalibration, mit Messgas, im Sensor gespeichert wurde
     ///
     /// Ist der Wert 0 dann deutete das darauf hin das der Sensor noch nicht über Modbus ausgelesen wurde.
     ///
@@ -225,7 +225,7 @@ impl Sensor {
         self.adc_value_at_messgas
     }
 
-    /// Leifert die Konzentration des Gases, die bei der Kalibration, mit Nullgas, im Sensor gespeichert wurde
+    /// Liefert die Konzentration des Gases, die bei der Kalibration, mit Nullgas, im Sensor gespeichert wurde
     ///
     /// # Examples
     ///
@@ -235,11 +235,11 @@ impl Sensor {
     ///
     /// assert_eq!(sensor.get_concentration_at_nullgas(), 0);
     /// ```
-    pub fn get_concentration_at_nullgas(&self) -> u32 {
+    pub fn get_concentration_at_nullgas(&self) -> u16 {
         self.concentration_at_nullgas
     }
 
-    /// Leifert die Konzentration des Gases, die bei der Kalibration, mit Messgas, im Sensor gespeichert wurde
+    /// Liefert die Konzentration des Gases, die bei der Kalibration, mit Messgas, im Sensor gespeichert wurde
     ///
     /// Ist der Wert 0 dann deutete das darauf hin das der Sensor noch nicht über Modbus ausgelesen wurde.
     ///
@@ -251,8 +251,22 @@ impl Sensor {
     ///
     /// assert_eq!(sensor.get_concentration_at_messgas(), 0);
     /// ```
-    pub fn get_concentration_at_messgas(&self) -> u32 {
+    pub fn get_concentration_at_messgas(&self) -> u16 {
         self.concentration_at_messgas
+    }
+
+    /// Liefert Config Register des Sensors
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
+    ///
+    /// assert_eq!(sensor.get_config(), 0);
+    /// ```
+    pub fn get_config(&self) -> u16 {
+        self.config
     }
 
     /// Liefert den Typen des Sensors
@@ -283,19 +297,6 @@ impl Sensor {
         self.si.clone()
     }
 
-    /// Liefert Config Register des Sensors
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
-    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
-    ///
-    /// assert_eq!(sensor.get_config(), 0);
-    /// ```
-    pub fn get_config(&self) -> u16 {
-        self.config
-    }
 
 
     /// Liefert den Stand des Fehlerzählers
@@ -434,7 +435,136 @@ impl Sensor {
     /// assert_eq!(sensor_sim_no2_fix.get_concentration(), 30.0);
     /// ```
     pub fn set_adc_value(&mut self, adc_value: u16) {
-        self.adc_value = adc_value
+        self.adc_value = adc_value;
+    }
+
+    /// Setzt den minimal Wert der für den Sensor konfiguriert wurde
+    ///
+    /// # Parameters
+    ///
+    /// * `min_value`   - Minimal Wert
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::Sensor;
+    /// let mut sensor = Sensor::new();
+    ///
+    /// sensor.set_min_value(1);
+    /// assert_eq!(sensor.get_min_value(), 1);
+    /// ```
+    pub fn set_min_value(&mut self, min_value: u16) {
+        self.min_value = min_value;
+    }
+
+    /// Setzt den maximal Wert der für den Sensor konfiguriert wurde
+    ///
+    /// # Parameters
+    ///
+    /// * `max_value`   - Maximal Wert
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::Sensor;
+    /// let mut sensor = Sensor::new();
+    ///
+    /// sensor.set_max_value(100);
+    /// assert_eq!(sensor.get_max_value(), 100);
+    /// ```
+    pub fn set_max_value(&mut self, max_value: u16) {
+        self.max_value = max_value;
+    }
+
+    /// Setzt den ADC Wert der bei der Kalibration, mit Nullgas, im Sensor gespeichert wurde
+    ///
+    /// # Parameters
+    ///
+    /// * `adc_value_at_nullgas`    - ADC Wert bie der Nullgas Kalibration
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::Sensor;
+    /// let mut sensor = Sensor::new();
+    ///
+    /// sensor.set_adc_value_at_nullgas(100);
+    /// assert_eq!(sensor.get_adc_value_at_nullgas(), 100);
+    /// ```
+    pub fn set_adc_value_at_nullgas(&mut self, adc_value_at_nullgas: u16) {
+        self.adc_value_at_nullgas = adc_value_at_nullgas;
+    }
+
+    /// Setzt den ADC Wert der bei der Kalibration, mit Messgas, im Sensor gespeichert wurde
+    ///
+    /// # Parameters
+    ///
+    /// * `adc_value_at_messgas`    - ADC Wert bie der Messgas Kalibration
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::Sensor;
+    /// let mut sensor = Sensor::new();
+    ///
+    /// sensor.set_adc_value_at_messgas(100);
+    /// assert_eq!(sensor.get_adc_value_at_messgas(), 100);
+    /// ```
+    pub fn set_adc_value_at_messgas(&mut self, adc_value_at_messgas: u16) {
+        self.adc_value_at_messgas = adc_value_at_messgas;
+    }
+
+    /// Setzt die Konzentration des Gases, die bei der Kalibration, mit Nullgas, im Sensor gespeichert wurde
+    ///
+    /// # Parameters
+    ///
+    /// * `concentration_at_nullgas`    - Konzentration bei Nullgas
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::Sensor;
+    /// let mut sensor = Sensor::new();
+    ///
+    /// sensor.set_concentration_at_nullgas(100);
+    /// assert_eq!(sensor.get_concentration_at_nullgas(), 100);
+    /// ```
+    pub fn set_concentration_at_nullgas(&mut self, concentration_at_nullgas: u16) {
+        self.concentration_at_nullgas = concentration_at_nullgas;
+    }
+
+    /// Setzt die Konzentration des Gases, die bei der Kalibration, mit Messgas, im Sensor gespeichert wurde
+    ///
+    /// # Parameters
+    ///
+    /// * `concentration_at_messgas`    - Konzentration bei Messgas
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::Sensor;
+    /// let mut sensor = Sensor::new();
+    ///
+    /// sensor.set_concentration_at_messgas(100);
+    /// assert_eq!(sensor.get_concentration_at_messgas(), 100);
+    /// ```
+    pub fn set_concentration_at_messgas(&mut self, concentration_at_messgas: u16) {
+        self.concentration_at_messgas = concentration_at_messgas;
+    }
+
+    /// Setzt Config Register des Sensors
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
+    /// let mut sensor = Sensor::new_with_type(SensorType::SimulationNO2);
+    ///
+    /// sensor.set_config(1);
+    /// assert_eq!(sensor.get_config(), 1);
+    /// ```
+    pub fn set_config(&mut self, config: u16) {
+        self.config = config;
     }
 
 }
