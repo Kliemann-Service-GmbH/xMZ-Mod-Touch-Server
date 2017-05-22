@@ -293,7 +293,7 @@ impl Kombisensor {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,no_run
     /// use xmz_mod_touch_server::Kombisensor;
     /// let mut kombisensor = Kombisensor::new();
     ///

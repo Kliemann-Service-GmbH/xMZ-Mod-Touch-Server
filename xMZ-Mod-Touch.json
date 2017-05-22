@@ -1,7 +1,7 @@
 {
   "version": "0.50.1",
-  "create_time": "2017-05-22T07:30:13.976064382Z",
-  "start_time": "2017-05-22T07:30:13.976069150Z",
+  "create_time": "2017-05-22T10:49:24.847226111Z",
+  "start_time": "2017-05-22T10:49:24.847228990Z",
   "exceptions": [],
   "zones": [
     {
@@ -25,7 +25,8 @@
               "error_count": 0,
               "alarm1_average_15min": 0,
               "alarm2_average_15min": 0,
-              "alarm3_direct_value": 0
+              "alarm3_direct_value": 0,
+              "values": []
             },
             {
               "adc_value": 0,
@@ -41,7 +42,8 @@
               "error_count": 0,
               "alarm1_average_15min": 0,
               "alarm2_average_15min": 0,
-              "alarm3_direct_value": 0
+              "alarm3_direct_value": 0,
+              "values": []
             }
           ],
           "error_count": 0
@@ -65,7 +67,8 @@
               "error_count": 0,
               "alarm1_average_15min": 0,
               "alarm2_average_15min": 0,
-              "alarm3_direct_value": 0
+              "alarm3_direct_value": 0,
+              "values": []
             },
             {
               "adc_value": 0,
@@ -81,7 +84,8 @@
               "error_count": 0,
               "alarm1_average_15min": 0,
               "alarm2_average_15min": 0,
-              "alarm3_direct_value": 0
+              "alarm3_direct_value": 0,
+              "values": []
             }
           ],
           "error_count": 0

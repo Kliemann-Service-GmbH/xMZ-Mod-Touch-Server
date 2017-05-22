@@ -140,15 +140,17 @@ impl XMZModTouchServer {
                 // Update Kombisensor Daten via Modbus
                 match kombisensor.get_from_modbus() {
                     Err(e) => {
-                        println!("Zone: {} Kombisensor: {} Error: {:?}", &num_zone, &num_kombisensor, e);
+                        // println!("Zone: {} Kombisensor: {} Error: {:?}", &num_zone, &num_kombisensor, e);
                         // self.add_exception(Exception::new(ExceptionType::KombisensorModbusError{ num_zone, num_kombisensor }));
                     }
-                    _ => {}
+                    _ => {
+                    }
                 }
 
                 for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
-                    // debug!("\t\t\t\tUpdate Sensor {} ...", num_sensor);
-                    // println!("{:?}", &self.get_relais_mut());
+                    // Aktualisiert den Tuppel Vector. In dem Tuppel werden die Daten der letzten 15Minuten gehalten,
+                    // mit diesen wird der Mittelwert gebildet
+                    sensor.update_adc_values_average();
                 }
             }
         }
