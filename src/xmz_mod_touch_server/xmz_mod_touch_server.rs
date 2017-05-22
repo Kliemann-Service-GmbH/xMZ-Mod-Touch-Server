@@ -104,13 +104,19 @@ impl XMZModTouchServer {
     /// ```
     pub fn check(&mut self) {
         debug!("\tCheck XMZModTouchServer ...");
-        for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
+        for (num_zone, zone) in self.get_zones().iter().enumerate() {
             // debug!("\t\Check Zone {} ...", num_zone);
-            for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
+            for (num_kombisensor, kombisensor) in zone.get_kombisensors().iter().enumerate() {
                 // debug!("\t\t\Check Kombisensor {} ...", num_kombisensor);
-                for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
+                for (num_sensor, sensor) in kombisensor.get_sensors().iter().enumerate() {
                     // debug!("\t\t\t\Check Sensor {} ...", num_sensor);
                     // Begin checks sensor ...
+                    if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 {
+                        // self.leds.set(5);
+                        // self.leds.set(6);
+                        // self.leds.set(7);
+                        println!("Peng {}", sensor.get_concentration());
+                    }
                 }
             }
         }

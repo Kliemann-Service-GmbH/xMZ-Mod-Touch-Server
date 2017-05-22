@@ -71,9 +71,9 @@ pub struct Sensor {
     error_count: u64,
     /// 15min Average
     adc_value_average_15min: f64,
-    alarm1_average_15min: u32,
-    alarm2_average_15min: u32,
-    alarm3_direct_value: u32,
+    pub alarm1_average_15min: u32,
+    pub alarm2_average_15min: u32,
+    pub alarm3_direct_value: u32,
     #[serde(skip_deserializing, skip_serializing)]
     adc_values_average: Vec<(u16, DateTime<UTC>)>,
 }
@@ -102,9 +102,9 @@ impl Sensor {
             config: 0,
             error_count: 0,
             adc_value_average_15min: 0.0,
-            alarm1_average_15min: 0,
-            alarm2_average_15min: 0,
-            alarm3_direct_value: 0,
+            alarm1_average_15min: 3,
+            alarm2_average_15min: 6,
+            alarm3_direct_value: 15,
             adc_values_average: vec![],
         }
     }

@@ -34,12 +34,11 @@ fn generate_config() -> Result<()> {
     let mut kombisensor = Kombisensor::new_with_type(KombisensorType::RAGasSimulation);
     kombisensor.set_modbus_address(247);
     xmz_mod_touch_server.get_zone_mut(0).unwrap().add_kombisensor( kombisensor );
-
-    for i in 1..3 {
-        let mut kombisensor = Kombisensor::new_with_type(KombisensorType::RAGasSimulation);
-        kombisensor.set_modbus_address(i);
-        xmz_mod_touch_server.get_zone_mut(0).unwrap().add_kombisensor( kombisensor );
-    }
+    // for i in 1..8 {
+    //     let mut kombisensor = Kombisensor::new_with_type(KombisensorType::RAGas);
+    //     kombisensor.set_modbus_address(i);
+    //     xmz_mod_touch_server.get_zone_mut(0).unwrap().add_kombisensor( kombisensor );
+    // }
 
     // write to config file
     let xmz_mod_touch_server_json = serde_json::to_string_pretty(&xmz_mod_touch_server)?;
