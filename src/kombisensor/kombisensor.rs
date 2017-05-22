@@ -10,6 +10,7 @@ use kombisensor::Sensor;
 #[derive(Serialize, Deserialize)]
 pub struct Kombisensor {
     firmware_version: String,
+    modbus_device: String,
     modbus_address: u8,
     sensors: Vec<Sensor>,
     error_count: u64,
@@ -34,6 +35,7 @@ impl Kombisensor {
         Kombisensor {
             firmware_version: "0.0.0".to_string(),
             modbus_address: 247,
+            modbus_device: "/dev/ttyUSB0".to_string(),
             // TODO: Remove this two default sensors, if the config generator is working
             sensors: vec![
                 Sensor::new(),
@@ -254,25 +256,76 @@ impl Kombisensor {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// assert!(false);
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    /// let mut kombisensor = Kombisensor::new();
+    ///
+    /// assert!(kombisensor.get_from_modbus().is_ok());
     /// ```
-    pub fn get_from_modbus(&self) -> Result<()> {
-        // use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH};
-        //
-        // let device: String = "/dev/ttyUSB0".to_string();
-        // let slave_id: u8 = 247;
-        //
-        // let mut modbus = Modbus::new_rtu(&device, 9600, 'N', 8, 1)?;
-        // modbus.set_slave(slave_id)?;
-        //
-        // // modbus.set_debug(true);
-        // modbus.connect()?;
-        //
-        // let mut response_register = vec![0u16; MODBUS_RTU_MAX_ADU_LENGTH as usize];
-        // modbus.read_registers(0, 30, &mut response_register)?;
-        //
-        // Ok(response_register)
+    pub fn get_from_modbus(&mut self) -> Result<()> {
+        use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH};
+
+        let mut modbus = Modbus::new_rtu(&self.modbus_device, 9600, 'N', 8, 1)?;
+        modbus.set_slave(self.modbus_address)?;
+
+        // modbus.set_debug(true);
+        modbus.connect()?;
+
+        let mut response_register = vec![0u16; MODBUS_RTU_MAX_ADU_LENGTH as usize];
+        modbus.read_registers(0, 30, &mut response_register)?;
+
+        if response_register.len() < 28 { bail!("Modbus Data invalid: {:?}", response_register) }
+
+        let firmware_version_major = *response_register.get(0).unwrap();
+        let firmware_version_minor = *response_register.get(1).unwrap();
+        let firmware_version_patch = *response_register.get(2).unwrap();
+        // let modbus_address = *response_register.get(3).unwrap();
+        let sensor1_num = *response_register.get(10).unwrap();
+        let sensor1_adc_value = *response_register.get(11).unwrap();
+        let sensor1_min_value = *response_register.get(12).unwrap();
+        let sensor1_max_value = *response_register.get(13).unwrap();
+        let sensor1_adc_value_at_nullgas = *response_register.get(14).unwrap();
+        let sensor1_adc_value_at_messgas = *response_register.get(15).unwrap();
+        let sensor1_concentration_at_nullgas = *response_register.get(16).unwrap();
+        let sensor1_concentration_at_messgas = *response_register.get(17).unwrap();
+        let sensor1_config = *response_register.get(18).unwrap();
+        let sensor2_num = *response_register.get(20).unwrap();
+        let sensor2_adc_value = *response_register.get(21).unwrap();
+        let sensor2_min_value = *response_register.get(22).unwrap();
+        let sensor2_max_value = *response_register.get(23).unwrap();
+        let sensor2_adc_value_at_nullgas = *response_register.get(24).unwrap();
+        let sensor2_adc_value_at_messgas = *response_register.get(25).unwrap();
+        let sensor2_concentration_at_nullgas = *response_register.get(26).unwrap();
+        let sensor2_concentration_at_messgas = *response_register.get(27).unwrap();
+        let sensor2_config = *response_register.get(28).unwrap();
+
+        self.set_firmware_version(format!("{}.{}.{}", firmware_version_major, firmware_version_minor, firmware_version_patch));
+
+        // Run through both sensors and update the mebers
+        if let Some(sensor1) = self.get_sensor_mut(0) {
+            sensor1.set_adc_value(sensor1_adc_value);
+            sensor1.set_adc_value(sensor1_adc_value);
+            sensor1.set_min_value(sensor1_min_value);
+            sensor1.set_max_value(sensor1_max_value);
+            sensor1.set_adc_value_at_nullgas(sensor1_adc_value_at_nullgas);
+            sensor1.set_adc_value_at_messgas(sensor1_adc_value_at_messgas);
+            sensor1.set_concentration_at_nullgas(sensor1_concentration_at_nullgas);
+            sensor1.set_concentration_at_messgas(sensor1_concentration_at_messgas);
+            sensor1.set_config(sensor1_config);
+        }
+
+        if let Some(sensor2) = self.get_sensor_mut(1) {
+            sensor2.set_adc_value(sensor2_adc_value);
+            sensor2.set_adc_value(sensor2_adc_value);
+            sensor2.set_min_value(sensor2_min_value);
+            sensor2.set_max_value(sensor2_max_value);
+            sensor2.set_adc_value_at_nullgas(sensor2_adc_value_at_nullgas);
+            sensor2.set_adc_value_at_messgas(sensor2_adc_value_at_messgas);
+            sensor2.set_concentration_at_nullgas(sensor2_concentration_at_nullgas);
+            sensor2.set_concentration_at_messgas(sensor2_concentration_at_messgas);
+            sensor2.set_config(sensor2_config);
+        }
+
 
         Ok(())
     }

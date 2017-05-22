@@ -11,6 +11,7 @@ use serde_json;
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::collections::HashSet;
 use xmz_mod_touch_server::Zone;
+use std::sync::{Arc, Mutex};
 
 
 pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
@@ -135,7 +136,16 @@ impl XMZModTouchServer {
             // debug!("\t\tUpdate Zone {} ...", num_zone);
             for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
                 // debug!("\t\t\tUpdate Kombisensor {} ...", num_kombisensor);
-                kombisensor.get_from_modbus();
+
+                // Update Kombisensor Daten via Modbus
+                match kombisensor.get_from_modbus() {
+                    Err(e) => {
+                        println!("Zone: {} Kombisensor: {} Error: {:?}", &num_zone, &num_kombisensor, e);
+                        // self.add_exception(Exception::new(ExceptionType::KombisensorModbusError{ num_zone, num_kombisensor }));
+                    }
+                    _ => {}
+                }
+
                 for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
                     // debug!("\t\t\t\tUpdate Sensor {} ...", num_sensor);
                     // println!("{:?}", &self.get_relais_mut());
@@ -411,7 +421,10 @@ impl XMZModTouchServer {
 
 
     // Macht was sie meint
-    // 
+    //
+    // Nachdem die Konfiguration mit `XMZModTouchServer::new_from_config()` wieder eingelesen wurde
+    // muss der `start_time` Member auf die aktuelle Systemzeit gesetzt werden.
+    //
     fn reset_start_time(&mut self) {
         self.start_time = UTC::now();
     }
