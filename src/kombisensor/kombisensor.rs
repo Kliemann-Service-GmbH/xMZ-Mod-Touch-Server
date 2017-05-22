@@ -1,7 +1,7 @@
 //! CO-NO2 Kombisensor mit Modbus Transceiver
 //!
 use errors::*;
-use kombisensor::Sensor;
+use kombisensor::{Sensor, SensorType};
 
 
 /// Ein Kombisensor kann `n` Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)
@@ -9,11 +9,20 @@ use kombisensor::Sensor;
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct Kombisensor {
+    kombisensor_type: KombisensorType,
     firmware_version: String,
     modbus_device: String,
     modbus_address: u8,
     sensors: Vec<Sensor>,
     error_count: u64,
+}
+
+#[derive(Clone)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug)]
+pub enum KombisensorType {
+    RAGas,
+    RAGasSimulation,
 }
 
 impl Kombisensor {
@@ -33,15 +42,45 @@ impl Kombisensor {
     /// ```
     pub fn new() -> Self {
         Kombisensor {
+            kombisensor_type: KombisensorType::RAGasSimulation,
             firmware_version: "0.0.0".to_string(),
             modbus_address: 247,
             modbus_device: "/dev/ttyUSB0".to_string(),
-            // TODO: Remove this two default sensors, if the config generator is working
             sensors: vec![
-                Sensor::new(),
-                Sensor::new(),
+                Sensor::new_with_type(SensorType::NemotoNO2),
+                Sensor::new_with_type(SensorType::NemotoCO),
             ],
             error_count: 0,
+        }
+    }
+    /// Erzeugt eine spezielle Kombisensor Instanz
+    ///
+    /// # Parameters
+    ///
+    /// * `kombisensor_type`    - Typ des Kombisensors
+    ///
+    /// # Return values
+    ///
+    /// Diese Funktion liefert eine neue Kombisensor Instanz vom gegebenen Typ
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::{Kombisensor, KombisensorType};
+    /// let kombisensor = Kombisensor::new_with_type(KombisensorType::RAGas);
+    ///
+    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS0".to_string());
+    /// ```
+    pub fn new_with_type(kombisensor_type: KombisensorType) -> Self {
+        match kombisensor_type {
+            KombisensorType::RAGas => {
+                Kombisensor {
+                    kombisensor_type: kombisensor_type,
+                    modbus_device: "/dev/ttyS0".to_string(),
+                    ..Default::default()
+                }
+            }
+            _ => { Kombisensor::new() }
         }
     }
 

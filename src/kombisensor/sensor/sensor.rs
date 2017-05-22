@@ -70,7 +70,7 @@ pub struct Sensor {
     /// Fehlerzähler, zZt. nicht in Firmware vorhanden
     error_count: u64,
     /// 15min Average
-    #[serde(skip_deserializing)]
+    #[serde(skip_deserializing, skip_serializing)]
     adc_value_average_15min: f64,
     alarm1_average_15min: u32,
     alarm2_average_15min: u32,
@@ -608,6 +608,9 @@ impl Sensor {
     }
 
     pub fn update_adc_values_average(&mut self) {
+        // Nur wenn die Messzelle aktiv ist wird der Mittelwert berechnet
+        if !self.is_enabled() { return; }
+
         // Update tuppel with the current (adc_value, timestamp)
         self.adc_values_average.push((self.adc_value, UTC::now()));
 

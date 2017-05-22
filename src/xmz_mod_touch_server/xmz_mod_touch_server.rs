@@ -57,9 +57,7 @@ impl XMZModTouchServer {
             create_time: chrono::UTC::now(),
             start_time: chrono::UTC::now(),
             exceptions: HashSet::new(),
-            zones: vec![
-                Zone::new(),
-            ],
+            zones: vec![],
             leds: ShiftRegister::new(ShiftRegisterType::LED),
             relais: ShiftRegister::new(ShiftRegisterType::Relais),
         }
@@ -272,7 +270,7 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert_eq!(xmz_mod_touch_server.get_zones().len(), 1); // Eine Zone default
+    /// assert_eq!(xmz_mod_touch_server.get_zones().len(), 0); // Eine Zone default
     /// ```
     pub fn get_zones(&self) -> &Vec<Zone> {
         &self.zones
@@ -290,7 +288,7 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert_eq!(xmz_mod_touch_server.get_zones_mut().len(), 1); // Eine Zone default
+    /// assert_eq!(xmz_mod_touch_server.get_zones_mut().len(), 0); // Eine Zone default
     /// ```
     pub fn get_zones_mut(&mut self) -> &mut Vec<Zone> {
         &mut self.zones
@@ -312,7 +310,7 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert!(xmz_mod_touch_server.get_zone(0).is_some());
+    /// assert!(xmz_mod_touch_server.get_zone(0).is_none());
     /// ```
     pub fn get_zone(&self, id: usize) -> Option<&Zone> {
         self.zones.get(id)
@@ -333,11 +331,27 @@ impl XMZModTouchServer {
     /// ```rust
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert!(xmz_mod_touch_server.get_zone_mut(0).is_some());
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert!(xmz_mod_touch_server.get_zone_mut(0).is_none());
     /// ```
     pub fn get_zone_mut(&mut self, id: usize) -> Option<&mut Zone> {
         self.zones.get_mut(id)
+    }
+
+    /// Erzeugt eine neu Zone
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert!(xmz_mod_touch_server.get_zone(0).is_none());
+    ///
+    /// xmz_mod_touch_server.add_zone();
+    /// assert!(xmz_mod_touch_server.get_zone(0).is_some());
+    /// ```
+    pub fn add_zone(&mut self) {
+        self.zones.push(Zone::new());
     }
 
     /// Referenz auf die LED's ShiftRegister

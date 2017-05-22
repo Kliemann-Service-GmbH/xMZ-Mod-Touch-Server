@@ -1,7 +1,7 @@
 /// Dies soll der Command Line Config Generator werden
 ///
 /// TODO: Add clap trait
-/// TODO: Add parameters config_file name and path 
+/// TODO: Add parameters config_file name and path
 /// TODO: Add parameter num_zones
 /// TODO: Add parameter num_kombisensors for zone_num
 /// TODO: Add parameter num_sensors for kombisensor_num
@@ -14,7 +14,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use xmz_mod_touch_server::errors::*;
-use xmz_mod_touch_server::XMZModTouchServer;
+use xmz_mod_touch_server::{XMZModTouchServer, Kombisensor, KombisensorType};
 
 
 const CONFIG_NAME: &'static str = "xMZ-Mod-Touch.json";
@@ -28,7 +28,18 @@ fn generate_config() -> Result<()> {
     let mut config = File::create(CONFIG_NAME)?;
 
     // The Server
-    let xmz_mod_touch_server = XMZModTouchServer::new();
+    let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    xmz_mod_touch_server.add_zone();
+
+    let mut kombisensor = Kombisensor::new_with_type(KombisensorType::RAGasSimulation);
+    kombisensor.set_modbus_address(247);
+    xmz_mod_touch_server.get_zone_mut(0).unwrap().add_kombisensor( kombisensor );
+
+    for i in 1..3 {
+        let mut kombisensor = Kombisensor::new_with_type(KombisensorType::RAGasSimulation);
+        kombisensor.set_modbus_address(i);
+        xmz_mod_touch_server.get_zone_mut(0).unwrap().add_kombisensor( kombisensor );
+    }
 
     // write to config file
     let xmz_mod_touch_server_json = serde_json::to_string_pretty(&xmz_mod_touch_server)?;

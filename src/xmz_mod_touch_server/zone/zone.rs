@@ -1,7 +1,7 @@
 //! Zone der XMZModTouchServer Platform
 //!
 //! Eine Zone kann `n` Kombisensoren enthalten
-//! 
+//!
 use kombisensor::Kombisensor;
 
 
@@ -29,10 +29,7 @@ impl Zone {
     /// ```
     pub fn new() -> Self {
         Zone {
-            kombisensors: vec![
-                Kombisensor::new(),
-                Kombisensor::new(),
-            ],
+            kombisensors: vec![],
         }
     }
 
@@ -44,7 +41,7 @@ impl Zone {
     /// use xmz_mod_touch_server::Zone;
     ///
     /// let zone = Zone::new();
-    /// assert_eq!(zone.get_kombisensors().len(), 2); // 2 Kombisensoren sind default
+    /// assert_eq!(zone.get_kombisensors().len(), 0);
     /// ```
     pub fn get_kombisensors(&self) -> &Vec<Kombisensor> {
         &self.kombisensors
@@ -58,7 +55,7 @@ impl Zone {
     /// use xmz_mod_touch_server::Zone;
     ///
     /// let mut zone = Zone::new();
-    /// assert_eq!(zone.get_kombisensors_mut().len(), 2); // 2 Kombisensoren sind default
+    /// assert_eq!(zone.get_kombisensors_mut().len(), 0);
     /// ```
     pub fn get_kombisensors_mut(&mut self) -> &mut Vec<Kombisensor> {
         &mut self.kombisensors
@@ -80,7 +77,7 @@ impl Zone {
     /// use xmz_mod_touch_server::Zone;
     ///
     /// let zone = Zone::new();
-    /// assert!(zone.get_kombisensor(0).is_some());
+    /// assert!(zone.get_kombisensor(0).is_none());
     /// ```
     pub fn get_kombisensor(&self, id: usize) -> Option<&Kombisensor> {
         self.kombisensors.get(id)
@@ -103,12 +100,33 @@ impl Zone {
     /// use xmz_mod_touch_server::Zone;
     ///
     /// let mut zone = Zone::new();
-    /// assert!(zone.get_kombisensor_mut(0).is_some());
+    /// assert!(zone.get_kombisensor_mut(0).is_none());
     /// ```
     pub fn get_kombisensor_mut(&mut self, id: usize) -> Option<&mut Kombisensor> {
         self.kombisensors.get_mut(id)
     }
+
+    /// Fügt ein gegebenen Kombisensor der Zone hinzu
+    ///
+    /// # Parameters
+    ///
+    /// * `kombisensor`   - [`Kombisensor`](struct.Kombisensor.html)
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::{Kombisensor, Zone};
+    /// let mut zone = Zone::new();
+    /// assert!(zone.get_kombisensor(0).is_none());
+    ///
+    /// zone.add_kombisensor(Kombisensor::new());
+    /// assert!(zone.get_kombisensor(0).is_some());
+    /// ```
+    pub fn add_kombisensor(&mut self, kombisensor: Kombisensor) {
+        self.kombisensors.push(kombisensor);
+    }
 }
+
 
 impl Default for Zone {
     fn default() -> Self {
