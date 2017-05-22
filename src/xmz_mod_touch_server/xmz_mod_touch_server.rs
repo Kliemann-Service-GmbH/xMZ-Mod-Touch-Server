@@ -11,6 +11,7 @@ use serde_json;
 use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::collections::HashSet;
 use xmz_mod_touch_server::Zone;
+use std::sync::{Arc, Mutex};
 
 
 pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
@@ -56,9 +57,7 @@ impl XMZModTouchServer {
             create_time: chrono::UTC::now(),
             start_time: chrono::UTC::now(),
             exceptions: HashSet::new(),
-            zones: vec![
-                Zone::new(),
-            ],
+            zones: vec![],
             leds: ShiftRegister::new(ShiftRegisterType::LED),
             relais: ShiftRegister::new(ShiftRegisterType::Relais),
         }
@@ -135,10 +134,21 @@ impl XMZModTouchServer {
             // debug!("\t\tUpdate Zone {} ...", num_zone);
             for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
                 // debug!("\t\t\tUpdate Kombisensor {} ...", num_kombisensor);
-                kombisensor.get_from_modbus();
+
+                // Update Kombisensor Daten via Modbus
+                match kombisensor.get_from_modbus() {
+                    Err(e) => {
+                        // println!("Zone: {} Kombisensor: {} Error: {:?}", &num_zone, &num_kombisensor, e);
+                        // self.add_exception(Exception::new(ExceptionType::KombisensorModbusError{ num_zone, num_kombisensor }));
+                    }
+                    _ => {
+                    }
+                }
+
                 for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
-                    // debug!("\t\t\t\tUpdate Sensor {} ...", num_sensor);
-                    // println!("{:?}", &self.get_relais_mut());
+                    // Aktualisiert den Tuppel Vector. In dem Tuppel werden die Daten der letzten 15Minuten gehalten,
+                    // mit diesen wird der Mittelwert gebildet
+                    sensor.update_adc_values_average();
                 }
             }
         }
@@ -260,7 +270,7 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert_eq!(xmz_mod_touch_server.get_zones().len(), 1); // Eine Zone default
+    /// assert_eq!(xmz_mod_touch_server.get_zones().len(), 0); // Eine Zone default
     /// ```
     pub fn get_zones(&self) -> &Vec<Zone> {
         &self.zones
@@ -278,7 +288,7 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert_eq!(xmz_mod_touch_server.get_zones_mut().len(), 1); // Eine Zone default
+    /// assert_eq!(xmz_mod_touch_server.get_zones_mut().len(), 0); // Eine Zone default
     /// ```
     pub fn get_zones_mut(&mut self) -> &mut Vec<Zone> {
         &mut self.zones
@@ -300,7 +310,7 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert!(xmz_mod_touch_server.get_zone(0).is_some());
+    /// assert!(xmz_mod_touch_server.get_zone(0).is_none());
     /// ```
     pub fn get_zone(&self, id: usize) -> Option<&Zone> {
         self.zones.get(id)
@@ -321,11 +331,27 @@ impl XMZModTouchServer {
     /// ```rust
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert!(xmz_mod_touch_server.get_zone_mut(0).is_some());
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert!(xmz_mod_touch_server.get_zone_mut(0).is_none());
     /// ```
     pub fn get_zone_mut(&mut self, id: usize) -> Option<&mut Zone> {
         self.zones.get_mut(id)
+    }
+
+    /// Erzeugt eine neu Zone
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert!(xmz_mod_touch_server.get_zone(0).is_none());
+    ///
+    /// xmz_mod_touch_server.add_zone();
+    /// assert!(xmz_mod_touch_server.get_zone(0).is_some());
+    /// ```
+    pub fn add_zone(&mut self) {
+        self.zones.push(Zone::new());
     }
 
     /// Referenz auf die LED's ShiftRegister
@@ -411,7 +437,10 @@ impl XMZModTouchServer {
 
 
     // Macht was sie meint
-    // 
+    //
+    // Nachdem die Konfiguration mit `XMZModTouchServer::new_from_config()` wieder eingelesen wurde
+    // muss der `start_time` Member auf die aktuelle Systemzeit gesetzt werden.
+    //
     fn reset_start_time(&mut self) {
         self.start_time = UTC::now();
     }

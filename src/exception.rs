@@ -9,8 +9,9 @@
 #[derive(Serialize, Deserialize)]
 pub enum ExceptionType {
     WartungsintervalReached,
-    KombisensorOffline { zone: usize },
-    SensorDirectValue { zone: usize, sensor: usize },
+    KombisensorOffline { num_zone: usize },
+    KombisensorModbusError { num_zone: usize, num_kombisensor: usize },
+    SensorDirectValue { num_zone: usize, sensor: usize },
 }
 
 #[derive(Debug)]

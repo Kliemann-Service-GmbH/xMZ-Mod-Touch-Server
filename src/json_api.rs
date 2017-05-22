@@ -354,8 +354,16 @@ pub fn init(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
     /// `curl -X PUT http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0/sensor/0/reset_error_count`
     let xmz_mod_touch_server_clone = xmz_mod_touch_server.clone();
     router.put("/api/v1/zone/:zone_id/kombisensor/:kombisensor_id/sensor/:sensor_id/reset_error_count",
-             move |req: &mut Request| reset_error_count(req, xmz_mod_touch_server_clone.clone()),
-             "reset_error_count");
+            move |req: &mut Request| reset_error_count(req, xmz_mod_touch_server_clone.clone()),
+            "reset_error_count");
+
+
+    // /// `curl -X POST -d "/dev/ttyS0" http://0.0.0.0:3000/api/v1/zone/0/kombisensor/0/sensor/0/reset_error_count`
+    // let xmz_mod_touch_server_clone = xmz_mod_touch_server.clone();
+    // router.put("/api/v1/zone/:zone_id/kombisensor/:kombisensor_id/sensor/:sensor_id/reset_error_count",
+    //          move |req: &mut Request| reset_error_count(req, xmz_mod_touch_server_clone.clone()),
+    //          "reset_error_count");
+
 
      /// `curl http://0.0.0.0:3000/api/v1/exceptions`
      let xmz_mod_touch_server_clone = xmz_mod_touch_server.clone();

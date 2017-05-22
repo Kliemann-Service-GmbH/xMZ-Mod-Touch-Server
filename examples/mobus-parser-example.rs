@@ -85,24 +85,24 @@ fn parse(input: &[u16]) -> Result<ModbusData> {
     let firmware_version_minor = *input.get(1).unwrap();
     let firmware_version_patch = *input.get(2).unwrap();
     let modbus_address = *input.get(3).unwrap();
-    let sensor1_num = *input.get(0).unwrap();
-    let sensor1_adc_value = *input.get(1).unwrap();
-    let sensor1_min_value = *input.get(2).unwrap();
-    let sensor1_max_value = *input.get(3).unwrap();
+    let sensor1_num = *input.get(10).unwrap();
+    let sensor1_adc_value = *input.get(11).unwrap();
+    let sensor1_min_value = *input.get(12).unwrap();
+    let sensor1_max_value = *input.get(13).unwrap();
     let sensor1_adc_value_at_nullgas = *input.get(4).unwrap();
     let sensor1_adc_value_at_messgas = *input.get(5).unwrap();
     let sensor1_concentration_at_nullgas = *input.get(6).unwrap();
     let sensor1_concentration_at_messgas = *input.get(7).unwrap();
     let sensor1_configuration_bits = *input.get(8).unwrap();
-    let sensor2_num = *input.get(0).unwrap();
-    let sensor2_adc_value = *input.get(1).unwrap();
-    let sensor2_min_value = *input.get(2).unwrap();
-    let sensor2_max_value = *input.get(3).unwrap();
-    let sensor2_adc_value_at_nullgas = *input.get(4).unwrap();
-    let sensor2_adc_value_at_messgas = *input.get(5).unwrap();
-    let sensor2_concentration_at_nullgas = *input.get(6).unwrap();
-    let sensor2_concentration_at_messgas = *input.get(7).unwrap();
-    let sensor2_configuration_bits = *input.get(8).unwrap();
+    let sensor2_num = *input.get(20).unwrap();
+    let sensor2_adc_value = *input.get(21).unwrap();
+    let sensor2_min_value = *input.get(22).unwrap();
+    let sensor2_max_value = *input.get(23).unwrap();
+    let sensor2_adc_value_at_nullgas = *input.get(24).unwrap();
+    let sensor2_adc_value_at_messgas = *input.get(25).unwrap();
+    let sensor2_concentration_at_nullgas = *input.get(26).unwrap();
+    let sensor2_concentration_at_messgas = *input.get(27).unwrap();
+    let sensor2_configuration_bits = *input.get(28).unwrap();
 
     let modbus_data = ModbusData {
         firmware_version_major: firmware_version_major,
