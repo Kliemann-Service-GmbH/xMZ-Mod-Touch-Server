@@ -12,8 +12,8 @@ use std::fmt;
 
 // Nur Messwerte der letzten 15Minuten behalten
 // Die Konstante wird in Sekunden angegeben
-pub const AVERAGE_15MIN_SEC: i64 = 15 * 60;
-// pub const AVERAGE_15MIN_SEC: i64 = 2;
+// pub const AVERAGE_15MIN_SEC: i64 = 15 * 60;
+pub const AVERAGE_15MIN_SEC: i64 = 60;
 
 /// Typ der Messzelle
 #[derive(Clone)]
@@ -70,12 +70,11 @@ pub struct Sensor {
     /// Fehlerzähler, zZt. nicht in Firmware vorhanden
     error_count: u64,
     /// 15min Average
-    #[serde(skip_deserializing, skip_serializing)]
     adc_value_average_15min: f64,
     alarm1_average_15min: u32,
     alarm2_average_15min: u32,
     alarm3_direct_value: u32,
-    #[serde(skip_deserializing)]
+    #[serde(skip_deserializing, skip_serializing)]
     adc_values_average: Vec<(u16, DateTime<UTC>)>,
 }
 
