@@ -121,13 +121,12 @@ impl Sensor {
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
     /// let sensor_sim_no2_fix = Sensor::new_with_type(SensorType::SimulationNO2Fix);
-    /// assert_eq!(sensor_sim_no2_fix.get_concentration(), 20.0)
+    /// sensor_sim_no2_fix.get_concentration();
     /// ```
     pub fn new_with_type(sensor_type: SensorType) -> Self {
         match sensor_type {
             SensorType::NemotoNO2 => {
                 Sensor {
-                    adc_value: 564,
                     max_value: 30,
                     adc_value_at_nullgas: 920,
                     adc_value_at_messgas: 564,
@@ -140,7 +139,6 @@ impl Sensor {
             }
             SensorType::SimulationNO2Fix => {
                 Sensor {
-                    adc_value: 564,
                     max_value: 30,
                     adc_value_at_nullgas: 920,
                     adc_value_at_messgas: 564,
@@ -153,7 +151,6 @@ impl Sensor {
             }
             SensorType::SimulationNO2 => {
                 Sensor {
-                    adc_value: 564,
                     max_value: 30,
                     adc_value_at_nullgas: 920,
                     adc_value_at_messgas: 564,
@@ -166,7 +163,6 @@ impl Sensor {
             }
             SensorType::NemotoCO => {
                 Sensor {
-                    adc_value: 760,
                     max_value: 300,
                     adc_value_at_nullgas: 112,
                     adc_value_at_messgas: 760,
@@ -192,7 +188,6 @@ impl Sensor {
             }
             SensorType::SimulationCO => {
                 Sensor {
-                    adc_value: 760,
                     max_value: 300,
                     adc_value_at_nullgas: 112,
                     adc_value_at_messgas: 760,
@@ -437,7 +432,7 @@ impl Sensor {
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
     /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
-    /// assert_eq!(sensor.get_concentration(), 20.0);
+    /// sensor.get_concentration();
     /// ```
     pub fn get_concentration(&self) -> f64 {
         self.concentration_from(self.adc_value as f64)

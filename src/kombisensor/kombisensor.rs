@@ -71,14 +71,14 @@ impl Kombisensor {
     /// use xmz_mod_touch_server::{Kombisensor, KombisensorType};
     /// let kombisensor = Kombisensor::new_with_type(KombisensorType::RAGas);
     ///
-    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS0".to_string());
+    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS1".to_string());
     /// ```
     pub fn new_with_type(kombisensor_type: KombisensorType) -> Self {
         match kombisensor_type {
             KombisensorType::RAGas => {
                 Kombisensor {
                     kombisensor_type: kombisensor_type,
-                    modbus_device: "/dev/ttyS0".to_string(),
+                    modbus_device: "/dev/ttyS1".to_string(),
                     ..Default::default()
                 }
             }
@@ -203,8 +203,8 @@ impl Kombisensor {
     /// use xmz_mod_touch_server::Kombisensor;
     /// let mut kombisensor = Kombisensor::new();
     ///
-    /// kombisensor.set_modbus_device("/dev/ttyS0".to_string());
-    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS0".to_string());
+    /// kombisensor.set_modbus_device("/dev/ttyS1".to_string());
+    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS1".to_string());
     /// ```
     pub fn set_modbus_device(&mut self, modbus_device: String) {
         self.modbus_device = modbus_device
@@ -349,12 +349,20 @@ impl Kombisensor {
     /// assert!(kombisensor.get_from_modbus().is_ok());
     /// ```
     pub fn get_from_modbus(&mut self) -> Result<()> {
-        use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH};
+        use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH, SerialMode, RequestToSendMode};
 
         let mut modbus = Modbus::new_rtu(&self.modbus_device, 9600, 'N', 8, 1)?;
         modbus.set_slave(self.modbus_address)?;
 
-        if self.modbus_debug { modbus.set_debug(true)?; }
+        // Debug Modus einschalten wenn gewünscht
+        if self.modbus_debug {
+            modbus.set_debug(true)?;
+        }
+
+        if self.kombisensor_type == KombisensorType::RAGas {
+            modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)?;
+            modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)?;
+        }
 
         modbus.connect()?;
 

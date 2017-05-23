@@ -29,7 +29,7 @@ impl Configuration {
     pub fn get_config() -> Result<String> {
         // TODO: In production nur Konfig von `/boot` verwenden!
         let possible_paths = vec![
-            Path::new("/boot/xMZ-Mod-Touch.json.production"),
+            Path::new("/boot/xMZ-Mod-Touch.json"),
             Path::new("/usr/share/xmz-mod-touch-server/xMZ-Mod-Touch.json.production"),
             Path::new("xMZ-Mod-Touch.json"),
         ];

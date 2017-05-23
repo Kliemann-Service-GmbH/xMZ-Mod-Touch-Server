@@ -180,17 +180,23 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.basic_configuration();
     /// ```
     pub fn basic_configuration(&mut self) {
-        if let Ok(mut leds) = self.leds.lock() {
-            // Grundzustand definieren
-            leds.reset();
-            // Power LED an
-            leds.set(1);
-        }
+        loop {
+            if let Ok(mut leds) = self.leds.lock() {
+                // Grundzustand definieren
+                leds.reset();
+                // Power LED an
+                leds.set(1);
+                break;
+            }
+        }            
 
-        if let Ok(mut relais) = self.relais.lock() {
-            relais.reset();
-            // Relais Störung anziehen (normal closed)
-            relais.set(1);
+        loop {
+            if let Ok(mut relais) = self.relais.lock() {
+                relais.reset();
+                // Relais Störung anziehen (normal closed)
+                relais.set(1);
+                break;
+            }
         }
     }
 

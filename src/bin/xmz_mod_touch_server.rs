@@ -18,8 +18,11 @@ pub const UPDATE_INTERVALL_MS: u64 = 100;
 fn start_basic_configuration(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
                 -> Result<()>
 {
-    if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
-        xmz_mod_touch_server.basic_configuration();
+    loop {
+        if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+            xmz_mod_touch_server.basic_configuration();
+            break;
+        }
     }
 
     Ok(())
