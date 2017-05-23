@@ -144,13 +144,11 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.update();
     /// ```
     pub fn update(&mut self) {
-        // debug!("\tUpdate XMZModTouchServer ...");
+        debug!("\tUpdate XMZModTouchServer ...");
         for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
-            // debug!("\t\tUpdate Zone {} ...", num_zone);
+            debug!("\t\tUpdate Zone {} ...", num_zone);
             for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
-                // debug!("\t\t\tUpdate Kombisensor {} ...", num_kombisensor);
-
-                // Update Kombisensor Daten via Modbus
+                debug!("\t\t\tUpdate Kombisensor {} via Modbus ...", num_kombisensor);
                 match kombisensor.get_from_modbus() {
                     Err(e) => {
                         // println!("Zone: {} Kombisensor: {} Error: {:?}", &num_zone, &num_kombisensor, e);
@@ -163,6 +161,7 @@ impl XMZModTouchServer {
                 for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
                     // Aktualisiert den Tuppel Vector. In dem Tuppel werden die Daten der letzten 15Minuten gehalten,
                     // mit diesen wird der Mittelwert gebildet
+                    debug!("\t\t\tUpdate Sensor {} average ...", num_sensor);
                     sensor.update_adc_values_average();
                 }
             }
@@ -182,16 +181,17 @@ impl XMZModTouchServer {
     pub fn basic_configuration(&mut self) {
         loop {
             if let Ok(mut leds) = self.leds.lock() {
-                // Grundzustand definieren
+                debug!("Basic configuration server LEDs");
                 leds.reset();
                 // Power LED an
                 leds.set(1);
                 break;
             }
-        }            
+        }
 
         loop {
             if let Ok(mut relais) = self.relais.lock() {
+                debug!("Basic configuration server RELAIS");
                 relais.reset();
                 // Relais Störung anziehen (normal closed)
                 relais.set(1);

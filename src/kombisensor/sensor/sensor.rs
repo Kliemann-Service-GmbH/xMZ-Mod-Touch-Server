@@ -139,6 +139,7 @@ impl Sensor {
             }
             SensorType::SimulationNO2Fix => {
                 Sensor {
+                    adc_value: 564,
                     max_value: 30,
                     adc_value_at_nullgas: 920,
                     adc_value_at_messgas: 564,
