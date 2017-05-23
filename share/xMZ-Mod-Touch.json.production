@@ -1,7 +1,7 @@
 {
   "version": "0.50.2",
-  "create_time": "2017-05-23T09:57:22.116349444Z",
-  "start_time": "2017-05-23T09:57:22.116353091Z",
+  "create_time": "2017-05-23T11:57:34.236970710Z",
+  "start_time": "2017-05-23T11:57:34.236973584Z",
   "exceptions": [],
   "zones": [
     {
@@ -9,12 +9,12 @@
         {
           "kombisensor_type": "RAGas",
           "firmware_version": "0.0.0",
-          "modbus_device": "/dev/ttyS0",
+          "modbus_device": "/dev/ttyS1",
           "modbus_address": 1,
           "modbus_debug": false,
           "sensors": [
             {
-              "adc_value": 564,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
               "adc_value_at_nullgas": 920,
@@ -31,7 +31,7 @@
               "alarm3_direct_value": 15
             },
             {
-              "adc_value": 760,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
               "adc_value_at_nullgas": 112,
@@ -53,12 +53,12 @@
         {
           "kombisensor_type": "RAGas",
           "firmware_version": "0.0.0",
-          "modbus_device": "/dev/ttyS0",
+          "modbus_device": "/dev/ttyS1",
           "modbus_address": 2,
           "modbus_debug": false,
           "sensors": [
             {
-              "adc_value": 564,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
               "adc_value_at_nullgas": 920,
@@ -75,7 +75,7 @@
               "alarm3_direct_value": 15
             },
             {
-              "adc_value": 760,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
               "adc_value_at_nullgas": 112,
@@ -97,12 +97,12 @@
         {
           "kombisensor_type": "RAGas",
           "firmware_version": "0.0.0",
-          "modbus_device": "/dev/ttyS0",
+          "modbus_device": "/dev/ttyS1",
           "modbus_address": 3,
           "modbus_debug": false,
           "sensors": [
             {
-              "adc_value": 564,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
               "adc_value_at_nullgas": 920,
@@ -119,7 +119,7 @@
               "alarm3_direct_value": 15
             },
             {
-              "adc_value": 760,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
               "adc_value_at_nullgas": 112,
@@ -141,12 +141,12 @@
         {
           "kombisensor_type": "RAGas",
           "firmware_version": "0.0.0",
-          "modbus_device": "/dev/ttyS0",
+          "modbus_device": "/dev/ttyS1",
           "modbus_address": 4,
           "modbus_debug": false,
           "sensors": [
             {
-              "adc_value": 564,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
               "adc_value_at_nullgas": 920,
@@ -163,7 +163,7 @@
               "alarm3_direct_value": 15
             },
             {
-              "adc_value": 760,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
               "adc_value_at_nullgas": 112,
@@ -185,12 +185,12 @@
         {
           "kombisensor_type": "RAGas",
           "firmware_version": "0.0.0",
-          "modbus_device": "/dev/ttyS0",
+          "modbus_device": "/dev/ttyS1",
           "modbus_address": 5,
           "modbus_debug": false,
           "sensors": [
             {
-              "adc_value": 564,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
               "adc_value_at_nullgas": 920,
@@ -207,7 +207,7 @@
               "alarm3_direct_value": 15
             },
             {
-              "adc_value": 760,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
               "adc_value_at_nullgas": 112,
@@ -229,12 +229,12 @@
         {
           "kombisensor_type": "RAGas",
           "firmware_version": "0.0.0",
-          "modbus_device": "/dev/ttyS0",
+          "modbus_device": "/dev/ttyS1",
           "modbus_address": 6,
           "modbus_debug": false,
           "sensors": [
             {
-              "adc_value": 564,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
               "adc_value_at_nullgas": 920,
@@ -251,7 +251,7 @@
               "alarm3_direct_value": 15
             },
             {
-              "adc_value": 760,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
               "adc_value_at_nullgas": 112,

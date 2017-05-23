@@ -355,13 +355,11 @@ impl Kombisensor {
         modbus.set_slave(self.modbus_address)?;
 
         // Debug Modus einschalten wenn gewünscht
-        if self.modbus_debug {
-            modbus.set_debug(true)?;
-        }
+        modbus.set_debug(self.modbus_debug)?;
 
         if self.kombisensor_type == KombisensorType::RAGas {
-            debug!("modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)");
-            modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)?;
+            // debug!("modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)");
+            // modbus.rtu_set_serial_mode(Serial1Mode::MODBUS_RTU_RS485)?;
             debug!("modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)");
             modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)?;
         }
