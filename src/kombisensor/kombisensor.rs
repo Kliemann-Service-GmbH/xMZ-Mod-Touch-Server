@@ -210,6 +210,43 @@ impl Kombisensor {
         self.modbus_device = modbus_device
     }
 
+    /// Get modbus_debug
+    ///
+    /// # Return values
+    ///
+    /// Liefert die Modbus Device Adresse als boolen
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    /// let kombisensor = Kombisensor::new();
+    ///
+    /// assert_eq!(kombisensor.get_modbus_debug(), false);
+    /// ```
+    pub fn get_modbus_debug(&self) -> bool {
+        self.modbus_debug
+    }
+
+    /// Set modbus_debug
+    ///
+    /// # Parameters
+    ///
+    /// * `modbus_debug`    - String mit der neuen Modbus Device Adresse
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    /// let mut kombisensor = Kombisensor::new();
+    ///
+    /// kombisensor.set_modbus_debug(true);
+    /// assert_eq!(kombisensor.get_modbus_debug(), true);
+    /// ```
+    pub fn set_modbus_debug(&mut self, modbus_debug: bool) {
+        self.modbus_debug = modbus_debug
+    }
+
     /// Liefert eine Referenz auf einen Vector mit den Sensoren
     ///
     /// # Examples
@@ -359,7 +396,7 @@ impl Kombisensor {
 
         if self.kombisensor_type == KombisensorType::RAGas {
             // debug!("modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)");
-            // modbus.rtu_set_serial_mode(Serial1Mode::MODBUS_RTU_RS485)?;
+            // modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)?;
             debug!("modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)");
             modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)?;
         }

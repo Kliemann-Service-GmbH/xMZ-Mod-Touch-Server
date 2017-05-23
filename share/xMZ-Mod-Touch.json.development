@@ -1,7 +1,7 @@
 {
-  "version": "0.50.2",
-  "create_time": "2017-05-23T09:57:47.877882415Z",
-  "start_time": "2017-05-23T09:57:47.877885885Z",
+  "version": "0.50.3",
+  "create_time": "2017-05-23T13:18:35.853465768Z",
+  "start_time": "2017-05-23T13:18:35.853469230Z",
   "exceptions": [],
   "zones": [
     {
@@ -14,7 +14,7 @@
           "modbus_debug": true,
           "sensors": [
             {
-              "adc_value": 564,
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
               "adc_value_at_nullgas": 920,
@@ -31,7 +31,51 @@
               "alarm3_direct_value": 15
             },
             {
-              "adc_value": 760,
+              "adc_value": 0,
+              "min_value": 0,
+              "max_value": 300,
+              "adc_value_at_nullgas": 112,
+              "adc_value_at_messgas": 760,
+              "concentration_at_nullgas": 0,
+              "concentration_at_messgas": 270,
+              "sensor_type": "NemotoCO",
+              "si": "ppm",
+              "config": 0,
+              "error_count": 0,
+              "adc_value_average_15min": 0.0,
+              "alarm1_average_15min": 30,
+              "alarm2_average_15min": 60,
+              "alarm3_direct_value": 150
+            }
+          ],
+          "error_count": 0
+        },
+        {
+          "kombisensor_type": "RAGasSimulation",
+          "firmware_version": "0.0.0",
+          "modbus_device": "/dev/ttyUSB0",
+          "modbus_address": 2,
+          "modbus_debug": true,
+          "sensors": [
+            {
+              "adc_value": 0,
+              "min_value": 0,
+              "max_value": 30,
+              "adc_value_at_nullgas": 920,
+              "adc_value_at_messgas": 564,
+              "concentration_at_nullgas": 0,
+              "concentration_at_messgas": 20,
+              "sensor_type": "NemotoNO2",
+              "si": "ppm",
+              "config": 0,
+              "error_count": 0,
+              "adc_value_average_15min": 0.0,
+              "alarm1_average_15min": 3,
+              "alarm2_average_15min": 6,
+              "alarm3_direct_value": 15
+            },
+            {
+              "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
               "adc_value_at_nullgas": 112,

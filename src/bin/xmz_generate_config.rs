@@ -30,6 +30,7 @@ struct Config<'a> {
     config_file: &'a str,
     num_zones: u8,
     kombisensors: u8,
+    debug: bool,
 }
 impl<'a> Config<'a> {
     fn new(
@@ -37,6 +38,7 @@ impl<'a> Config<'a> {
         config_file: &'a str,
         num_zones: u8,
         kombisensors: u8,
+        debug: bool,
     ) -> Self
 {
         Config {
@@ -44,6 +46,7 @@ impl<'a> Config<'a> {
             config_file: config_file,
             num_zones: num_zones,
             kombisensors: kombisensors,
+            debug: debug,
         }
     }
 }
@@ -62,12 +65,13 @@ fn generate_config(config: &Config) -> Result<()> {
     };
 
     // Add Zones
-    for num_zone in 1..config.num_zones + 1 {
+    for num_zone in 1..(config.num_zones + 1) {
         xmz_mod_touch_server.add_zone();
 
-        for num_kombisensor in 1..config.kombisensors {
+        for num_kombisensor in 1..(config.kombisensors + 1) {
             let mut kombisensor = Kombisensor::new_with_type(kombisensor_type.clone());
             kombisensor.set_modbus_address(num_kombisensor);
+            kombisensor.set_modbus_debug(config.debug);
             xmz_mod_touch_server.get_zone_mut((num_zone - 1) as usize).unwrap().add_kombisensor( kombisensor );
         }
     }
@@ -76,8 +80,10 @@ fn generate_config(config: &Config) -> Result<()> {
     let xmz_mod_touch_server_json = serde_json::to_string_pretty(&xmz_mod_touch_server)?;
     config_file.write_all(xmz_mod_touch_server_json.as_bytes())?;
 
+    // Zusammenfassung ausgeben
     println!("Konfiguration:");
-    println!("Umgebung '{:?}' '{}' Zonen mit je '{}' Kombisensoren", config.environment, config.num_zones, config.kombisensors);
+    println!("Umgebung '{:?}', '{}' Zonen mit je '{}' Kombisensoren", config.environment, config.num_zones, config.kombisensors);
+    println!("Modbus DEBUG Modus: {}", config.debug);
     println!("nach '{}' geschrieben", config.config_file);
 
     Ok(())
@@ -92,8 +98,10 @@ fn run(matches: &ArgMatches) -> Result<()> {
     let config_file = matches.value_of("config_file").unwrap();
     let num_zones: u8 = matches.value_of("num_zones").unwrap().parse().unwrap();
     let kombisensors: u8 = matches.value_of("kombisensors").unwrap().parse().unwrap();
+    let debug: bool = matches.value_of("debug").unwrap().parse().unwrap();
 
-    let config = Config::new(environment, config_file, num_zones, kombisensors);
+
+    let config = Config::new(environment, config_file, num_zones, kombisensors, debug);
     // println!("config {:#?}", config);
     generate_config(&config)?;
 
@@ -138,6 +146,14 @@ fn main() {
             .takes_value(true)
             .required(true)
             .default_value("2"))
+        .arg(Arg::with_name("debug")
+            .help("soll der Modbus DEBUG Modus gesetzt werden")
+            .long("debug")
+            .short("d")
+            .possible_values(&["true", "false"])
+            .takes_value(true)
+            .required(true)
+            .default_value("false"))
         .get_matches();
 
 
