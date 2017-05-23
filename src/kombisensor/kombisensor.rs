@@ -13,6 +13,7 @@ pub struct Kombisensor {
     firmware_version: String,
     modbus_device: String,
     modbus_address: u8,
+    modbus_debug: bool,
     sensors: Vec<Sensor>,
     error_count: u64,
 }
@@ -46,6 +47,7 @@ impl Kombisensor {
             firmware_version: "0.0.0".to_string(),
             modbus_address: 247,
             modbus_device: "/dev/ttyUSB0".to_string(),
+            modbus_debug: false,
             sensors: vec![
                 Sensor::new_with_type(SensorType::NemotoNO2),
                 Sensor::new_with_type(SensorType::NemotoCO),
@@ -77,6 +79,14 @@ impl Kombisensor {
                 Kombisensor {
                     kombisensor_type: kombisensor_type,
                     modbus_device: "/dev/ttyS0".to_string(),
+                    ..Default::default()
+                }
+            }
+            KombisensorType::RAGasSimulation => {
+                Kombisensor {
+                    kombisensor_type: kombisensor_type,
+                    modbus_device: "/dev/ttyUSB0".to_string(),
+                    modbus_debug: true,
                     ..Default::default()
                 }
             }
@@ -344,7 +354,8 @@ impl Kombisensor {
         let mut modbus = Modbus::new_rtu(&self.modbus_device, 9600, 'N', 8, 1)?;
         modbus.set_slave(self.modbus_address)?;
 
-        // modbus.set_debug(true);
+        if self.modbus_debug { modbus.set_debug(true)?; }
+
         modbus.connect()?;
 
         let mut response_register = vec![0u16; MODBUS_RTU_MAX_ADU_LENGTH as usize];

@@ -102,9 +102,9 @@ impl Sensor {
             config: 0,
             error_count: 0,
             adc_value_average_15min: 0.0,
-            alarm1_average_15min: 3,
-            alarm2_average_15min: 6,
-            alarm3_direct_value: 15,
+            alarm1_average_15min: 0,
+            alarm2_average_15min: 0,
+            alarm3_direct_value: 0,
             adc_values_average: vec![],
         }
     }
@@ -125,6 +125,19 @@ impl Sensor {
     /// ```
     pub fn new_with_type(sensor_type: SensorType) -> Self {
         match sensor_type {
+            SensorType::NemotoNO2 => {
+                Sensor {
+                    adc_value: 564,
+                    max_value: 30,
+                    adc_value_at_nullgas: 920,
+                    adc_value_at_messgas: 564,
+                    concentration_at_messgas: 20,       // 20ppm Messgas
+                    alarm1_average_15min: 3, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
+                    alarm2_average_15min: 6, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
+                    alarm3_direct_value: 15, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
+                    sensor_type: sensor_type,
+                    ..Default::default() }
+            }
             SensorType::SimulationNO2Fix => {
                 Sensor {
                     adc_value: 564,
@@ -138,7 +151,46 @@ impl Sensor {
                     sensor_type: sensor_type,
                     ..Default::default() }
             }
+            SensorType::SimulationNO2 => {
+                Sensor {
+                    adc_value: 564,
+                    max_value: 30,
+                    adc_value_at_nullgas: 920,
+                    adc_value_at_messgas: 564,
+                    concentration_at_messgas: 20,       // 20ppm Messgas
+                    alarm1_average_15min: 3, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
+                    alarm2_average_15min: 6, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
+                    alarm3_direct_value: 15, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
+                    sensor_type: sensor_type,
+                    ..Default::default() }
+            }
+            SensorType::NemotoCO => {
+                Sensor {
+                    adc_value: 760,
+                    max_value: 300,
+                    adc_value_at_nullgas: 112,
+                    adc_value_at_messgas: 760,
+                    concentration_at_messgas: 270,       // 280ppm Messgas
+                    alarm1_average_15min: 30, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
+                    alarm2_average_15min: 60, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
+                    alarm3_direct_value: 150, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
+                    sensor_type: sensor_type,
+                    ..Default::default() }
+            }
             SensorType::SimulationCOFix => {
+                Sensor {
+                    adc_value: 760,
+                    max_value: 300,
+                    adc_value_at_nullgas: 112,
+                    adc_value_at_messgas: 760,
+                    concentration_at_messgas: 270,       // 280ppm Messgas
+                    alarm1_average_15min: 30, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
+                    alarm2_average_15min: 60, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
+                    alarm3_direct_value: 150, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
+                    sensor_type: sensor_type,
+                    ..Default::default() }
+            }
+            SensorType::SimulationCO => {
                 Sensor {
                     adc_value: 760,
                     max_value: 300,
@@ -384,8 +436,8 @@ impl Sensor {
     /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
-    /// assert_eq!(sensor.get_concentration(), 0.0);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+    /// assert_eq!(sensor.get_concentration(), 20.0);
     /// ```
     pub fn get_concentration(&self) -> f64 {
         self.concentration_from(self.adc_value as f64)
@@ -398,8 +450,8 @@ impl Sensor {
     /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
-    /// assert_eq!(sensor.get_concentration_average_15min(), 0.0);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+    /// sensor.get_concentration_average_15min();
     /// ```
     pub fn get_concentration_average_15min(&self) -> f64 {
         self.concentration_from(self.adc_value_average_15min)
@@ -432,8 +484,8 @@ impl Sensor {
     /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
-    /// assert_eq!(sensor.get_mv(), 0);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+    /// sensor.get_mv();
     /// ```
     pub fn get_mv(&self) -> u16 {
         (5000 / 1024) * self.adc_value as u16

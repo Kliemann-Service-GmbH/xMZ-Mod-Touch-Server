@@ -374,7 +374,7 @@ impl XMZModTouchServer {
         self.zones.push(Zone::new());
     }
 
-    /// Referenz auf die LED's ShiftRegister
+    /// Atomic Reference Counted Mutex einer Referenz auf die LED's ShiftRegister
     ///
     /// # Examples
     ///
@@ -382,14 +382,14 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let server_leds = xmz_mod_touch_server.get_leds();
+    /// let server_leds = xmz_mod_touch_server.get_leds().lock().unwrap();
     /// assert_eq!(server_leds.data, 0);
     /// ```
     pub fn get_leds(&self) -> &Arc<Mutex<ShiftRegister>> {
         &self.leds
     }
 
-    /// Mutable Referenz auf die LED's ShiftRegister
+    /// Atomic Reference Counted Mutex einer Mutable Referenz auf die LED's ShiftRegister
     ///
     /// # Examples
     ///
@@ -397,14 +397,14 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let mut server_leds = xmz_mod_touch_server.get_leds();
+    /// let mut server_leds = xmz_mod_touch_server.get_leds().lock().unwrap();
     /// assert_eq!(server_leds.data, 0);
     /// ```
     pub fn get_leds_mut(&mut self) -> &mut Arc<Mutex<ShiftRegister>> {
         &mut self.leds
     }
 
-    /// Referenz auf die Relais ShiftRegister
+    /// Atomic Reference Counted Mutex einer Referenz auf die Relais ShiftRegister
     ///
     /// # Examples
     ///
@@ -412,14 +412,14 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let server_relais = xmz_mod_touch_server.get_relais();
+    /// let server_relais = xmz_mod_touch_server.get_relais().lock().unwrap();
     /// assert_eq!(server_relais.data, 0);
     /// ```
     pub fn get_relais(&self) -> &Arc<Mutex<ShiftRegister>> {
         &self.relais
     }
 
-    /// Mutable Referenz auf die Relais ShiftRegister
+    /// Atomic Reference Counted Mutex einer Mutable Referenz auf die Relais ShiftRegister
     ///
     /// # Examples
     ///
@@ -427,7 +427,7 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let mut server_relais = xmz_mod_touch_server.get_relais();
+    /// let mut server_relais = xmz_mod_touch_server.get_relais().lock().unwrap();
     /// assert_eq!(server_relais.data, 0);
     /// ```
     pub fn get_relais_mut(&mut self) -> &mut Arc<Mutex<ShiftRegister>> {

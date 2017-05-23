@@ -58,7 +58,7 @@ fn generate_config(config: &Config) -> Result<()> {
     // Kombisensor Typ nach Environment
     let kombisensor_type = match config.environment {
         Environment::Development => KombisensorType::RAGasSimulation,
-        Environment::Production => KombisensorType::RAGas,
+        Environment::Production  => KombisensorType::RAGas,
     };
 
     // Add Zones
@@ -85,7 +85,7 @@ fn generate_config(config: &Config) -> Result<()> {
 
 fn run(matches: &ArgMatches) -> Result<()> {
     let environment = match matches.value_of("environment").unwrap(){
-        "production" => Environment::Production,
+        "production"  => Environment::Production,
         "development" => Environment::Development,
         _ => unreachable!(),
     };
