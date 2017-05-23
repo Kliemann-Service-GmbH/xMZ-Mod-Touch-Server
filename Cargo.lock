@@ -3,6 +3,7 @@ name = "xmz_mod_touch_server"
 version = "0.50.1"
 dependencies = [
  "chrono 0.3.1 (git+https://github.com/chronotope/chrono.git)",
+ "clap 2.24.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "error-chain 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "iron 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",

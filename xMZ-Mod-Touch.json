@@ -1,7 +1,7 @@
 {
   "version": "0.50.1",
-  "create_time": "2017-05-22T14:48:13.612655457Z",
-  "start_time": "2017-05-22T14:48:13.612659213Z",
+  "create_time": "2017-05-23T08:13:57.886959910Z",
+  "start_time": "2017-05-23T08:13:57.886963066Z",
   "exceptions": [],
   "zones": [
     {
@@ -10,7 +10,7 @@
           "kombisensor_type": "RAGasSimulation",
           "firmware_version": "0.0.0",
           "modbus_device": "/dev/ttyUSB0",
-          "modbus_address": 247,
+          "modbus_address": 1,
           "sensors": [
             {
               "adc_value": 0,
@@ -51,21 +51,5 @@
         }
       ]
     }
-  ],
-  "leds": {
-    "register_type": "LED",
-    "oe_pin": 276,
-    "ds_pin": 38,
-    "clock_pin": 44,
-    "latch_pin": 40,
-    "data": 0
-  },
-  "relais": {
-    "register_type": "Relais",
-    "oe_pin": 277,
-    "ds_pin": 45,
-    "clock_pin": 39,
-    "latch_pin": 37,
-    "data": 0
-  }
+  ]
 }

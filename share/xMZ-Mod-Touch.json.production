@@ -1,7 +1,7 @@
 {
   "version": "0.50.1",
-  "create_time": "2017-05-22T14:46:21.555602121Z",
-  "start_time": "2017-05-22T14:46:21.555606315Z",
+  "create_time": "2017-05-23T08:14:33.029476420Z",
+  "start_time": "2017-05-23T08:14:33.029479166Z",
   "exceptions": [],
   "zones": [
     {
@@ -263,67 +263,8 @@
             }
           ],
           "error_count": 0
-        },
-        {
-          "kombisensor_type": "RAGas",
-          "firmware_version": "0.0.0",
-          "modbus_device": "/dev/ttyS0",
-          "modbus_address": 7,
-          "sensors": [
-            {
-              "adc_value": 0,
-              "min_value": 0,
-              "max_value": 0,
-              "adc_value_at_nullgas": 0,
-              "adc_value_at_messgas": 0,
-              "concentration_at_nullgas": 0,
-              "concentration_at_messgas": 0,
-              "sensor_type": "NemotoNO2",
-              "si": "ppm",
-              "config": 0,
-              "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
-            },
-            {
-              "adc_value": 0,
-              "min_value": 0,
-              "max_value": 0,
-              "adc_value_at_nullgas": 0,
-              "adc_value_at_messgas": 0,
-              "concentration_at_nullgas": 0,
-              "concentration_at_messgas": 0,
-              "sensor_type": "NemotoCO",
-              "si": "ppm",
-              "config": 0,
-              "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
-            }
-          ],
-          "error_count": 0
         }
       ]
     }
-  ],
-  "leds": {
-    "register_type": "LED",
-    "oe_pin": 276,
-    "ds_pin": 38,
-    "clock_pin": 44,
-    "latch_pin": 40,
-    "data": 0
-  },
-  "relais": {
-    "register_type": "Relais",
-    "oe_pin": 277,
-    "ds_pin": 45,
-    "clock_pin": 39,
-    "latch_pin": 37,
-    "data": 0
-  }
+  ]
 }

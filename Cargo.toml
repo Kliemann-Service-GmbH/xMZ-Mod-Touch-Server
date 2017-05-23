@@ -14,8 +14,8 @@ path = "src/bin/xmz_mod_touch_server.rs"
 doc = false
 
 [[bin]]
-name = "generate_server_config"
-path = "src/bin/generate_server_config.rs"
+name = "xmz_generate_config"
+path = "src/bin/xmz_generate_config.rs"
 doc = false
 
 [features]
@@ -35,3 +35,9 @@ serde = "1"
 serde_derive = "1"
 serde_json = "1"
 sysfs_gpio = "0.5"
+
+[dependencies.clap]
+version = "~2.24"
+default-features = false
+ # Cherry-pick the features you'd like to use
+features = [ "color" ]
