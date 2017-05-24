@@ -661,30 +661,28 @@ impl Sensor {
         // Update tuppel with the current (adc_value, timestamp)
         self.adc_values_average.push((self.adc_value, UTC::now()));
 
-        // Die [`binary_search_by_key()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.binary_search_by_key)
-        // erhält als ersten Parameter die AVERAGE_15MIN_SEC Konstante, dann eine Referenz auf das Tuppel mit den (Messwerten, Zeitstempeln),
-        // und als letzten Parameter die Bedingung die dem ersten Parameter vergleichen werden soll.
-        // In diesem Beispiel die vergangen Sekunden seit dem der Timestamp erstellt wurde
+        //  [`position()`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.position)
+        // Searches for an element in an iterator, returning its index. We use the index then to [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
         //
-        if let Ok(index) = self.adc_values_average.binary_search_by_key(&AVERAGE_15MIN_SEC, |&(_, timestamp)| UTC::now().signed_duration_since(timestamp).num_seconds() ) {
-            // Mit split off kann man nun den Vector teilen, es bleiben nur noch die (Messerte, Zeitstempel) der letzten AVERAGE_15MIN_SEC übrig.
+        if let Some(index) = self.adc_values_average.iter().position(|&(_, timestamp)| UTC::now().signed_duration_since(timestamp).num_seconds() > AVERAGE_15MIN_SEC ) {
+            // Mit `split_off()` kann man nun den Vector teilen, es bleiben nur noch die (Messerte, Zeitstempel) der letzten AVERAGE_15MIN_SEC übrig.
             // **Dieser Rest wird nun wieder als adc_values_average übernommen, alle anderen Werte werden verworfen.**
             //
             self.adc_values_average = self.adc_values_average.split_off(index);
-
-            // // // Nochmal rein guggen obs auch so ist ><
-            // // for (num, adc_values_average) in adc_values_average.clone().iter().enumerate() {
-            // //     println!("{:?}, {:?}", num, adc_values_average);
-            // // };
-
-            let num_adc_values_average = self.adc_values_average.len();
-            let mut sum_adc_values_average = 0;
-            for &(value, _) in self.adc_values_average.iter(){
-                sum_adc_values_average += value;
-            }
-
-            self.adc_value_average_15min = sum_adc_values_average as f64 / num_adc_values_average as f64;
         }
+
+        // // DEBUG
+        // for (num, adc_values_average) in self.adc_values_average.clone().iter().enumerate() {
+        //     println!("{:?}, {:?}", num, adc_values_average);
+        // };
+
+        let num_adc_values_average = self.adc_values_average.len();
+        let mut sum_adc_values_average = 0;
+        for &(value, _) in self.adc_values_average.iter(){
+            sum_adc_values_average += value;
+        }
+
+        self.adc_value_average_15min = sum_adc_values_average as f64 / num_adc_values_average as f64;
     }
 
 }
