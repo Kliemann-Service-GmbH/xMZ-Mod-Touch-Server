@@ -12,8 +12,8 @@ use std::fmt;
 
 // Nur Messwerte der letzten 15Minuten behalten
 // Die Konstante wird in Sekunden angegeben
-// pub const AVERAGE_15MIN_SEC: i64 = 15 * 60;
-pub const AVERAGE_15MIN_SEC: i64 = 60;
+pub const AVERAGE_15MIN_SEC: i64 = 15 * 60;
+// pub const AVERAGE_15MIN_SEC: i64 = 10;
 
 /// Typ der Messzelle
 #[derive(Clone)]
@@ -664,7 +664,7 @@ impl Sensor {
         //  [`position()`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.position)
         // Searches for an element in an iterator, returning its index. We use the index then to [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
         //
-        if let Some(index) = self.adc_values_average.iter().position(|&(_, timestamp)| UTC::now().signed_duration_since(timestamp).num_seconds() > AVERAGE_15MIN_SEC ) {
+        if let Some(index) = self.adc_values_average.iter().position(|&(_, timestamp)| UTC::now().signed_duration_since(timestamp).num_seconds() < AVERAGE_15MIN_SEC ) {
             // Mit `split_off()` kann man nun den Vector teilen, es bleiben nur noch die (Messerte, Zeitstempel) der letzten AVERAGE_15MIN_SEC übrig.
             // **Dieser Rest wird nun wieder als adc_values_average übernommen, alle anderen Werte werden verworfen.**
             //
@@ -677,9 +677,11 @@ impl Sensor {
         // };
 
         let num_adc_values_average = self.adc_values_average.len();
-        let mut sum_adc_values_average = 0;
+        debug!("num adc_values_average: {}", num_adc_values_average);
+
+        let mut sum_adc_values_average: u64 = 0;
         for &(value, _) in self.adc_values_average.iter(){
-            sum_adc_values_average += value;
+            sum_adc_values_average += value as u64;
         }
 
         self.adc_value_average_15min = sum_adc_values_average as f64 / num_adc_values_average as f64;
