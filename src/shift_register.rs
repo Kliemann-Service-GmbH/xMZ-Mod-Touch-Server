@@ -58,7 +58,7 @@ impl ShiftRegister {
     /// # Examples
     ///
     /// ```
-    /// use xmz_mod_touch_server::*;
+    /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.data, 0b0);
@@ -103,7 +103,7 @@ impl ShiftRegister {
     /// # Examples
     ///
     /// ```
-    /// use xmz_mod_touch_server::*;
+    /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.data, 0b0);
@@ -129,7 +129,7 @@ impl ShiftRegister {
     /// # Examples
     ///
     /// ```
-    /// use xmz_mod_touch_server::*;
+    /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// sim.set(1);
@@ -157,7 +157,7 @@ impl ShiftRegister {
     /// # Examples
     ///
     /// ```
-    /// use xmz_mod_touch_server::*;
+    /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.data, 0b0);
@@ -189,7 +189,7 @@ impl ShiftRegister {
     /// # Examples
     ///
     /// ```
-    /// use xmz_mod_touch_server::*;
+    /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.data, 0b0);
@@ -211,7 +211,7 @@ impl ShiftRegister {
     /// # Examples
     ///
     /// ```
-    /// use xmz_mod_touch_server::*;
+    /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.get(1), false);
@@ -236,7 +236,7 @@ impl ShiftRegister {
     /// # Examples
     ///
     /// ```
-    /// use xmz_mod_touch_server::*;
+    /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     ///
@@ -269,7 +269,7 @@ impl ShiftRegister {
     /// # Examples
     ///
     /// ```
-    /// use xmz_mod_touch_server::*;
+    /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     ///
