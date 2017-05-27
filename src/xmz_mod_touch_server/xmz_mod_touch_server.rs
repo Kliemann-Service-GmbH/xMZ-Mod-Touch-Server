@@ -172,19 +172,19 @@ impl XMZModTouchServer {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,no_run
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// xmz_mod_touch_server.basic_configuration();
+    /// xmz_mod_touch_server.basic_configuration().unwrap();
     /// ```
-    pub fn basic_configuration(&mut self) {
+    pub fn basic_configuration(&mut self) -> Result<()> {
         loop {
             if let Ok(mut leds) = self.leds.lock() {
                 debug!("Basic configuration server LEDs");
                 leds.reset();
                 // Power LED an
-                leds.set(1);
+                leds.set(1)?;
                 break;
             }
         }
@@ -194,10 +194,12 @@ impl XMZModTouchServer {
                 debug!("Basic configuration server RELAIS");
                 relais.reset();
                 // Relais Störung anziehen (normal closed)
-                relais.set(1);
+                relais.set(1)?;
                 break;
             }
         }
+
+        Ok(())
     }
 
     /// Liefert die Versionsnummer des XMZModTouchServer's

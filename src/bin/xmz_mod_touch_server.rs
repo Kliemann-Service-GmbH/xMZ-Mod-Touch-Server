@@ -1,3 +1,4 @@
+#[macro_use] extern crate log;
 extern crate env_logger;
 extern crate xmz_mod_touch_server;
 extern crate serde_json;
@@ -6,9 +7,8 @@ use std::error::Error;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use xmz_mod_touch_server::{XMZModTouchServer, json_api, configuration};
+use xmz_mod_touch_server::{XMZModTouchServer, json_api};
 use xmz_mod_touch_server::errors::*;
-
 
 pub const UPDATE_INTERVALL_MS: u64 = 100;
 
@@ -20,6 +20,7 @@ fn start_basic_configuration(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>
 {
     loop {
         if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+            debug!("start_basic_configuration()");
             xmz_mod_touch_server.basic_configuration();
             break;
         }
@@ -67,7 +68,6 @@ fn start_web_interface(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
 fn run() -> Result<()> {
     /// Server Konfiguration aus Konfig File auslesen
     let xmz_mod_touch_server = Arc::new(Mutex::new(XMZModTouchServer::new_from_config()?));
-
 
     start_basic_configuration(xmz_mod_touch_server.clone())?;
 

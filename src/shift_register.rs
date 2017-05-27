@@ -112,7 +112,7 @@ impl ShiftRegister {
     /// More info: http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c
     pub fn set(&mut self, num: u64) -> Result<()> {
         self.data |= 1 << (num -1);
-        try!(self.shift_out());
+        self.shift_out()?;
 
         Ok(())
     }
@@ -120,6 +120,7 @@ impl ShiftRegister {
     /// Abfrage ob ein Bit gesetzt ist, `true` wenn ja, `false` wenn das bit nicht gesetzt ist
     ///
     /// # Parameters
+    ///
     /// * `num`     - Nummer des abzufragenden Bits **Diese Nummer ist Eins basiert!**
     ///
     /// Der Parameter ist nicht Null basiert. D.h. `get(1)` fragt das erste Bit(0) im `data`
@@ -148,6 +149,7 @@ impl ShiftRegister {
     /// Löscht das übergebene Bit
     ///
     /// # Parameters
+    ///
     /// * `num`     - Nummer des zu löschenden Bits **Diese Nummer ist Eins basiert!**
     ///
     /// Der Parameter ist nicht Null basiert. D.h. `clear(1)` löscht das erste Bit(0) im `data`
@@ -172,7 +174,7 @@ impl ShiftRegister {
     /// ```
     pub fn clear(&mut self, num: u64) -> Result<()> {
         self.data &= !(1 << (num - 1));
-        try!(self.shift_out());
+        self.shift_out()?;
 
         Ok(())
     }
@@ -180,6 +182,7 @@ impl ShiftRegister {
     /// Schaltet das übergebene Bit um, war es Null dann wird es Eins und umgekehrt
     ///
     /// # Parameters
+    ///
     /// * `num`     - Nummer des zu wechselnden Bits **Diese Nummer ist Eins basiert!**
     ///
     /// Der Parameter ist nicht Null basiert. D.h. `toggle(1)` schaltet das erste Bit(0) im `data`
@@ -200,7 +203,7 @@ impl ShiftRegister {
     /// ```
     pub fn toggle(&mut self, num: u64) -> Result<()> {
         self.data ^= 1 << (num -1);
-        try!(self.shift_out());
+        self.shift_out()?;
 
         Ok(())
     }
@@ -221,7 +224,7 @@ impl ShiftRegister {
     /// ```
     pub fn reset(&mut self) -> Result<()> {
         self.data = 0;
-        try!(self.shift_out());
+        self.shift_out()?;
 
         Ok(())
     }
@@ -250,12 +253,13 @@ impl ShiftRegister {
         let old_state = self.data;
         // Buffer komplett mit Einsen füllen
         self.data = u64::max_value();
-        try!(self.shift_out());
+        self.shift_out()?;
+        // 1Sec warten
         thread::sleep(Duration::new(1, 0));
-        try!(self.reset());
+        self.reset()?;
         // alten Stand wieder herstellen
         self.data = old_state;
-        try!(self.shift_out());
+        self.shift_out()?;
 
         Ok(())
     }
@@ -279,12 +283,12 @@ impl ShiftRegister {
         let old_state = self.data;
         // Buffer mit Zufallsdaten füllen
         self.data =  ::rand::thread_rng().gen_range(1, u64::max_value());
-        try!(self.shift_out());
+        self.shift_out()?;
         thread::sleep(Duration::new(1, 0));
-        try!(self.reset());
+        self.reset()?;
         // alten Stand wieder herstellen
         self.data = old_state;
-        try!(self.shift_out());
+        self.shift_out()?;
 
         Ok(())
     }
@@ -293,10 +297,10 @@ impl ShiftRegister {
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
     fn export_pins(&self) -> Result<()> {
-        if let Some(oe_pin) = self.oe_pin { try!(Pin::new(oe_pin).export()) };
-        if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).export()) };
-        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).export()) };
-        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).export()) };
+        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).export()? };
+        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).export()? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).export()? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).export()? };
 
         Ok(())
     }
@@ -304,14 +308,14 @@ impl ShiftRegister {
     /// Schaltet die Pins in den OUTPUT Pin Modus
     ///
     fn set_pin_direction_output(&self) -> Result<()> {
-        if let Some(oe_pin) = self.oe_pin { try!(Pin::new(oe_pin).set_direction(Direction::Out)) };
-        if let Some(oe_pin) = self.oe_pin { try!(Pin::new(oe_pin).set_value(0)) }; // !OE pin low == Shift register enabled.
-        if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).set_direction(Direction::Out)) };
-        if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).set_value(0)) };
-        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_direction(Direction::Out)) };
-        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(0)) };
-        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_direction(Direction::Out)) };
-        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(0)) };
+        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).set_direction(Direction::Out)? };
+        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).set_value(0)? }; // !OE pin low == Shift register enabled.
+        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_direction(Direction::Out)? };
+        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(0)? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_direction(Direction::Out)? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(0)? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_direction(Direction::Out)? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(0)? };
 
         Ok(())
     }
