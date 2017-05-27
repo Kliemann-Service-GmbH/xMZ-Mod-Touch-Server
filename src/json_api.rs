@@ -284,7 +284,8 @@ fn exceptions_index(_req: &mut Request,
 ///
 /// In dieser Funktion ist das gesammte Webinterface definiert.
 pub fn init(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-            -> Result<()> {
+            -> Result<()>
+{
     let mut router = Router::new();
 
     /// Index Route

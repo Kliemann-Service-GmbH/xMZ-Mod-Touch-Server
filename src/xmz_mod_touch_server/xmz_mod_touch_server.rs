@@ -31,10 +31,10 @@ pub struct XMZModTouchServer {
     // Ausnahmen
     pub exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
-    #[serde(skip_serializing, skip_deserializing)]
-    leds: Arc<Mutex<ShiftRegister>>,
-    #[serde(skip_serializing, skip_deserializing)]
-    relais: Arc<Mutex<ShiftRegister>>,
+    // #[serde(skip_serializing, skip_deserializing)]
+    leds: Mutex<ShiftRegister>,
+    // #[serde(skip_serializing, skip_deserializing)]
+    relais: Mutex<ShiftRegister>,
 }
 
 impl XMZModTouchServer {
@@ -61,8 +61,8 @@ impl XMZModTouchServer {
             start_time: chrono::UTC::now(),
             exceptions: HashSet::new(),
             zones: vec![],
-            leds: Arc::new(Mutex::new(ShiftRegister::new(ShiftRegisterType::LED))),
-            relais: Arc::new(Mutex::new(ShiftRegister::new(ShiftRegisterType::Relais))),
+            leds: Mutex::new(ShiftRegister::new(ShiftRegisterType::LED)),
+            relais: Mutex::new(ShiftRegister::new(ShiftRegisterType::Relais)),
         }
     }
 
@@ -75,7 +75,7 @@ impl XMZModTouchServer {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,no_run
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new_from_config();
@@ -393,7 +393,7 @@ impl XMZModTouchServer {
     /// let server_leds = xmz_mod_touch_server.get_leds().lock().unwrap();
     /// assert_eq!(server_leds.data, 0);
     /// ```
-    pub fn get_leds(&self) -> &Arc<Mutex<ShiftRegister>> {
+    pub fn get_leds(&self) -> &Mutex<ShiftRegister> {
         &self.leds
     }
 
@@ -408,7 +408,7 @@ impl XMZModTouchServer {
     /// let mut server_leds = xmz_mod_touch_server.get_leds().lock().unwrap();
     /// assert_eq!(server_leds.data, 0);
     /// ```
-    pub fn get_leds_mut(&mut self) -> &mut Arc<Mutex<ShiftRegister>> {
+    pub fn get_leds_mut(&mut self) -> &mut Mutex<ShiftRegister> {
         &mut self.leds
     }
 
@@ -423,7 +423,7 @@ impl XMZModTouchServer {
     /// let server_relais = xmz_mod_touch_server.get_relais().lock().unwrap();
     /// assert_eq!(server_relais.data, 0);
     /// ```
-    pub fn get_relais(&self) -> &Arc<Mutex<ShiftRegister>> {
+    pub fn get_relais(&self) -> &Mutex<ShiftRegister> {
         &self.relais
     }
 
@@ -438,7 +438,7 @@ impl XMZModTouchServer {
     /// let mut server_relais = xmz_mod_touch_server.get_relais().lock().unwrap();
     /// assert_eq!(server_relais.data, 0);
     /// ```
-    pub fn get_relais_mut(&mut self) -> &mut Arc<Mutex<ShiftRegister>> {
+    pub fn get_relais_mut(&mut self) -> &mut Mutex<ShiftRegister> {
         &mut self.relais
     }
 
