@@ -26,14 +26,11 @@ pub struct XMZModTouchServer {
     // `create_time` wird nur ein mal beim erstellen der Konfiguration gesetzt
     create_time: chrono::DateTime<UTC>,
     // Wird jedes mal wenn der Serverprozess gestartet wurde, gesetzt
-    // #[serde(skip_deserializing)]
     start_time: chrono::DateTime<UTC>,
     // Ausnahmen
     pub exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
-    // #[serde(skip_serializing, skip_deserializing)]
     leds: Mutex<ShiftRegister>,
-    // #[serde(skip_serializing, skip_deserializing)]
     relais: Mutex<ShiftRegister>,
 }
 
@@ -115,6 +112,7 @@ impl XMZModTouchServer {
                     // debug!("\t\t\t\Check Sensor {} ...", num_sensor);
                     // Begin checks sensor ...
                     if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 {
+                        println!("sensor.get_concentration() {} >= sensor.alarm3_direct_value {}", sensor.get_concentration(), sensor.alarm3_direct_value);
                         if let Ok(mut leds) = self.leds.lock() {
                             leds.set(5);
                             leds.set(6);
