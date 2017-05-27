@@ -1,6 +1,6 @@
 [package]
 name = "xmz_mod_touch_server"
-version = "0.50.3"
+version = "0.50.4"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "Serverteil der 'xMZ-Mod-Touch'-Platform"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"

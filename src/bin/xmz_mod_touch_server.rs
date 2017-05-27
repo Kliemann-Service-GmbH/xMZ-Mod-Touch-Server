@@ -59,7 +59,7 @@ fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
 ///
 fn start_web_interface(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
                        -> Result<()> {
-    json_api::init(xmz_mod_touch_server)?;
+    // json_api::init(xmz_mod_touch_server)?;
 
     Ok(())
 }
