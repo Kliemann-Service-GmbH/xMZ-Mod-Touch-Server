@@ -475,7 +475,7 @@ impl Sensor {
 
     /// Liefert den berechneten milli Volt Wert
     ///
-    ///  # Examples
+    /// # Examples
     ///
     /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
@@ -487,11 +487,11 @@ impl Sensor {
         (5000 / 1024) * self.adc_value as u16
     }
 
-    /// Liefert true oder false je nachdem ob der Sensor aktiv Ist
+    /// Liefert true oder false je nachdem ob der Sensor aktiv ist
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
     /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
@@ -502,6 +502,24 @@ impl Sensor {
             0 => false,
             _ => true,
         }
+    }
+
+    /// Indirekter check ob der Sensor "online" ist
+    ///
+    /// Das heist diese Funktion soll prüfen ob der Sensor wenigstens ein mal erfolgreich über
+    /// das Bus System ausgelesen worden ist.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
+    ///
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
+    /// assert_eq!(sensor.is_online(), false);
+    /// ```
+    pub fn is_online(&self) -> bool {
+        self.adc_value > 0 && self.adc_values_average.len() > 0
     }
 
 
@@ -654,6 +672,7 @@ impl Sensor {
         self.config = config;
     }
 
+    /// Berechnet den Mittelwert
     pub fn update_adc_values_average(&mut self) {
         // Nur wenn die Messzelle aktiv ist wird der Mittelwert berechnet
         if !self.is_enabled() { return; }

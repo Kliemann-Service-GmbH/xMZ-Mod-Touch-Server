@@ -103,16 +103,19 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.check();
     /// ```
     pub fn check(&mut self) {
-        debug!("\tCheck XMZModTouchServer ...");
+        debug!("Check XMZModTouchServer ...");
         for (num_zone, zone) in self.get_zones().iter().enumerate() {
-            // debug!("\t\Check Zone {} ...", num_zone);
+            // debug!("\tCheck Zone {} ...", num_zone);
             for (num_kombisensor, kombisensor) in zone.get_kombisensors().iter().enumerate() {
-                // debug!("\t\t\Check Kombisensor {} ...", num_kombisensor);
+                // debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
                 for (num_sensor, sensor) in kombisensor.get_sensors().iter().enumerate() {
-                    // debug!("\t\t\t\Check Sensor {} ...", num_sensor);
+                    // debug!("\t\t\tCheck Sensor {} ...", num_sensor);
                     // Begin checks sensor ...
+                    // Wenn der Sensor nicht online ist einfach überspringen
+                    if !sensor.is_online() { return }
+
+                    // Direktwert
                     if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 {
-                        println!("sensor.get_concentration() {} >= sensor.alarm3_direct_value {}", sensor.get_concentration(), sensor.alarm3_direct_value);
                         if let Ok(mut leds) = self.leds.lock() {
                             leds.set(5);
                             leds.set(6);
@@ -122,6 +125,31 @@ impl XMZModTouchServer {
                             relais.set(2);
                             relais.set(3);
                             relais.set(4);
+                        }
+                        // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
+                    } else {
+                        // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
+                    }
+
+                    // AP2
+                    if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min as f64 {
+                        if let Ok(mut leds) = self.leds.lock() {
+                            leds.set(5);
+                            leds.set(6);
+                        }
+                        if let Ok(mut relais) = self.relais.lock() {
+                            relais.set(2);
+                            relais.set(3);
+                        }
+                    }
+
+                    // AP1
+                    if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min as f64 {
+                        if let Ok(mut leds) = self.leds.lock() {
+                            leds.set(5);
+                        }
+                        if let Ok(mut relais) = self.relais.lock() {
+                            relais.set(2);
                         }
                     }
                 }
@@ -439,7 +467,6 @@ impl XMZModTouchServer {
     pub fn get_relais_mut(&mut self) -> &mut Mutex<ShiftRegister> {
         &mut self.relais
     }
-
 
     /// Uptime des Servers
     ///
