@@ -12,6 +12,7 @@ use shift_register::{ShiftRegister, ShiftRegisterType};
 use std::collections::HashSet;
 use xmz_mod_touch_server::Zone;
 use std::sync::{Arc, Mutex};
+use std::cell::RefCell;
 
 
 pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
@@ -25,13 +26,12 @@ pub struct XMZModTouchServer {
     // `create_time` wird nur ein mal beim erstellen der Konfiguration gesetzt
     create_time: chrono::DateTime<UTC>,
     // Wird jedes mal wenn der Serverprozess gestartet wurde, gesetzt
-    // #[serde(skip_deserializing)]
     start_time: chrono::DateTime<UTC>,
     // Ausnahmen
     pub exceptions: HashSet<Exception>,
     zones: Vec<Zone>,
-    leds: ShiftRegister,
-    relais: ShiftRegister,
+    leds: Mutex<ShiftRegister>,
+    relais: Mutex<ShiftRegister>,
 }
 
 impl XMZModTouchServer {
@@ -58,8 +58,8 @@ impl XMZModTouchServer {
             start_time: chrono::UTC::now(),
             exceptions: HashSet::new(),
             zones: vec![],
-            leds: ShiftRegister::new(ShiftRegisterType::LED),
-            relais: ShiftRegister::new(ShiftRegisterType::Relais),
+            leds: Mutex::new(ShiftRegister::new(ShiftRegisterType::LED)),
+            relais: Mutex::new(ShiftRegister::new(ShiftRegisterType::Relais)),
         }
     }
 
@@ -72,7 +72,7 @@ impl XMZModTouchServer {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,no_run
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new_from_config();
@@ -103,14 +103,55 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.check();
     /// ```
     pub fn check(&mut self) {
-        debug!("\tCheck XMZModTouchServer ...");
-        for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
-            // debug!("\t\Check Zone {} ...", num_zone);
-            for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
-                // debug!("\t\t\Check Kombisensor {} ...", num_kombisensor);
-                for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
-                    // debug!("\t\t\t\Check Sensor {} ...", num_sensor);
+        debug!("Check XMZModTouchServer ...");
+        for (num_zone, zone) in self.get_zones().iter().enumerate() {
+            // debug!("\tCheck Zone {} ...", num_zone);
+            for (num_kombisensor, kombisensor) in zone.get_kombisensors().iter().enumerate() {
+                // debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
+                for (num_sensor, sensor) in kombisensor.get_sensors().iter().enumerate() {
+                    // debug!("\t\t\tCheck Sensor {} ...", num_sensor);
                     // Begin checks sensor ...
+                    // Wenn der Sensor nicht online ist einfach überspringen
+                    if !sensor.is_online() { return }
+
+                    // Direktwert
+                    if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 {
+                        if let Ok(mut leds) = self.leds.lock() {
+                            leds.set(5);
+                            leds.set(6);
+                            leds.set(7);
+                        }
+                        if let Ok(mut relais) = self.relais.lock() {
+                            relais.set(2);
+                            relais.set(3);
+                            relais.set(4);
+                        }
+                        // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
+                    } else {
+                        // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
+                    }
+
+                    // AP2
+                    if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min as f64 {
+                        if let Ok(mut leds) = self.leds.lock() {
+                            leds.set(5);
+                            leds.set(6);
+                        }
+                        if let Ok(mut relais) = self.relais.lock() {
+                            relais.set(2);
+                            relais.set(3);
+                        }
+                    }
+
+                    // AP1
+                    if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min as f64 {
+                        if let Ok(mut leds) = self.leds.lock() {
+                            leds.set(5);
+                        }
+                        if let Ok(mut relais) = self.relais.lock() {
+                            relais.set(2);
+                        }
+                    }
                 }
             }
         }
@@ -129,13 +170,11 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.update();
     /// ```
     pub fn update(&mut self) {
-        // debug!("\tUpdate XMZModTouchServer ...");
+        debug!("\tUpdate XMZModTouchServer ...");
         for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
-            // debug!("\t\tUpdate Zone {} ...", num_zone);
+            debug!("\t\tUpdate Zone {} ...", num_zone);
             for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
-                // debug!("\t\t\tUpdate Kombisensor {} ...", num_kombisensor);
-
-                // Update Kombisensor Daten via Modbus
+                debug!("\t\t\tUpdate Kombisensor {} via Modbus ...", num_kombisensor);
                 match kombisensor.get_from_modbus() {
                     Err(e) => {
                         // println!("Zone: {} Kombisensor: {} Error: {:?}", &num_zone, &num_kombisensor, e);
@@ -148,6 +187,7 @@ impl XMZModTouchServer {
                 for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
                     // Aktualisiert den Tuppel Vector. In dem Tuppel werden die Daten der letzten 15Minuten gehalten,
                     // mit diesen wird der Mittelwert gebildet
+                    debug!("\t\t\tUpdate Sensor {} average ...", num_sensor);
                     sensor.update_adc_values_average();
                 }
             }
@@ -158,20 +198,34 @@ impl XMZModTouchServer {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,no_run
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// xmz_mod_touch_server.basic_configuration();
+    /// xmz_mod_touch_server.basic_configuration().unwrap();
     /// ```
-    pub fn basic_configuration(&mut self) {
-        // Grundzustand definieren
-        self.leds.reset();
-        self.relais.reset();
-        // Power LED an
-        self.leds.set(1);
-        // Relais Störung anziehen (normal closed)
-        self.relais.set(1);
+    pub fn basic_configuration(&mut self) -> Result<()> {
+        loop {
+            if let Ok(mut leds) = self.leds.lock() {
+                debug!("Basic configuration server LEDs");
+                leds.reset();
+                // Power LED an
+                leds.set(1)?;
+                break;
+            }
+        }
+
+        loop {
+            if let Ok(mut relais) = self.relais.lock() {
+                debug!("Basic configuration server RELAIS");
+                relais.reset();
+                // Relais Störung anziehen (normal closed)
+                relais.set(1)?;
+                break;
+            }
+        }
+
+        Ok(())
     }
 
     /// Liefert die Versionsnummer des XMZModTouchServer's
@@ -354,7 +408,7 @@ impl XMZModTouchServer {
         self.zones.push(Zone::new());
     }
 
-    /// Referenz auf die LED's ShiftRegister
+    /// Atomic Reference Counted Mutex einer Referenz auf die LED's ShiftRegister
     ///
     /// # Examples
     ///
@@ -362,14 +416,14 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let server_leds = xmz_mod_touch_server.get_leds();
+    /// let server_leds = xmz_mod_touch_server.get_leds().lock().unwrap();
     /// assert_eq!(server_leds.data, 0);
     /// ```
-    pub fn get_leds(&self) -> &ShiftRegister {
+    pub fn get_leds(&self) -> &Mutex<ShiftRegister> {
         &self.leds
     }
 
-    /// Mutable Referenz auf die LED's ShiftRegister
+    /// Atomic Reference Counted Mutex einer Mutable Referenz auf die LED's ShiftRegister
     ///
     /// # Examples
     ///
@@ -377,14 +431,14 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let mut server_leds = xmz_mod_touch_server.get_leds();
+    /// let mut server_leds = xmz_mod_touch_server.get_leds().lock().unwrap();
     /// assert_eq!(server_leds.data, 0);
     /// ```
-    pub fn get_leds_mut(&mut self) -> &mut ShiftRegister {
+    pub fn get_leds_mut(&mut self) -> &mut Mutex<ShiftRegister> {
         &mut self.leds
     }
 
-    /// Referenz auf die Relais ShiftRegister
+    /// Atomic Reference Counted Mutex einer Referenz auf die Relais ShiftRegister
     ///
     /// # Examples
     ///
@@ -392,14 +446,14 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let server_relais = xmz_mod_touch_server.get_relais();
+    /// let server_relais = xmz_mod_touch_server.get_relais().lock().unwrap();
     /// assert_eq!(server_relais.data, 0);
     /// ```
-    pub fn get_relais(&self) -> &ShiftRegister {
+    pub fn get_relais(&self) -> &Mutex<ShiftRegister> {
         &self.relais
     }
 
-    /// Mutable Referenz auf die Relais ShiftRegister
+    /// Atomic Reference Counted Mutex einer Mutable Referenz auf die Relais ShiftRegister
     ///
     /// # Examples
     ///
@@ -407,13 +461,12 @@ impl XMZModTouchServer {
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let mut server_relais = xmz_mod_touch_server.get_relais();
+    /// let mut server_relais = xmz_mod_touch_server.get_relais().lock().unwrap();
     /// assert_eq!(server_relais.data, 0);
     /// ```
-    pub fn get_relais_mut(&mut self) -> &mut ShiftRegister {
+    pub fn get_relais_mut(&mut self) -> &mut Mutex<ShiftRegister> {
         &mut self.relais
     }
-
 
     /// Uptime des Servers
     ///

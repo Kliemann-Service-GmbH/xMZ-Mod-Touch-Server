@@ -11,7 +11,9 @@ pub enum ExceptionType {
     WartungsintervalReached,
     KombisensorOffline { num_zone: usize },
     KombisensorModbusError { num_zone: usize, num_kombisensor: usize },
-    SensorDirectValue { num_zone: usize, sensor: usize },
+    SensorAP3DirectValue { num_zone: usize, num_sensor: usize },
+    SensorAP2Average15min { num_zone: usize, num_sensor: usize },
+    SensorAP1Average15min { num_zone: usize, num_sensor: usize },
 }
 
 #[derive(Debug)]

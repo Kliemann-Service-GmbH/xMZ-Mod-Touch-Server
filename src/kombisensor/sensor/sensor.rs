@@ -12,8 +12,8 @@ use std::fmt;
 
 // Nur Messwerte der letzten 15Minuten behalten
 // Die Konstante wird in Sekunden angegeben
-// pub const AVERAGE_15MIN_SEC: i64 = 15 * 60;
-pub const AVERAGE_15MIN_SEC: i64 = 60;
+pub const AVERAGE_15MIN_SEC: i64 = 15 * 60;
+// pub const AVERAGE_15MIN_SEC: i64 = 10;
 
 /// Typ der Messzelle
 #[derive(Clone)]
@@ -71,9 +71,9 @@ pub struct Sensor {
     error_count: u64,
     /// 15min Average
     adc_value_average_15min: f64,
-    alarm1_average_15min: u32,
-    alarm2_average_15min: u32,
-    alarm3_direct_value: u32,
+    pub alarm1_average_15min: u32,
+    pub alarm2_average_15min: u32,
+    pub alarm3_direct_value: u32,
     #[serde(skip_deserializing, skip_serializing)]
     adc_values_average: Vec<(u16, DateTime<UTC>)>,
 }
@@ -121,10 +121,22 @@ impl Sensor {
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
     /// let sensor_sim_no2_fix = Sensor::new_with_type(SensorType::SimulationNO2Fix);
-    /// assert_eq!(sensor_sim_no2_fix.get_concentration(), 20.0)
+    /// sensor_sim_no2_fix.get_concentration();
     /// ```
     pub fn new_with_type(sensor_type: SensorType) -> Self {
         match sensor_type {
+            SensorType::NemotoNO2 => {
+                Sensor {
+                    max_value: 30,
+                    adc_value_at_nullgas: 920,
+                    adc_value_at_messgas: 564,
+                    concentration_at_messgas: 20,       // 20ppm Messgas
+                    alarm1_average_15min: 3, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
+                    alarm2_average_15min: 6, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
+                    alarm3_direct_value: 15, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
+                    sensor_type: sensor_type,
+                    ..Default::default() }
+            }
             SensorType::SimulationNO2Fix => {
                 Sensor {
                     adc_value: 564,
@@ -138,9 +150,45 @@ impl Sensor {
                     sensor_type: sensor_type,
                     ..Default::default() }
             }
+            SensorType::SimulationNO2 => {
+                Sensor {
+                    max_value: 30,
+                    adc_value_at_nullgas: 920,
+                    adc_value_at_messgas: 564,
+                    concentration_at_messgas: 20,       // 20ppm Messgas
+                    alarm1_average_15min: 3, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
+                    alarm2_average_15min: 6, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
+                    alarm3_direct_value: 15, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
+                    sensor_type: sensor_type,
+                    ..Default::default() }
+            }
+            SensorType::NemotoCO => {
+                Sensor {
+                    max_value: 300,
+                    adc_value_at_nullgas: 112,
+                    adc_value_at_messgas: 760,
+                    concentration_at_messgas: 270,       // 280ppm Messgas
+                    alarm1_average_15min: 30, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
+                    alarm2_average_15min: 60, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
+                    alarm3_direct_value: 150, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
+                    sensor_type: sensor_type,
+                    ..Default::default() }
+            }
             SensorType::SimulationCOFix => {
                 Sensor {
                     adc_value: 760,
+                    max_value: 300,
+                    adc_value_at_nullgas: 112,
+                    adc_value_at_messgas: 760,
+                    concentration_at_messgas: 270,       // 280ppm Messgas
+                    alarm1_average_15min: 30, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
+                    alarm2_average_15min: 60, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
+                    alarm3_direct_value: 150, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
+                    sensor_type: sensor_type,
+                    ..Default::default() }
+            }
+            SensorType::SimulationCO => {
+                Sensor {
                     max_value: 300,
                     adc_value_at_nullgas: 112,
                     adc_value_at_messgas: 760,
@@ -384,8 +432,8 @@ impl Sensor {
     /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
-    /// assert_eq!(sensor.get_concentration(), 0.0);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+    /// sensor.get_concentration();
     /// ```
     pub fn get_concentration(&self) -> f64 {
         self.concentration_from(self.adc_value as f64)
@@ -398,8 +446,8 @@ impl Sensor {
     /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
-    /// assert_eq!(sensor.get_concentration_average_15min(), 0.0);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+    /// sensor.get_concentration_average_15min();
     /// ```
     pub fn get_concentration_average_15min(&self) -> f64 {
         self.concentration_from(self.adc_value_average_15min)
@@ -427,23 +475,23 @@ impl Sensor {
 
     /// Liefert den berechneten milli Volt Wert
     ///
-    ///  # Examples
+    /// # Examples
     ///
     /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
-    /// let sensor = Sensor::new_with_type(SensorType::NemotoNO2);
-    /// assert_eq!(sensor.get_mv(), 0);
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+    /// sensor.get_mv();
     /// ```
     pub fn get_mv(&self) -> u16 {
         (5000 / 1024) * self.adc_value as u16
     }
 
-    /// Liefert true oder false je nachdem ob der Sensor aktiv Ist
+    /// Liefert true oder false je nachdem ob der Sensor aktiv ist
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     ///
     /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
@@ -454,6 +502,24 @@ impl Sensor {
             0 => false,
             _ => true,
         }
+    }
+
+    /// Indirekter check ob der Sensor "online" ist
+    ///
+    /// Das heist diese Funktion soll prüfen ob der Sensor wenigstens ein mal erfolgreich über
+    /// das Bus System ausgelesen worden ist.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
+    ///
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2);
+    /// assert_eq!(sensor.is_online(), false);
+    /// ```
+    pub fn is_online(&self) -> bool {
+        self.adc_value > 0 && self.adc_values_average.len() > 0
     }
 
 
@@ -606,6 +672,7 @@ impl Sensor {
         self.config = config;
     }
 
+    /// Berechnet den Mittelwert
     pub fn update_adc_values_average(&mut self) {
         // Nur wenn die Messzelle aktiv ist wird der Mittelwert berechnet
         if !self.is_enabled() { return; }
@@ -613,30 +680,30 @@ impl Sensor {
         // Update tuppel with the current (adc_value, timestamp)
         self.adc_values_average.push((self.adc_value, UTC::now()));
 
-        // Die [`binary_search_by_key()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.binary_search_by_key)
-        // erhält als ersten Parameter die AVERAGE_15MIN_SEC Konstante, dann eine Referenz auf das Tuppel mit den (Messwerten, Zeitstempeln),
-        // und als letzten Parameter die Bedingung die dem ersten Parameter vergleichen werden soll.
-        // In diesem Beispiel die vergangen Sekunden seit dem der Timestamp erstellt wurde
+        //  [`position()`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.position)
+        // Searches for an element in an iterator, returning its index. We use the index then to [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
         //
-        if let Ok(index) = self.adc_values_average.binary_search_by_key(&AVERAGE_15MIN_SEC, |&(_, timestamp)| UTC::now().signed_duration_since(timestamp).num_seconds() ) {
-            // Mit split off kann man nun den Vector teilen, es bleiben nur noch die (Messerte, Zeitstempel) der letzten AVERAGE_15MIN_SEC übrig.
+        if let Some(index) = self.adc_values_average.iter().position(|&(_, timestamp)| UTC::now().signed_duration_since(timestamp).num_seconds() < AVERAGE_15MIN_SEC ) {
+            // Mit `split_off()` kann man nun den Vector teilen, es bleiben nur noch die (Messerte, Zeitstempel) der letzten AVERAGE_15MIN_SEC übrig.
             // **Dieser Rest wird nun wieder als adc_values_average übernommen, alle anderen Werte werden verworfen.**
             //
             self.adc_values_average = self.adc_values_average.split_off(index);
-
-            // // // Nochmal rein guggen obs auch so ist ><
-            // // for (num, adc_values_average) in adc_values_average.clone().iter().enumerate() {
-            // //     println!("{:?}, {:?}", num, adc_values_average);
-            // // };
-
-            let num_adc_values_average = self.adc_values_average.len();
-            let mut sum_adc_values_average = 0;
-            for &(value, _) in self.adc_values_average.iter(){
-                sum_adc_values_average += value;
-            }
-
-            self.adc_value_average_15min = sum_adc_values_average as f64 / num_adc_values_average as f64;
         }
+
+        // // DEBUG
+        // for (num, adc_values_average) in self.adc_values_average.clone().iter().enumerate() {
+        //     println!("{:?}, {:?}", num, adc_values_average);
+        // };
+
+        let num_adc_values_average = self.adc_values_average.len();
+        debug!("num adc_values_average: {}", num_adc_values_average);
+
+        let mut sum_adc_values_average: u64 = 0;
+        for &(value, _) in self.adc_values_average.iter(){
+            sum_adc_values_average += value as u64;
+        }
+
+        self.adc_value_average_15min = sum_adc_values_average as f64 / num_adc_values_average as f64;
     }
 
 }

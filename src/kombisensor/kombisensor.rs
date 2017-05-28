@@ -13,6 +13,7 @@ pub struct Kombisensor {
     firmware_version: String,
     modbus_device: String,
     modbus_address: u8,
+    modbus_debug: bool,
     sensors: Vec<Sensor>,
     error_count: u64,
 }
@@ -46,6 +47,7 @@ impl Kombisensor {
             firmware_version: "0.0.0".to_string(),
             modbus_address: 247,
             modbus_device: "/dev/ttyUSB0".to_string(),
+            modbus_debug: false,
             sensors: vec![
                 Sensor::new_with_type(SensorType::NemotoNO2),
                 Sensor::new_with_type(SensorType::NemotoCO),
@@ -69,14 +71,22 @@ impl Kombisensor {
     /// use xmz_mod_touch_server::{Kombisensor, KombisensorType};
     /// let kombisensor = Kombisensor::new_with_type(KombisensorType::RAGas);
     ///
-    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS0".to_string());
+    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS1".to_string());
     /// ```
     pub fn new_with_type(kombisensor_type: KombisensorType) -> Self {
         match kombisensor_type {
             KombisensorType::RAGas => {
                 Kombisensor {
                     kombisensor_type: kombisensor_type,
-                    modbus_device: "/dev/ttyS0".to_string(),
+                    modbus_device: "/dev/ttyS1".to_string(),
+                    ..Default::default()
+                }
+            }
+            KombisensorType::RAGasSimulation => {
+                Kombisensor {
+                    kombisensor_type: kombisensor_type,
+                    modbus_device: "/dev/ttyUSB0".to_string(),
+                    modbus_debug: true,
                     ..Default::default()
                 }
             }
@@ -193,11 +203,48 @@ impl Kombisensor {
     /// use xmz_mod_touch_server::Kombisensor;
     /// let mut kombisensor = Kombisensor::new();
     ///
-    /// kombisensor.set_modbus_device("/dev/ttyS0".to_string());
-    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS0".to_string());
+    /// kombisensor.set_modbus_device("/dev/ttyS1".to_string());
+    /// assert_eq!(kombisensor.get_modbus_device(), "/dev/ttyS1".to_string());
     /// ```
     pub fn set_modbus_device(&mut self, modbus_device: String) {
         self.modbus_device = modbus_device
+    }
+
+    /// Get modbus_debug
+    ///
+    /// # Return values
+    ///
+    /// Liefert die Modbus Device Adresse als boolen
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    /// let kombisensor = Kombisensor::new();
+    ///
+    /// assert_eq!(kombisensor.get_modbus_debug(), false);
+    /// ```
+    pub fn get_modbus_debug(&self) -> bool {
+        self.modbus_debug
+    }
+
+    /// Set modbus_debug
+    ///
+    /// # Parameters
+    ///
+    /// * `modbus_debug`    - String mit der neuen Modbus Device Adresse
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    /// let mut kombisensor = Kombisensor::new();
+    ///
+    /// kombisensor.set_modbus_debug(true);
+    /// assert_eq!(kombisensor.get_modbus_debug(), true);
+    /// ```
+    pub fn set_modbus_debug(&mut self, modbus_debug: bool) {
+        self.modbus_debug = modbus_debug
     }
 
     /// Liefert eine Referenz auf einen Vector mit den Sensoren
@@ -339,12 +386,21 @@ impl Kombisensor {
     /// assert!(kombisensor.get_from_modbus().is_ok());
     /// ```
     pub fn get_from_modbus(&mut self) -> Result<()> {
-        use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH};
+        use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH, SerialMode, RequestToSendMode};
 
         let mut modbus = Modbus::new_rtu(&self.modbus_device, 9600, 'N', 8, 1)?;
         modbus.set_slave(self.modbus_address)?;
 
-        // modbus.set_debug(true);
+        // Debug Modus einschalten wenn gewünscht
+        modbus.set_debug(self.modbus_debug)?;
+
+        if self.kombisensor_type == KombisensorType::RAGas {
+            // debug!("modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)");
+            // modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)?;
+            debug!("modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)");
+            modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)?;
+        }
+
         modbus.connect()?;
 
         let mut response_register = vec![0u16; MODBUS_RTU_MAX_ADU_LENGTH as usize];
