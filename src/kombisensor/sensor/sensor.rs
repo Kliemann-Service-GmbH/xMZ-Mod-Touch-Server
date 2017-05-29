@@ -63,7 +63,7 @@ pub struct Sensor {
     concentration_at_nullgas: u16,
     concentration_at_messgas: u16,
     // Typ der Messzelle
-    pub sensor_type: SensorType,
+    sensor_type: SensorType,
     /// SI Einheit des Sensors (ppm, % UEG, Vol %)
     si: SI,
     config: u16,
@@ -97,7 +97,7 @@ impl Sensor {
             adc_value_at_messgas: 0,
             concentration_at_nullgas: 0,
             concentration_at_messgas: 0,
-            sensor_type: SensorType::NemotoNO2,
+            sensor_type: SensorType::SimulationNO2Fix,
             si: SI::ppm,
             config: 0,
             error_count: 0,
@@ -329,7 +329,7 @@ impl Sensor {
         self.config
     }
 
-    /// Liefert den Typen des Sensors
+    /// Liefert den Typ des Sensors
     ///
     /// # Examples
     ///
@@ -337,7 +337,7 @@ impl Sensor {
     /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
     /// let sensor = Sensor::new();
     ///
-    /// assert_eq!(sensor.get_sensor_type(), SensorType::NemotoNO2);
+    /// assert_eq!(sensor.get_sensor_type(), SensorType::SimulationNO2Fix);
     /// ```
     pub fn get_sensor_type(&self) -> SensorType {
         self.sensor_type.clone()
