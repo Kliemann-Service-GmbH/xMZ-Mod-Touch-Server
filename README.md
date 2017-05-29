@@ -1,5 +1,5 @@
 # Serverteil
-## 'xMZ-Mod-Touch'-Platform [![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)
+## der 'xMZ-Mod-Touch'-Platform [![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server)
 
 [Projektseite |][homepage]&nbsp;[Dokumentation |][doku]&nbsp;[Repo auf Github.com |][repo]
 
@@ -36,14 +36,14 @@ cargo test
 ## Links
 
 * [https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software](https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software)
-* Dokumentation [http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html](http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html)
+* Dokumentation [http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_mod_touch_server/index.html](http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_mod_touch_server/index.html)
 * Command Line Parser [https://github.com/kbknapp/clap-rs](https://github.com/kbknapp/clap-rs)
 * RA-GAS CO-NO2-Kombisensor-Mod [https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod)
 
-##
+## Props
 Das verwendete [CSS File](http://s3.jfh.me/css/john-full.css) stammt von [http://s3.jfh.me/css/john-full.css](http://s3.jfh.me/css/john-full.css)
 
 [1]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Software
-[homepage]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server
+[homepage]: https://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server
 [repo]: https://github.com/Kliemann-Service-GmbH/xMZ-Mod-Touch-Server
-[doku]: http://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_server/index.html
+[doku]: https://kliemann-service-gmbh.github.io/xMZ-Mod-Touch-Server/xmz_mod_touch_server/index.html

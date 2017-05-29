@@ -14,7 +14,7 @@ path = "src/bin/xmz_mod_touch_server.rs"
 doc = false
 
 [[bin]]
-name = "xmz_generate_config"
+name = "xmz-generate-config"
 path = "src/bin/xmz_generate_config.rs"
 doc = false
 
