@@ -128,6 +128,16 @@ impl XMZModTouchServer {
                         }
                         // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
                     } else {
+                        if let Ok(mut leds) = self.leds.lock() {
+                            leds.clear(5);
+                            leds.clear(6);
+                            leds.clear(7);
+                        }
+                        if let Ok(mut relais) = self.relais.lock() {
+                            relais.clear(2);
+                            relais.clear(3);
+                            relais.clear(4);
+                        }
                         // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
                     }
 
@@ -141,6 +151,15 @@ impl XMZModTouchServer {
                             relais.set(2);
                             relais.set(3);
                         }
+                    } else {
+                        if let Ok(mut leds) = self.leds.lock() {
+                            leds.clear(5);
+                            leds.clear(6);
+                        }
+                        if let Ok(mut relais) = self.relais.lock() {
+                            relais.clear(2);
+                            relais.clear(3);
+                        }
                     }
 
                     // AP1
@@ -150,6 +169,13 @@ impl XMZModTouchServer {
                         }
                         if let Ok(mut relais) = self.relais.lock() {
                             relais.set(2);
+                        }
+                    } else {
+                        if let Ok(mut leds) = self.leds.lock() {
+                            leds.clear(5);
+                        }
+                        if let Ok(mut relais) = self.relais.lock() {
+                            relais.clear(2);
                         }
                     }
                 }
