@@ -1,5 +1,19 @@
 //! JSON Web API der xMZ-Mod-Touch-Server Platform
 //!
+//! Übersicht über die möglichen URL's
+//!
+//! |URL|Beschreibung|
+//! |------------------------------------------------------------------------|------------------------------------------------------------------------|
+//! |[http://localhost:3000](http://localhost:3000)|Index, komplette Server Datenstruktur wird als JSON Objekt zurück gegeben|
+//! |[http://localhost:3000/api/v1](http://localhost:3000/api/v1)|Index, komplette Server Datenstruktur wird als JSON Objekt zurück gegeben|
+//! |[http://localhost:3000/api/v1/zones](http://localhost:3000/api/v1/zones)|Alle Zonen abfragen|
+//! |[http://localhost:3000/api/v1/zone/0](http://localhost:3000/api/v1/zone/0)|Eine Zone abfragen, ZoneID als Parameter übergeben|
+//! |[http://localhost:3000/api/v1/zone/0/kombisensors](http://localhost:3000/api/v1/zone/0/kombisensors)|Alle Sensoren des Kombisensors abfragen|
+//! |[http://localhost:3000/api/v1/zone/0/kombisensor/0](http://localhost:3000/api/v1/zone/0/kombisensor/0)||
+//! |[http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors](http://localhost:3000/api/v1/zone/0/kombisensor/0/sensors)|Alle Sensoren des Kombisensors abfragen|
+//! |[http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0](http://localhost:3000/api/v1/zone/0/kombisensor/0/sensor/0)|Ein Sensor abfragen, SensorID als weiteren Parameter mit übergeben|
+//! |[http://localhost:3000/api/v1/exceptions](http://localhost:3000/api/v1/exceptions)|Ausnahmen des Servers erfragen|
+//!
 
 // TODO: https://disconnected.systems/blog/rover-rest-api/
 extern crate iron;

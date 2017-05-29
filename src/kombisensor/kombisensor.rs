@@ -2,6 +2,7 @@
 //!
 use errors::*;
 use kombisensor::{Sensor, SensorType};
+use std::fmt;
 
 
 /// Ein Kombisensor kann `n` Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)
@@ -9,7 +10,8 @@ use kombisensor::{Sensor, SensorType};
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct Kombisensor {
-    kombisensor_type: KombisensorType,
+    // Typ des Kombisensors
+    pub kombisensor_type: KombisensorType,
     firmware_version: String,
     modbus_device: String,
     modbus_address: u8,
@@ -461,8 +463,15 @@ impl Kombisensor {
 
         Ok(())
     }
+}
 
-
+impl fmt::Display for KombisensorType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            KombisensorType::RAGas => write!(f, "RA-GAS CO/ NO2 Kombisensor"),
+            KombisensorType::RAGasSimulation => write!(f, "RA-GAS CO/ NO2 Kombisensor (Sim)"),
+        }
+    }
 }
 
 impl Default for Kombisensor {
