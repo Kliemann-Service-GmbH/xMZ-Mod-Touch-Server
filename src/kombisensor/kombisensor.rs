@@ -11,7 +11,7 @@ use std::fmt;
 #[derive(Serialize, Deserialize)]
 pub struct Kombisensor {
     // Typ des Kombisensors
-    pub kombisensor_type: KombisensorType,
+    kombisensor_type: KombisensorType,
     firmware_version: String,
     modbus_device: String,
     modbus_address: u8,
@@ -113,6 +113,24 @@ impl Kombisensor {
     /// ```
     pub fn get_firmware_version(&self) -> String {
         self.firmware_version.clone()
+    }
+
+    /// Liefert den Typ des Kombisensors
+    ///
+    /// # Return values
+    ///
+    /// Liefert den Typ des Kombisensors
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::{Kombisensor, KombisensorType};
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert_eq!(kombisensor.get_kombisensor_type(), KombisensorType::RAGasSimulation);
+    /// ```
+    pub fn get_kombisensor_type(&self) -> KombisensorType {
+        self.kombisensor_type.clone()
     }
 
     /// Set firmware version
