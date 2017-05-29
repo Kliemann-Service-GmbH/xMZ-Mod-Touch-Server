@@ -63,7 +63,7 @@ pub struct Sensor {
     concentration_at_nullgas: u16,
     concentration_at_messgas: u16,
     // Typ der Messzelle
-    sensor_type: SensorType,
+    pub sensor_type: SensorType,
     /// SI Einheit des Sensors (ppm, % UEG, Vol %)
     si: SI,
     config: u16,
