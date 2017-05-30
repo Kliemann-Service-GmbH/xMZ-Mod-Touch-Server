@@ -111,71 +111,72 @@ impl XMZModTouchServer {
                 for (num_sensor, sensor) in kombisensor.get_sensors().iter().enumerate() {
                     // debug!("\t\t\tCheck Sensor {} ...", num_sensor);
                     // Begin checks sensor ...
-                    // Wenn der Sensor nicht online ist einfach überspringen
-                    if !sensor.is_online() { return }
+                    // Nur wenn der Sensor "online" und aktiviert ist
+                    if sensor.is_online() && sensor.is_enabled() {
 
-                    // Direktwert
-                    if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 {
-                        if let Ok(mut leds) = self.leds.lock() {
-                            leds.set(5);
-                            leds.set(6);
-                            leds.set(7);
+                        // Direktwert
+                        if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 {
+                            if let Ok(mut leds) = self.leds.lock() {
+                                leds.set(5);
+                                leds.set(6);
+                                leds.set(7);
+                            }
+                            if let Ok(mut relais) = self.relais.lock() {
+                                relais.set(2);
+                                relais.set(3);
+                                relais.set(4);
+                            }
+                            // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
+                        } else {
+                            if let Ok(mut leds) = self.leds.lock() {
+                                leds.clear(5);
+                                leds.clear(6);
+                                leds.clear(7);
+                            }
+                            if let Ok(mut relais) = self.relais.lock() {
+                                relais.clear(2);
+                                relais.clear(3);
+                                relais.clear(4);
+                            }
+                            // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
                         }
-                        if let Ok(mut relais) = self.relais.lock() {
-                            relais.set(2);
-                            relais.set(3);
-                            relais.set(4);
-                        }
-                        // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
-                    } else {
-                        if let Ok(mut leds) = self.leds.lock() {
-                            leds.clear(5);
-                            leds.clear(6);
-                            leds.clear(7);
-                        }
-                        if let Ok(mut relais) = self.relais.lock() {
-                            relais.clear(2);
-                            relais.clear(3);
-                            relais.clear(4);
-                        }
-                        // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
-                    }
 
-                    // AP2
-                    if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min as f64 {
-                        if let Ok(mut leds) = self.leds.lock() {
-                            leds.set(5);
-                            leds.set(6);
+                        // AP2
+                        if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min as f64 {
+                            if let Ok(mut leds) = self.leds.lock() {
+                                leds.set(5);
+                                leds.set(6);
+                            }
+                            if let Ok(mut relais) = self.relais.lock() {
+                                relais.set(2);
+                                relais.set(3);
+                            }
+                        } else {
+                            if let Ok(mut leds) = self.leds.lock() {
+                                leds.clear(5);
+                                leds.clear(6);
+                            }
+                            if let Ok(mut relais) = self.relais.lock() {
+                                relais.clear(2);
+                                relais.clear(3);
+                            }
                         }
-                        if let Ok(mut relais) = self.relais.lock() {
-                            relais.set(2);
-                            relais.set(3);
-                        }
-                    } else {
-                        if let Ok(mut leds) = self.leds.lock() {
-                            leds.clear(5);
-                            leds.clear(6);
-                        }
-                        if let Ok(mut relais) = self.relais.lock() {
-                            relais.clear(2);
-                            relais.clear(3);
-                        }
-                    }
 
-                    // AP1
-                    if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min as f64 {
-                        if let Ok(mut leds) = self.leds.lock() {
-                            leds.set(5);
-                        }
-                        if let Ok(mut relais) = self.relais.lock() {
-                            relais.set(2);
-                        }
-                    } else {
-                        if let Ok(mut leds) = self.leds.lock() {
-                            leds.clear(5);
-                        }
-                        if let Ok(mut relais) = self.relais.lock() {
-                            relais.clear(2);
+                        // AP1
+                        if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min as f64 {
+                            if let Ok(mut leds) = self.leds.lock() {
+                                leds.set(5);
+                            }
+                            if let Ok(mut relais) = self.relais.lock() {
+                                relais.set(2);
+                            }
+                        } else {
+                            if let Ok(mut leds) = self.leds.lock() {
+                                leds.clear(5);
+                            }
+                            if let Ok(mut relais) = self.relais.lock() {
+                                relais.clear(2);
+                            }
                         }
                     }
                 }
