@@ -421,6 +421,7 @@ impl Kombisensor {
             modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)?;
         }
 
+        // modbus.connect().map_err(|_| self.inc_error_count() );
         modbus.connect()?;
 
         let mut response_register = vec![0u16; MODBUS_RTU_MAX_ADU_LENGTH as usize];
