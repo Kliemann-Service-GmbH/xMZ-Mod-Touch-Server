@@ -28,7 +28,7 @@ pub struct XMZModTouchServer {
     // Wird jedes mal wenn der Serverprozess gestartet wurde, gesetzt
     start_time: chrono::DateTime<UTC>,
     // Ausnahmen
-    pub exceptions: HashSet<Exception>,
+    exceptions: Mutex<HashSet<Exception>>,
     zones: Vec<Zone>,
     leds: Mutex<ShiftRegister>,
     relais: Mutex<ShiftRegister>,
@@ -56,7 +56,7 @@ impl XMZModTouchServer {
             version: env!("CARGO_PKG_VERSION").to_string(),
             create_time: chrono::UTC::now(),
             start_time: chrono::UTC::now(),
-            exceptions: HashSet::new(),
+            exceptions: Mutex::new(HashSet::new()),
             zones: vec![],
             leds: Mutex::new(ShiftRegister::new(ShiftRegisterType::LED)),
             relais: Mutex::new(ShiftRegister::new(ShiftRegisterType::Relais)),
@@ -99,23 +99,30 @@ impl XMZModTouchServer {
     /// ```rust
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
     /// xmz_mod_touch_server.check();
     /// ```
-    pub fn check(&mut self) {
+    pub fn check(&self) {
         debug!("Check XMZModTouchServer ...");
         for (num_zone, zone) in self.get_zones().iter().enumerate() {
             // debug!("\tCheck Zone {} ...", num_zone);
+
+            // Marker ob in dieser Zone ein Alarm war
+            let mut has_alarm = false;
+
             for (num_kombisensor, kombisensor) in zone.get_kombisensors().iter().enumerate() {
                 // debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
                 for (num_sensor, sensor) in kombisensor.get_sensors().iter().enumerate() {
                     // debug!("\t\t\tCheck Sensor {} ...", num_sensor);
                     // Begin checks sensor ...
                     // Nur wenn der Sensor "online" und aktiviert ist
+
                     if sensor.is_online() && sensor.is_enabled() {
 
                         // Direktwert
                         if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 {
+                            has_alarm = true;
+
                             if let Ok(mut leds) = self.leds.lock() {
                                 leds.set(5);
                                 leds.set(6);
@@ -127,22 +134,12 @@ impl XMZModTouchServer {
                                 relais.set(4);
                             }
                             // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
-                        } else {
-                            if let Ok(mut leds) = self.leds.lock() {
-                                leds.clear(5);
-                                leds.clear(6);
-                                leds.clear(7);
-                            }
-                            if let Ok(mut relais) = self.relais.lock() {
-                                relais.clear(2);
-                                relais.clear(3);
-                                relais.clear(4);
-                            }
-                            // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
                         }
 
                         // AP2
                         if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min as f64 {
+                            has_alarm = true;
+
                             if let Ok(mut leds) = self.leds.lock() {
                                 leds.set(5);
                                 leds.set(6);
@@ -151,34 +148,33 @@ impl XMZModTouchServer {
                                 relais.set(2);
                                 relais.set(3);
                             }
-                        } else {
-                            if let Ok(mut leds) = self.leds.lock() {
-                                leds.clear(5);
-                                leds.clear(6);
-                            }
-                            if let Ok(mut relais) = self.relais.lock() {
-                                relais.clear(2);
-                                relais.clear(3);
-                            }
                         }
 
                         // AP1
                         if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min as f64 {
+                            has_alarm = true;
+
                             if let Ok(mut leds) = self.leds.lock() {
                                 leds.set(5);
                             }
                             if let Ok(mut relais) = self.relais.lock() {
                                 relais.set(2);
                             }
-                        } else {
-                            if let Ok(mut leds) = self.leds.lock() {
-                                leds.clear(5);
-                            }
-                            if let Ok(mut relais) = self.relais.lock() {
-                                relais.clear(2);
-                            }
                         }
                     }
+                }
+            }
+
+            if !has_alarm {
+                if let Ok(mut leds) = self.leds.lock() {
+                    leds.clear(5);
+                    leds.clear(6);
+                    leds.clear(7);
+                }
+                if let Ok(mut relais) = self.relais.lock() {
+                    relais.clear(2);
+                    relais.clear(3);
+                    relais.clear(4);
                 }
             }
         }
@@ -281,13 +277,13 @@ impl XMZModTouchServer {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
     /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 0);
     /// ```
-    pub fn get_exceptions(&self) -> &HashSet<Exception> {
+    pub fn get_exceptions(&self) -> &Mutex<HashSet<Exception>> {
         &self.exceptions
     }
 
@@ -303,9 +299,6 @@ impl XMZModTouchServer {
     /// ```rust,ignore
     /// use xmz_mod_touch_server::XMZModTouchServer;
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// xmz_mod_touch_server.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
-    ///
-    /// assert!(xmz_mod_touch_server.get_exception(0).is_some());
     /// ```
     pub fn get_exception(&self, id: usize) -> Option<&Exception> {
         unimplemented!()
@@ -319,23 +312,12 @@ impl XMZModTouchServer {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use xmz_mod_touch_server::{XMZModTouchServer, Exception, ExceptionType};
-    ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 0);
-    ///
-    /// xmz_mod_touch_server.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
-    /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 1);
-    ///
-    /// // if the exception is alreddy present, dont insert again
-    /// xmz_mod_touch_server.add_exception(Exception::new(ExceptionType::WartungsintervalReached));
-    /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 1);
     /// ```
     pub fn add_exception(&mut self, exception: Exception) {
-        if !self.exceptions.contains(&exception) {
-            self.exceptions.insert(exception);
-        }
+        unimplemented!()
     }
 
 
