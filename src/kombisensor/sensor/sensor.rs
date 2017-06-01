@@ -711,8 +711,10 @@ impl Sensor {
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            SensorType::NemotoNO2 => write!(f, "Nemoto™ NO2"),
-            SensorType::NemotoCO => write!(f, "Nemoto™ CO"),
+            // SensorType::NemotoNO2 => write!(f, "Nemoto™ NO2"),
+            SensorType::NemotoNO2 => write!(f, "NO2 Messzelle"),
+            // SensorType::NemotoCO => write!(f, "Nemoto™ CO"),
+            SensorType::NemotoCO => write!(f, "CO Messzelle"),
             SensorType::SimulationNO2Fix => write!(f, "Simulation NO2 (Fix)"),
             SensorType::SimulationCOFix => write!(f, "Simulation CO (Fix)"),
             SensorType::SimulationNO2 => write!(f, "Simulation NO2"),
