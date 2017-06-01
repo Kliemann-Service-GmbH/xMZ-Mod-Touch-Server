@@ -71,9 +71,9 @@ pub struct Sensor {
     error_count: u64,
     /// 15min Average
     adc_value_average_15min: f64,
-    pub alarm1_average_15min: u32,
-    pub alarm2_average_15min: u32,
-    pub alarm3_direct_value: u32,
+    pub alarm1_average_15min: f64,
+    pub alarm2_average_15min: f64,
+    pub alarm3_direct_value: f64,
     #[serde(skip_deserializing, skip_serializing)]
     adc_values_average: Vec<(u16, DateTime<UTC>)>,
 }
@@ -102,9 +102,9 @@ impl Sensor {
             config: 0,
             error_count: 0,
             adc_value_average_15min: 0.0,
-            alarm1_average_15min: 0,
-            alarm2_average_15min: 0,
-            alarm3_direct_value: 0,
+            alarm1_average_15min: 0.0,
+            alarm2_average_15min: 0.0,
+            alarm3_direct_value: 0.0,
             adc_values_average: vec![],
         }
     }
@@ -131,9 +131,9 @@ impl Sensor {
                     adc_value_at_nullgas: 920,
                     adc_value_at_messgas: 564,
                     concentration_at_messgas: 20,       // 20ppm Messgas
-                    alarm1_average_15min: 3, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
-                    alarm2_average_15min: 6, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
-                    alarm3_direct_value: 15, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
+                    alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
+                    alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
+                    alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
                     sensor_type: sensor_type,
                     ..Default::default() }
             }
@@ -144,9 +144,9 @@ impl Sensor {
                     adc_value_at_nullgas: 920,
                     adc_value_at_messgas: 564,
                     concentration_at_messgas: 20,       // 20ppm Messgas
-                    alarm1_average_15min: 3, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
-                    alarm2_average_15min: 6, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
-                    alarm3_direct_value: 15, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
+                    alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
+                    alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
+                    alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
                     sensor_type: sensor_type,
                     ..Default::default() }
             }
@@ -156,9 +156,9 @@ impl Sensor {
                     adc_value_at_nullgas: 920,
                     adc_value_at_messgas: 564,
                     concentration_at_messgas: 20,       // 20ppm Messgas
-                    alarm1_average_15min: 3, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
-                    alarm2_average_15min: 6, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
-                    alarm3_direct_value: 15, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
+                    alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
+                    alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
+                    alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
                     sensor_type: sensor_type,
                     ..Default::default() }
             }
@@ -168,9 +168,9 @@ impl Sensor {
                     adc_value_at_nullgas: 112,
                     adc_value_at_messgas: 760,
                     concentration_at_messgas: 270,       // 280ppm Messgas
-                    alarm1_average_15min: 30, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
-                    alarm2_average_15min: 60, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
-                    alarm3_direct_value: 150, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
+                    alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
+                    alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
+                    alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
                     sensor_type: sensor_type,
                     ..Default::default() }
             }
@@ -181,9 +181,9 @@ impl Sensor {
                     adc_value_at_nullgas: 112,
                     adc_value_at_messgas: 760,
                     concentration_at_messgas: 270,       // 280ppm Messgas
-                    alarm1_average_15min: 30, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
-                    alarm2_average_15min: 60, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
-                    alarm3_direct_value: 150, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
+                    alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
+                    alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
+                    alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
                     sensor_type: sensor_type,
                     ..Default::default() }
             }
@@ -193,9 +193,9 @@ impl Sensor {
                     adc_value_at_nullgas: 112,
                     adc_value_at_messgas: 760,
                     concentration_at_messgas: 270,       // 280ppm Messgas
-                    alarm1_average_15min: 30, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
-                    alarm2_average_15min: 60, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
-                    alarm3_direct_value: 150, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
+                    alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
+                    alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
+                    alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
                     sensor_type: sensor_type,
                     ..Default::default() }
             }
