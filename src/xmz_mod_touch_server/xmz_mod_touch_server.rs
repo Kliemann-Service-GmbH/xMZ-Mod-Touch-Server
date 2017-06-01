@@ -107,8 +107,10 @@ impl XMZModTouchServer {
         for (num_zone, zone) in self.get_zones().iter().enumerate() {
             // debug!("\tCheck Zone {} ...", num_zone);
 
-            // Marker ob in dieser Zone ein Alarm war
-            let mut has_alarm = false;
+            // Marker
+            let mut alarm3_direct_value = false;
+            let mut alarm2_average_15min = false;
+            let mut alarm1_average_15min = false;
 
             for (num_kombisensor, kombisensor) in zone.get_kombisensors().iter().enumerate() {
                 // debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
@@ -120,8 +122,8 @@ impl XMZModTouchServer {
                     if sensor.is_online() && sensor.is_enabled() {
 
                         // Direktwert
-                        if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 {
-                            has_alarm = true;
+                        if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 && !alarm3_direct_value {
+                            alarm3_direct_value = true;
 
                             if let Ok(mut leds) = self.leds.lock() {
                                 leds.set(5);
@@ -133,12 +135,14 @@ impl XMZModTouchServer {
                                 relais.set(3);
                                 relais.set(4);
                             }
-                            // self.add_exception(Exception::new(ExceptionType::SensorAP3DirectValue { num_zone: num_zone, num_sensor: num_sensor } ));
+                        } else if sensor.get_concentration() >= sensor.alarm3_direct_value && alarm3_direct_value { break; }
+                        else {
+                            alarm3_direct_value = false;
                         }
 
                         // AP2
-                        if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min as f64 {
-                            has_alarm = true;
+                        if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min && !alarm2_average_15min {
+                            alarm2_average_15min = true;
 
                             if let Ok(mut leds) = self.leds.lock() {
                                 leds.set(5);
@@ -148,11 +152,14 @@ impl XMZModTouchServer {
                                 relais.set(2);
                                 relais.set(3);
                             }
+                        } else if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min && !alarm2_average_15min { break; }
+                        else {
+                            alarm2_average_15min = false;
                         }
 
                         // AP1
-                        if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min as f64 {
-                            has_alarm = true;
+                        if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min && !alarm1_average_15min {
+                            alarm1_average_15min = true;
 
                             if let Ok(mut leds) = self.leds.lock() {
                                 leds.set(5);
@@ -160,12 +167,15 @@ impl XMZModTouchServer {
                             if let Ok(mut relais) = self.relais.lock() {
                                 relais.set(2);
                             }
+                        } else if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min && !alarm1_average_15min { break; }
+                        else {
+                            alarm1_average_15min = false;
                         }
                     }
                 }
             }
 
-            if !has_alarm {
+            if !alarm3_direct_value {
                 if let Ok(mut leds) = self.leds.lock() {
                     leds.clear(5);
                     leds.clear(6);
@@ -177,6 +187,27 @@ impl XMZModTouchServer {
                     relais.clear(4);
                 }
             }
+
+            if !alarm2_average_15min {
+                if let Ok(mut leds) = self.leds.lock() {
+                    leds.clear(5);
+                    leds.clear(6);
+                }
+                if let Ok(mut relais) = self.relais.lock() {
+                    relais.clear(2);
+                    relais.clear(3);
+                }
+            }
+
+            if !alarm1_average_15min {
+                if let Ok(mut leds) = self.leds.lock() {
+                    leds.clear(5);
+                }
+                if let Ok(mut relais) = self.relais.lock() {
+                    relais.clear(2);
+                }
+            }
+
         }
     }
 
