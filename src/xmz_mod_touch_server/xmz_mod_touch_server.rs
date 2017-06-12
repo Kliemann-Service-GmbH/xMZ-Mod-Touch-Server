@@ -448,66 +448,6 @@ impl XMZModTouchServer {
         self.zones.push(Zone::new());
     }
 
-    /// Atomic Reference Counted Mutex einer Referenz auf die LED's ShiftRegister
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let server_leds = xmz_mod_touch_server.get_leds().lock().unwrap();
-    /// assert_eq!(server_leds.data, 0);
-    /// ```
-    pub fn get_leds(&self) -> &Mutex<ShiftRegister> {
-        &self.leds
-    }
-
-    /// Atomic Reference Counted Mutex einer Mutable Referenz auf die LED's ShiftRegister
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let mut server_leds = xmz_mod_touch_server.get_leds().lock().unwrap();
-    /// assert_eq!(server_leds.data, 0);
-    /// ```
-    pub fn get_leds_mut(&mut self) -> &mut Mutex<ShiftRegister> {
-        &mut self.leds
-    }
-
-    /// Atomic Reference Counted Mutex einer Referenz auf die Relais ShiftRegister
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let server_relais = xmz_mod_touch_server.get_relais().lock().unwrap();
-    /// assert_eq!(server_relais.data, 0);
-    /// ```
-    pub fn get_relais(&self) -> &Mutex<ShiftRegister> {
-        &self.relais
-    }
-
-    /// Atomic Reference Counted Mutex einer Mutable Referenz auf die Relais ShiftRegister
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let mut server_relais = xmz_mod_touch_server.get_relais().lock().unwrap();
-    /// assert_eq!(server_relais.data, 0);
-    /// ```
-    pub fn get_relais_mut(&mut self) -> &mut Mutex<ShiftRegister> {
-        &mut self.relais
-    }
-
     /// Uptime des Servers
     ///
     /// # Return values
