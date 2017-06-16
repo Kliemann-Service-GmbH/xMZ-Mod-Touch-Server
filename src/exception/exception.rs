@@ -1,9 +1,5 @@
-//! Exceptions Ausnahmen/ Fehlerbehandlung
-//!
-//!
-//! Playground URL: https://play.rust-lang.org/?gist=6c0100d86a96f116615f43389f7b8af6&version=nightly&backtrace=0
-//! Gist URL: https://gist.github.com/6c0100d86a96f116615f43389f7b8af6
-//!
+/// Ausnahme Typ
+///
 #[derive(Debug)]
 #[derive(Hash, Eq, PartialEq)]
 #[derive(Serialize, Deserialize)]
@@ -16,6 +12,7 @@ pub enum ExceptionType {
     SensorAP1Average15min { num_zone: usize, num_sensor: usize },
 }
 
+/// Ausnahme (Fehler der auftreten kann)
 #[derive(Debug)]
 #[derive(Hash, Eq, PartialEq)]
 #[derive(Serialize, Deserialize)]

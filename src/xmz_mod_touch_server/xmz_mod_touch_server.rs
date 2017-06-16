@@ -450,6 +450,8 @@ impl XMZModTouchServer {
 
     /// Uptime des Servers
     ///
+    /// Wieviel Zeit ist seit dem letzten Neustart des Servers vergangen. **Bitte nicht mit der [`runtime`](struct.XMZModTouchServer.html#method.runtime) des Servers verwechseln!**
+    ///
     /// # Return values
     ///
     /// * `uptime`  - Die Uptime des Servers
@@ -464,10 +466,29 @@ impl XMZModTouchServer {
     /// assert!(xmz_mod_touch_server.uptime().num_milliseconds() >= 10);
     /// ```
     pub fn uptime(&self) -> chrono::Duration {
-        // Wartungsintervall erreicht?
         chrono::UTC::now().signed_duration_since(self.start_time)
     }
 
+    /// Runtime des Servers
+    ///
+    /// Komplette Laufzeit des Servers. Diese Funktion wertet den `create_time` Member aus. Dieser Zeitstempel wird bei der
+    /// Erstellung der Konfigurationsdatei, oder bei einer Wartung auf das aktuelle Datum gesetzt.
+    ///
+    /// # Return values
+    ///
+    /// * `uptime`  - Die Uptime des Servers
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    ///
+    /// let runtime = xmz_mod_touch_server.runtime();
+    /// ```
+    pub fn runtime(&self) -> chrono::Duration {
+        chrono::UTC::now().signed_duration_since(self.create_time)
+    }
 
     // Macht was sie meint
     //
