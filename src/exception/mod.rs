@@ -5,7 +5,9 @@
 //! Gist URL: https://gist.github.com/6c0100d86a96f116615f43389f7b8af6
 //!
 mod action;
+mod check;
 mod exception;
 
 pub use self::action::Action;
+pub use self::check::Check;
 pub use self::exception::{Exception, ExceptionType};

@@ -1,7 +1,8 @@
 {
-  "version": "0.51.2",
-  "create_time": "2017-06-01T10:51:26.151391940Z",
-  "start_time": "2017-06-01T10:51:26.151394831Z",
+  "version": "0.99.1",
+  "create_time": "2017-06-16T13:50:25.554145259Z",
+  "start_time": "2017-06-16T13:50:25.554149551Z",
+  "wartungsintervall_days": 365,
   "exceptions": [],
   "zones": [
     {
@@ -26,9 +27,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -43,9 +44,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
           "error_count": 0
@@ -70,9 +71,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -87,9 +88,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
           "error_count": 0
@@ -114,9 +115,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -131,9 +132,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
           "error_count": 0
@@ -158,9 +159,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -175,9 +176,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
           "error_count": 0
@@ -202,9 +203,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -219,9 +220,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
           "error_count": 0
@@ -246,9 +247,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -263,9 +264,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
           "error_count": 0
@@ -290,9 +291,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -307,9 +308,9 @@
               "config": 0,
               "error_count": 0,
               "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
           "error_count": 0

@@ -15,14 +15,14 @@ fn main() {
     let actions: Vec<Box<Action<ShiftRegister, u64>>> = vec![Box::new(action1), Box::new(action2)];
 
     // Startbedingungen
-    relais.set(1);
+    relais.set(1).unwrap();
     assert_eq!(leds.get_data().unwrap(), 0b0);
     assert_eq!(relais.get_data().unwrap(), 0b1);
 
     // action1.run();
     // action2.run();
     for action in actions {
-        action.run();
+        action.run().unwrap();
     }
 
     // Nachdem die Actionen ausgeführt wurden, Endbedingen prüfen

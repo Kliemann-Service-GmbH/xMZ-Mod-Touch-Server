@@ -15,8 +15,6 @@ use std::sync::{Arc, Mutex};
 use std::cell::RefCell;
 
 
-pub const SERVER_MAX_UPTIME_SEC: i64 = 5;
-
 /// Der XMZModTouchServer kann `n` [Zonen](struct.Zone.html) enthalten
 ///
 #[derive(Debug)]
@@ -27,11 +25,13 @@ pub struct XMZModTouchServer {
     create_time: chrono::DateTime<UTC>,
     // Wird jedes mal wenn der Serverprozess gestartet wurde, gesetzt
     start_time: chrono::DateTime<UTC>,
+    // Anzahl Tage der max. Laufzeit. Wird diese Anzahl erreicht wird der Wartungsintervall Alarm ausgelöst
+    wartungsintervall_days: i64,
     // Ausnahmen
     exceptions: Mutex<HashSet<Exception>>,
     zones: Vec<Zone>,
-    leds: Mutex<ShiftRegister>,
-    relais: Mutex<ShiftRegister>,
+    leds: ShiftRegister,
+    relais: ShiftRegister,
 }
 
 impl XMZModTouchServer {
@@ -56,10 +56,11 @@ impl XMZModTouchServer {
             version: env!("CARGO_PKG_VERSION").to_string(),
             create_time: chrono::UTC::now(),
             start_time: chrono::UTC::now(),
+            wartungsintervall_days: 365,
             exceptions: Mutex::new(HashSet::new()),
             zones: vec![],
-            leds: Mutex::new(ShiftRegister::new(ShiftRegisterType::LED)),
-            relais: Mutex::new(ShiftRegister::new(ShiftRegisterType::Relais)),
+            leds: ShiftRegister::new(ShiftRegisterType::LED),
+            relais: ShiftRegister::new(ShiftRegisterType::Relais),
         }
     }
 
@@ -125,16 +126,13 @@ impl XMZModTouchServer {
                         if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 && !alarm3_direct_value {
                             alarm3_direct_value = true;
 
-                            if let Ok(mut leds) = self.leds.lock() {
-                                leds.set(5);
-                                leds.set(6);
-                                leds.set(7);
-                            }
-                            if let Ok(mut relais) = self.relais.lock() {
-                                relais.set(2);
-                                relais.set(3);
-                                relais.set(4);
-                            }
+                            self.leds.set(5);
+                            self.leds.set(6);
+                            self.leds.set(7);
+
+                            self.relais.set(2);
+                            self.relais.set(3);
+                            self.relais.set(4);
                         } else if sensor.get_concentration() >= sensor.alarm3_direct_value && alarm3_direct_value { break; }
                         else {
                             alarm3_direct_value = false;
@@ -144,14 +142,11 @@ impl XMZModTouchServer {
                         if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min && !alarm2_average_15min {
                             alarm2_average_15min = true;
 
-                            if let Ok(mut leds) = self.leds.lock() {
-                                leds.set(5);
-                                leds.set(6);
-                            }
-                            if let Ok(mut relais) = self.relais.lock() {
-                                relais.set(2);
-                                relais.set(3);
-                            }
+                            self.leds.set(5);
+                            self.leds.set(6);
+
+                            self.relais.set(2);
+                            self.relais.set(3);
                         } else if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min && !alarm2_average_15min { break; }
                         else {
                             alarm2_average_15min = false;
@@ -161,12 +156,9 @@ impl XMZModTouchServer {
                         if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min && !alarm1_average_15min {
                             alarm1_average_15min = true;
 
-                            if let Ok(mut leds) = self.leds.lock() {
-                                leds.set(5);
-                            }
-                            if let Ok(mut relais) = self.relais.lock() {
-                                relais.set(2);
-                            }
+                            self.leds.set(5);
+
+                            self.relais.set(2);
                         } else if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min && !alarm1_average_15min { break; }
                         else {
                             alarm1_average_15min = false;
@@ -176,36 +168,27 @@ impl XMZModTouchServer {
             }
 
             if !alarm3_direct_value {
-                if let Ok(mut leds) = self.leds.lock() {
-                    leds.clear(5);
-                    leds.clear(6);
-                    leds.clear(7);
-                }
-                if let Ok(mut relais) = self.relais.lock() {
-                    relais.clear(2);
-                    relais.clear(3);
-                    relais.clear(4);
-                }
+                self.leds.clear(5);
+                self.leds.clear(6);
+                self.leds.clear(7);
+
+                self.relais.clear(2);
+                self.relais.clear(3);
+                self.relais.clear(4);
             }
 
             if !alarm2_average_15min {
-                if let Ok(mut leds) = self.leds.lock() {
-                    leds.clear(5);
-                    leds.clear(6);
-                }
-                if let Ok(mut relais) = self.relais.lock() {
-                    relais.clear(2);
-                    relais.clear(3);
-                }
+                self.leds.clear(5);
+                self.leds.clear(6);
+
+                self.relais.clear(2);
+                self.relais.clear(3);
             }
 
             if !alarm1_average_15min {
-                if let Ok(mut leds) = self.leds.lock() {
-                    leds.clear(5);
-                }
-                if let Ok(mut relais) = self.relais.lock() {
-                    relais.clear(2);
-                }
+                self.leds.clear(5);
+
+                self.relais.clear(2);
             }
 
         }
@@ -259,25 +242,13 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.basic_configuration().unwrap();
     /// ```
     pub fn basic_configuration(&mut self) -> Result<()> {
-        loop {
-            if let Ok(mut leds) = self.leds.lock() {
-                debug!("Basic configuration server LEDs");
-                leds.reset();
-                // Power LED an
-                leds.set(1)?;
-                break;
-            }
-        }
+        self.leds.reset()?;
+        // Power LED an
+        self.leds.set(1)?;
 
-        loop {
-            if let Ok(mut relais) = self.relais.lock() {
-                debug!("Basic configuration server RELAIS");
-                relais.reset();
-                // Relais Störung anziehen (normal closed)
-                relais.set(1)?;
-                break;
-            }
-        }
+        self.relais.reset()?;
+        // Relais Störung anziehen (normal closed)
+        self.relais.set(1)?;
 
         Ok(())
     }
@@ -448,6 +419,36 @@ impl XMZModTouchServer {
         self.zones.push(Zone::new());
     }
 
+    /// Liefert Maximal Tage bis Wartungsintervall Alarm ausgelöst wird
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    ///
+    /// assert_eq!(xmz_mod_touch_server.get_max_wartungsintervall_days(), 365);
+    /// ```
+    pub fn get_max_wartungsintervall_days(&self) -> i64 {
+        self.wartungsintervall_days
+    }
+
+    /// Setzt die Maximal Tage bis Wartungsintervall Alarm ausgelöst wird
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.get_max_wartungsintervall_days(), 365);
+    ///
+    /// xmz_mod_touch_server.set_max_wartungsintervall_days(0);
+    /// assert_eq!(xmz_mod_touch_server.get_max_wartungsintervall_days(), 0);
+    /// ```
+    pub fn set_max_wartungsintervall_days(&mut self, interval: i64) {
+        self.wartungsintervall_days = interval;
+    }
+
     /// Uptime des Servers
     ///
     /// Wieviel Zeit ist seit dem letzten Neustart des Servers vergangen. **Bitte nicht mit der [`runtime`](struct.XMZModTouchServer.html#method.runtime) des Servers verwechseln!**
@@ -488,6 +489,22 @@ impl XMZModTouchServer {
     /// ```
     pub fn runtime(&self) -> chrono::Duration {
         chrono::UTC::now().signed_duration_since(self.create_time)
+    }
+
+    // Prüfung Wartungsintervall erreicht
+    //
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// assert_eq!(xmz_mod_touch_server.wartungsintervall_reached(), false);
+    ///
+    /// xmz_mod_touch_server.set_max_wartungsintervall_days(0);
+    /// assert_eq!(xmz_mod_touch_server.wartungsintervall_reached(), true);
+    /// ```
+    pub fn wartungsintervall_reached(&self) -> bool {
+        self.runtime().num_days() >= self.get_max_wartungsintervall_days()
     }
 
     // Macht was sie meint
