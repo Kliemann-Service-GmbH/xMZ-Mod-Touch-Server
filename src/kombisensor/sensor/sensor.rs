@@ -48,6 +48,23 @@ pub enum SI {
     UEG,
 }
 
+/// Status des Sensors
+///
+/// Der Sensor Status wird in der Update Funktion gesetzt.
+#[derive(Clone)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug)]
+enum SensorStatus {
+    // alles OK
+    Normal,
+    // Direktwert überschritten
+    DIW,
+    // Alarmpunkt 2 überschritten
+    AP2,
+    // Alarmpunkt 1 überschritten
+    AP1,
+}
+
 /// Representation der Firmware Daten einer Messzelle
 ///
 /// Firmware Version: 0.14.0
@@ -76,6 +93,7 @@ pub struct Sensor {
     pub alarm3_direct_value: f64,
     #[serde(skip_deserializing, skip_serializing)]
     adc_values_average: Vec<(u16, DateTime<UTC>)>,
+    status: SensorStatus,
 }
 
 impl Sensor {
@@ -106,6 +124,7 @@ impl Sensor {
             alarm2_average_15min: 0.0,
             alarm3_direct_value: 0.0,
             adc_values_average: vec![],
+            status: SensorStatus::Normal,
         }
     }
 
@@ -412,7 +431,6 @@ impl Sensor {
     ///
     /// Liefert ein boolen `true` wenn der konfigurierte Direktwert überschritten wurden
     ///
-    ///
     ///  # Examples
     ///
     /// ```rust
@@ -423,6 +441,38 @@ impl Sensor {
     /// ```
     pub fn direct_value_reached(&self) -> bool {
         self.get_concentration() >= self.alarm3_direct_value as f64
+    }
+
+    /// Alarmpunkt (AP2) erreicht?
+    ///
+    /// Liefert ein boolen `true` wenn der konfigurierte Alarmpunkt2 erreicht wurden
+    ///
+    ///  # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+    ///
+    /// assert_eq!(sensor.ap2_reached(), true)
+    /// ```
+    pub fn ap2_reached(&self) -> bool {
+        self.get_concentration_average_15min() >= self.alarm2_average_15min as f64
+    }
+
+    /// Alarmpunkt (AP1) erreicht?
+    ///
+    /// Liefert ein boolen `true` wenn der konfigurierte Alarmpunkt1 erreicht wurden
+    ///
+    ///  # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::kombisensor::{Sensor, SensorType};
+    /// let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+    ///
+    /// assert_eq!(sensor.ap1_reached(), true)
+    /// ```
+    pub fn ap1_reached(&self) -> bool {
+        self.get_concentration_average_15min() >= self.alarm1_average_15min as f64
     }
 
     /// Direktwert
@@ -453,7 +503,6 @@ impl Sensor {
         self.concentration_from(self.adc_value_average_15min)
     }
 
-
     /// Berechnet die Gaskonzentration mit einer linearen Funktion
     ///
     /// Diese Funktion ist eine Helper Funktion. Sie wird von `get_concentration()` und `get_concentration_average_15min()`
@@ -471,7 +520,6 @@ impl Sensor {
         // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
         if concentration < 0.0 { 0.0 } else { concentration }
     }
-
 
     /// Liefert den berechneten milli Volt Wert
     ///
@@ -521,10 +569,6 @@ impl Sensor {
     pub fn is_online(&self) -> bool {
         self.adc_value > 0 && self.adc_values_average.len() > 0
     }
-
-
-
-    // Setter
 
     /// Setzt den ADC Wert manuell von Hand
     ///
@@ -672,41 +716,66 @@ impl Sensor {
         self.config = config;
     }
 
+
     /// Berechnet den Mittelwert
-    pub fn update_adc_values_average(&mut self) {
+    ///
+    /// Diese Funktion berechnet den Mittelwert aus einer Liste (Tuppel) von ADC Werten und Zeitstempeln.
+    /// Zu Begin der Funkton wird die Liste der ADC Werte/ Zeitstempel mit dem aktuellen ADC Wert/ Zeitstempel aktualisiert.
+    fn update_adc_values_average(&mut self) {
         // Nur wenn die Messzelle aktiv ist wird der Mittelwert berechnet
         if !self.is_enabled() { return; }
 
-        // Update tuppel with the current (adc_value, timestamp)
+        // Update der ADC Werte Liste (adc_value, timestamp)
         self.adc_values_average.push((self.adc_value, UTC::now()));
 
-        //  [`position()`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.position)
-        // Searches for an element in an iterator, returning its index. We use the index then to [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
-        //
+        // Die [`position()`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.position) Funktion
+        // sucht in einem Iterator (Iterator über die Liste der ADC Werte/ Zeitstempel) nach einem Element und liefert dessen Index Wert.
+        // Dieser Index wird benutzt um die Liste der ADC Werte/ Zeitstempel zu teilen [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
         if let Some(index) = self.adc_values_average.iter().position(|&(_, timestamp)| UTC::now().signed_duration_since(timestamp).num_seconds() < AVERAGE_15MIN_SEC ) {
             // Mit `split_off()` kann man nun den Vector teilen, es bleiben nur noch die (Messerte, Zeitstempel) der letzten AVERAGE_15MIN_SEC übrig.
             // **Dieser Rest wird nun wieder als adc_values_average übernommen, alle anderen Werte werden verworfen.**
             //
             self.adc_values_average = self.adc_values_average.split_off(index);
         }
-
-        // // DEBUG
-        // for (num, adc_values_average) in self.adc_values_average.clone().iter().enumerate() {
-        //     println!("{:?}, {:?}", num, adc_values_average);
-        // };
-
+        // Länge der Liste der ADC Werte/ Zeitstempel ermitteln. Dieser Wert wird für den Mittelwert benötigt
         let num_adc_values_average = self.adc_values_average.len();
         debug!("num adc_values_average: {}", num_adc_values_average);
-
+        // Die Variable sum_adc_values_average speichert die Summe aller ADC Werte
         let mut sum_adc_values_average: u64 = 0;
-        for &(value, _) in self.adc_values_average.iter(){
-            sum_adc_values_average += value as u64;
+        // Durchlaufe den Tuppel, verwende aber nur den ADC Wert (`value`), und bilde die Summer aller ADC Werte
+        for &(adc_value, _) in self.adc_values_average.iter(){
+            sum_adc_values_average += adc_value as u64;
         }
-
+        // Die Summe aller ADC Werte wird durch die Anzahl der ADC Werte geteilt um den Mittelwert zu erhalten.
+        // Dieser Mittelwert wird dann im `adc_value_average_15min` Member der `Sensor` Struct gespeichert
         self.adc_value_average_15min = sum_adc_values_average as f64 / num_adc_values_average as f64;
     }
 
+    /// Update Status des Sensors
+    fn update_status(&mut self) {
+        if self.direct_value_reached() {
+            self.status = SensorStatus::DIW;
+        } else if self.ap2_reached() {
+            self.status = SensorStatus::AP2;
+        } else if self.ap1_reached() {
+            self.status = SensorStatus::AP1;
+        } else {
+            self.status = SensorStatus::Normal;
+        }
+    }
+
+
+    /// Update Funktion des Sensors
+    ///
+    /// Diese Funktion fast die einzelnen Update Funktionen des Sensors zusammen
+    pub fn update(&mut self) {
+        self.update_adc_values_average();
+
+        self.update_status();
+    }
+
 }
+
 
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

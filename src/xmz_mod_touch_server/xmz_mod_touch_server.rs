@@ -106,91 +106,15 @@ impl XMZModTouchServer {
     pub fn check(&self) {
         debug!("Check XMZModTouchServer ...");
         for (num_zone, zone) in self.get_zones().iter().enumerate() {
-            // debug!("\tCheck Zone {} ...", num_zone);
-
-            // Marker
-            let mut alarm3_direct_value = false;
-            let mut alarm2_average_15min = false;
-            let mut alarm1_average_15min = false;
+            debug!("\tCheck Zone {} ...", num_zone);
 
             for (num_kombisensor, kombisensor) in zone.get_kombisensors().iter().enumerate() {
-                // debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
+                debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
+
                 for (num_sensor, sensor) in kombisensor.get_sensors().iter().enumerate() {
-                    // debug!("\t\t\tCheck Sensor {} ...", num_sensor);
-                    // Begin checks sensor ...
-                    // Nur wenn der Sensor "online" und aktiviert ist
-
-                    if sensor.is_online() && sensor.is_enabled() {
-
-                        // Direktwert
-                        if sensor.get_concentration() >= sensor.alarm3_direct_value as f64 && !alarm3_direct_value {
-                            alarm3_direct_value = true;
-
-                            self.leds.set(5);
-                            self.leds.set(6);
-                            self.leds.set(7);
-
-                            self.relais.set(2);
-                            self.relais.set(3);
-                            self.relais.set(4);
-                        } else if sensor.get_concentration() >= sensor.alarm3_direct_value && alarm3_direct_value { break; }
-                        else {
-                            alarm3_direct_value = false;
-                        }
-
-                        // AP2
-                        if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min && !alarm2_average_15min {
-                            alarm2_average_15min = true;
-
-                            self.leds.set(5);
-                            self.leds.set(6);
-
-                            self.relais.set(2);
-                            self.relais.set(3);
-                        } else if sensor.get_concentration_average_15min() >= sensor.alarm2_average_15min && !alarm2_average_15min { break; }
-                        else {
-                            alarm2_average_15min = false;
-                        }
-
-                        // AP1
-                        if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min && !alarm1_average_15min {
-                            alarm1_average_15min = true;
-
-                            self.leds.set(5);
-
-                            self.relais.set(2);
-                        } else if sensor.get_concentration_average_15min() >= sensor.alarm1_average_15min && !alarm1_average_15min { break; }
-                        else {
-                            alarm1_average_15min = false;
-                        }
-                    }
+                    debug!("\t\t\tCheck Sensor {} ...", num_sensor);
                 }
             }
-
-            if !alarm3_direct_value {
-                self.leds.clear(5);
-                self.leds.clear(6);
-                self.leds.clear(7);
-
-                self.relais.clear(2);
-                self.relais.clear(3);
-                self.relais.clear(4);
-            }
-
-            if !alarm2_average_15min {
-                self.leds.clear(5);
-                self.leds.clear(6);
-
-                self.relais.clear(2);
-                self.relais.clear(3);
-            }
-
-            if !alarm1_average_15min {
-                self.leds.clear(5);
-
-                self.relais.clear(2);
-            }
-
         }
     }
 
@@ -207,25 +131,17 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.update();
     /// ```
     pub fn update(&mut self) {
-        debug!("\tUpdate XMZModTouchServer ...");
+        debug!("Check XMZModTouchServer ...");
         for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
-            debug!("\t\tUpdate Zone {} ...", num_zone);
+            debug!("\tCheck Zone {} ...", num_zone);
+
             for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
-                debug!("\t\t\tUpdate Kombisensor {} via Modbus ...", num_kombisensor);
-                match kombisensor.get_from_modbus() {
-                    Err(e) => {
-                        // println!("Zone: {} Kombisensor: {} Error: {:?}", &num_zone, &num_kombisensor, e);
-                        // self.add_exception(Exception::new(ExceptionType::KombisensorModbusError{ num_zone, num_kombisensor }));
-                    }
-                    _ => {
-                    }
-                }
+                debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
+                kombisensor.update();
 
                 for (num_sensor, mut sensor) in &mut kombisensor.get_sensors_mut().iter_mut().enumerate() {
-                    // Aktualisiert den Tuppel Vector. In dem Tuppel werden die Daten der letzten 15Minuten gehalten,
-                    // mit diesen wird der Mittelwert gebildet
-                    debug!("\t\t\tUpdate Sensor {} average ...", num_sensor);
-                    sensor.update_adc_values_average();
+                    debug!("\t\t\tCheck Sensor {} ...", num_sensor);
+                    sensor.update();
                 }
             }
         }
@@ -279,49 +195,15 @@ impl XMZModTouchServer {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use xmz_mod_touch_server::XMZModTouchServer;
     ///
     /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// assert_eq!(xmz_mod_touch_server.get_exceptions().len(), 0);
+    /// xmz_mod_touch_server.get_exceptions();
     /// ```
     pub fn get_exceptions(&self) -> &Mutex<HashSet<Exception>> {
         &self.exceptions
     }
-
-    /// Finde eine Exception
-    ///
-    /// # Return values
-    ///
-    /// Liefert ein Option Type der entweder eine Refernz auf die Exception des Servers oder `None` enthält,
-    /// wenn eine Exception mit dieser Id nicht existiert
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// ```
-    pub fn get_exception(&self, id: usize) -> Option<&Exception> {
-        unimplemented!()
-    }
-
-    /// Fügt eine Exception hinzu
-    ///
-    /// # Parameters
-    ///
-    /// * `exception`   - Exception die hinzugefügt werden soll
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// use xmz_mod_touch_server::{XMZModTouchServer, Exception, ExceptionType};
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
-    /// ```
-    pub fn add_exception(&mut self, exception: Exception) {
-        unimplemented!()
-    }
-
 
     /// Zonen des Servers
     ///

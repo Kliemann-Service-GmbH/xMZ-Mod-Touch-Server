@@ -5,6 +5,24 @@ use kombisensor::{Sensor, SensorType};
 use std::fmt;
 
 
+#[derive(Clone)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug)]
+pub enum KombisensorType {
+    RAGas,
+    RAGasSimulation,
+}
+
+#[derive(Clone)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug)]
+pub enum KombisensorStatus {
+    // alles Ok
+    Normal,
+    // Kabelbruch
+    Kabelbruch,
+}
+
 /// Ein Kombisensor kann `n` Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)
 ///
 #[derive(Debug)]
@@ -18,14 +36,7 @@ pub struct Kombisensor {
     modbus_debug: bool,
     sensors: Vec<Sensor>,
     error_count: u64,
-}
-
-#[derive(Clone)]
-#[derive(Eq, PartialEq)]
-#[derive(Serialize, Deserialize, Debug)]
-pub enum KombisensorType {
-    RAGas,
-    RAGasSimulation,
+    status: KombisensorStatus,
 }
 
 impl Kombisensor {
@@ -55,6 +66,7 @@ impl Kombisensor {
                 Sensor::new_with_type(SensorType::NemotoCO),
             ],
             error_count: 0,
+            status: KombisensorStatus::Normal,
         }
     }
     /// Erzeugt eine spezielle Kombisensor Instanz
@@ -357,7 +369,7 @@ impl Kombisensor {
         self.error_count
     }
 
-    /// Erhöht den  Error Counter
+    /// Erhöht den Fehlerzähler (Error Counter)
     ///
     /// # Examples
     ///
@@ -374,7 +386,7 @@ impl Kombisensor {
         self.error_count += 1
     }
 
-    /// Reset den Error Counter
+    /// Reset den Fehlerzähler (Error Counter)
     ///
     /// # Examples
     ///
@@ -397,15 +409,9 @@ impl Kombisensor {
     ///
     /// Die Funktion liefert ein Result
     ///
-    /// # Examples
-    ///
-    /// ```rust,no_run
-    /// use xmz_mod_touch_server::Kombisensor;
-    /// let mut kombisensor = Kombisensor::new();
-    ///
-    /// assert!(kombisensor.get_from_modbus().is_ok());
-    /// ```
-    pub fn get_from_modbus(&mut self) -> Result<()> {
+    fn update_via_modbus(&mut self) -> Result<()> {
+        if self.status != KombisensorStatus::Normal { bail!("Kabelbruch") };
+
         use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH, SerialMode, RequestToSendMode};
 
         let mut modbus = Modbus::new_rtu(&self.modbus_device, 9600, 'N', 8, 1)?;
@@ -429,6 +435,8 @@ impl Kombisensor {
 
         if response_register.len() < 28 { bail!("Modbus Data invalid: {:?}", response_register) }
 
+        // Parse die empfangenen Daten
+        // TODO: unwrap() entfernen!
         let firmware_version_major = *response_register.get(0).unwrap();
         let firmware_version_minor = *response_register.get(1).unwrap();
         let firmware_version_patch = *response_register.get(2).unwrap();
@@ -482,6 +490,32 @@ impl Kombisensor {
 
         Ok(())
     }
+
+    // Update Status des Kombisensors
+    //
+    // Diese Funktion wird in der public `update()` Funktion aufgerufen.
+    fn update_status(&mut self) {
+        if self.error_count >= 5 {
+            self.status = KombisensorStatus::Kabelbruch;
+        } else {
+            self.status = KombisensorStatus::Normal;
+        }
+
+    }
+
+
+    /// Update Funktion des Kombisensors
+    ///
+    /// Diese Funktion fast die einzelnen Update Funktionen des Kombisensors zusammen
+    pub fn update(&mut self) {
+        match self.update_via_modbus() {
+            Ok(_) => {}
+            Err(_) => self.error_count += 1,
+        }
+
+        self.update_status();
+    }
+
 }
 
 impl fmt::Display for KombisensorType {
