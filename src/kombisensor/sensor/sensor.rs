@@ -54,7 +54,7 @@ pub enum SI {
 #[derive(Clone)]
 #[derive(Eq, PartialEq)]
 #[derive(Serialize, Deserialize, Debug)]
-enum SensorStatus {
+pub enum SensorStatus {
     // alles OK
     Normal,
     // Direktwert überschritten
@@ -749,6 +749,11 @@ impl Sensor {
         // Die Summe aller ADC Werte wird durch die Anzahl der ADC Werte geteilt um den Mittelwert zu erhalten.
         // Dieser Mittelwert wird dann im `adc_value_average_15min` Member der `Sensor` Struct gespeichert
         self.adc_value_average_15min = sum_adc_values_average as f64 / num_adc_values_average as f64;
+    }
+
+    /// Liefert den Status des Sensors
+    pub fn get_status(&self) -> SensorStatus {
+        self.status.clone()
     }
 
     /// Update Status des Sensors

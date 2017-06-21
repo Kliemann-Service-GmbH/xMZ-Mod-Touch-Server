@@ -5,11 +5,22 @@
 use kombisensor::Kombisensor;
 
 
+#[derive(Clone)]
+#[derive(Debug)]
+#[derive(Serialize, Deserialize)]
+pub enum ZoneStatus {
+    Normal,
+    DIW,
+    AP2,
+    AP1,
+}
+
 /// Eine `Zone` kann `n` [Kombisensoren](kombisensor/struct.Kombisensor.html) enthalten
 ///
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct Zone {
+    status: ZoneStatus,
     kombisensors: Vec<Kombisensor>,
 }
 
@@ -29,6 +40,7 @@ impl Zone {
     /// ```
     pub fn new() -> Self {
         Zone {
+            status: ZoneStatus::Normal,
             kombisensors: vec![],
         }
     }
@@ -124,6 +136,17 @@ impl Zone {
     /// ```
     pub fn add_kombisensor(&mut self, kombisensor: Kombisensor) {
         self.kombisensors.push(kombisensor);
+    }
+
+
+    /// Liefert den Status der Zone
+    pub fn get_status(&self) -> ZoneStatus {
+        self.status.clone()
+    }
+
+
+    pub fn update(&mut self) {
+
     }
 }
 

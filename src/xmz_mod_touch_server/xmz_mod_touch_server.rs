@@ -104,12 +104,48 @@ impl XMZModTouchServer {
     /// xmz_mod_touch_server.check();
     /// ```
     pub fn check(&self) {
+        use kombisensor::{KombisensorStatus, SensorStatus};
+        use xmz_mod_touch_server::ZoneStatus;
+
         debug!("Check XMZModTouchServer ...");
+        if self.wartungsintervall_reached() {
+            self.leds.set(2); self.leds.set(3);
+        } else {
+            self.leds.clear(2); self.leds.clear(3);
+        }
+
         for (num_zone, zone) in self.get_zones().iter().enumerate() {
             debug!("\tCheck Zone {} ...", num_zone);
+            match zone.get_status() {
+                ZoneStatus::DIW => {
+                    self.leds.set(5); self.leds.set(6); self.leds.set(7);
+                    self.relais.set(2); self.relais.set(3); self.relais.set(4);
+                }
+                ZoneStatus::AP2 => {
+                    self.leds.set(5); self.leds.set(6); self.leds.clear(7);
+                    self.relais.set(2); self.relais.set(3); self.relais.clear(4);
+                }
+                ZoneStatus::AP1 => {
+                    self.leds.set(5); self.leds.clear(6); self.leds.clear(7);
+                    self.relais.set(2); self.relais.clear(3); self.relais.clear(4);
+                }
+                ZoneStatus::AP1 => {
+                    self.leds.clear(5); self.leds.clear(6); self.leds.clear(7);
+                    self.relais.clear(2); self.relais.clear(3); self.relais.clear(4);
+                }
+                _ => {}
+            }
 
             for (num_kombisensor, kombisensor) in zone.get_kombisensors().iter().enumerate() {
                 debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
+                match kombisensor.get_status() {
+                    KombisensorStatus::Kabelbruch => {
+                        self.leds.set(2);
+                    }
+                    _ => {
+                        self.leds.clear(2);
+                    }
+                }
 
                 for (num_sensor, sensor) in kombisensor.get_sensors().iter().enumerate() {
                     debug!("\t\t\tCheck Sensor {} ...", num_sensor);
@@ -134,6 +170,7 @@ impl XMZModTouchServer {
         debug!("Check XMZModTouchServer ...");
         for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
             debug!("\tCheck Zone {} ...", num_zone);
+            zone.update();
 
             for (num_kombisensor, mut kombisensor) in &mut zone.get_kombisensors_mut().iter_mut().enumerate() {
                 debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);

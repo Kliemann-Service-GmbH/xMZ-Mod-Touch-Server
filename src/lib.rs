@@ -30,8 +30,8 @@ pub mod shift_register;
 pub mod xmz_mod_touch_server;
 
 pub use self::exception::{Action, Check, Exception, ExceptionType};
-pub use self::kombisensor::{Kombisensor, KombisensorType};
+pub use self::kombisensor::{Kombisensor, KombisensorType, KombisensorStatus};
 pub use self::shift_register::{ShiftRegister, ShiftRegisterType};
 pub use self::xmz_mod_touch_server::configuration;
 pub use self::xmz_mod_touch_server::XMZModTouchServer;
-pub use self::xmz_mod_touch_server::Zone;
+pub use self::xmz_mod_touch_server::{Zone, ZoneStatus};

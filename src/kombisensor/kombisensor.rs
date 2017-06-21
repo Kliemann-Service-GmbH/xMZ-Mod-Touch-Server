@@ -491,6 +491,11 @@ impl Kombisensor {
         Ok(())
     }
 
+    /// Gibt den Status des Kombisensors wieder
+    pub fn get_status(&self) -> KombisensorStatus {
+        self.status.clone()
+    }
+
     // Update Status des Kombisensors
     //
     // Diese Funktion wird in der public `update()` Funktion aufgerufen.

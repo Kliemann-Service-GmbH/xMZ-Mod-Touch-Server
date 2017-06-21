@@ -1,3 +1,3 @@
 mod sensor;
 
-pub use self::sensor::{Sensor, SensorType, SI};
+pub use self::sensor::{Sensor, SensorType, SensorStatus, SI};
