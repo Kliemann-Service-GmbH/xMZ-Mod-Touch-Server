@@ -4,9 +4,10 @@
 //!
 extern crate chrono;
 
-mod xmz_mod_touch_server;
 pub mod configuration;
-mod zone;
+pub mod server;
+pub mod zone;
 
-pub use self::xmz_mod_touch_server::XMZModTouchServer;
+pub use self::configuration::Configuration;
+pub use self::server::Server;
 pub use self::zone::{Zone, ZoneStatus};

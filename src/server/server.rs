@@ -4,22 +4,22 @@
 //!
 use chrono;
 use chrono::prelude::*;
-use configuration::Configuration;
+use server::configuration::Configuration;
 use errors::*;
 use exception::{Exception, ExceptionType};
 use serde_json;
 use shift_register::{ShiftRegister, ShiftRegisterType};
-use std::collections::HashSet;
-use xmz_mod_touch_server::Zone;
-use std::sync::{Arc, Mutex};
 use std::cell::RefCell;
+use std::collections::HashSet;
+use std::sync::{Arc, Mutex};
+use server::zone::{Zone, ZoneStatus};
+use server::zone::kombisensor::{Kombisensor, KombisensorStatus};
 
-
-/// Der XMZModTouchServer kann `n` [Zonen](struct.Zone.html) enthalten
+/// Der Server kann `n` [Zonen](struct.Zone.html) enthalten
 ///
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
-pub struct XMZModTouchServer {
+pub struct Server {
     version: String,
     // `create_time` wird nur ein mal beim erstellen der Konfiguration gesetzt
     create_time: chrono::DateTime<UTC>,
@@ -34,25 +34,25 @@ pub struct XMZModTouchServer {
     relais: ShiftRegister,
 }
 
-impl XMZModTouchServer {
-    /// Erzeugt eine neue XMZModTouchServer Instanz
+impl Server {
+    /// Erzeugt eine neue Server Instanz
     ///
     /// # Return values
     ///
-    /// Diese Funktion liefert eine neue XMZModTouchServer Instanz
+    /// Diese Funktion liefert eine neue Server Instanz
     ///
     /// # Parameters
     ///
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let xmz_mod_touch_server = Server::new();
     /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
     /// ```
     pub fn new() -> Self {
-        XMZModTouchServer {
+        Server {
             version: env!("CARGO_PKG_VERSION").to_string(),
             create_time: chrono::UTC::now(),
             start_time: chrono::UTC::now(),
@@ -74,12 +74,12 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust,no_run
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new_from_config();
+    /// let xmz_mod_touch_server = Server::new_from_config();
     /// ```
-    pub fn new_from_config() -> Result<XMZModTouchServer> {
-        let mut xmz_mod_touch_server: XMZModTouchServer = match serde_json::from_str(&Configuration::get_config()?) {
+    pub fn new_from_config() -> Result<Server> {
+        let mut xmz_mod_touch_server: Server = match serde_json::from_str(&Configuration::get_config()?) {
             Ok(xmz_mod_touch_server) => xmz_mod_touch_server,
             _ => panic!("Konnte Konfigurationsdatei nicht lesen. Server konnte nicht erstellt werden."),
         };
@@ -91,23 +91,20 @@ impl XMZModTouchServer {
     }
 
 
-    /// Check Funktion des XMZModTouchServer
+    /// Check Funktion des Server
     ///
     /// Hier werden die Zonen durchlaufen, und deren `check()` Funktion aufgerufen.
     ///
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let xmz_mod_touch_server = Server::new();
     /// xmz_mod_touch_server.check();
     /// ```
     pub fn check(&self) {
-        use kombisensor::{KombisensorStatus, SensorStatus};
-        use xmz_mod_touch_server::ZoneStatus;
-
-        debug!("Check XMZModTouchServer ...");
+        debug!("Check Server ...");
         if self.wartungsintervall_reached() {
             self.leds.set(2); self.leds.set(3);
         } else {
@@ -128,10 +125,6 @@ impl XMZModTouchServer {
                 ZoneStatus::AP1 => {
                     self.leds.set(5); self.leds.clear(6); self.leds.clear(7);
                     self.relais.set(2); self.relais.clear(3); self.relais.clear(4);
-                }
-                ZoneStatus::AP1 => {
-                    self.leds.clear(5); self.leds.clear(6); self.leds.clear(7);
-                    self.relais.clear(2); self.relais.clear(3); self.relais.clear(4);
                 }
                 _ => {}
             }
@@ -154,20 +147,20 @@ impl XMZModTouchServer {
         }
     }
 
-    /// Update Funktion des XMZModTouchServer
+    /// Update Funktion des Server
     ///
     /// Hier werden die Zonen durchlaufen, und deren `update()` Funktion aufgerufen.
     ///
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let mut xmz_mod_touch_server = Server::new();
     /// xmz_mod_touch_server.update();
     /// ```
     pub fn update(&mut self) {
-        debug!("Check XMZModTouchServer ...");
+        debug!("Check Server ...");
         for (num_zone, mut zone) in &mut self.get_zones_mut().iter_mut().enumerate() {
             debug!("\tCheck Zone {} ...", num_zone);
             zone.update();
@@ -189,9 +182,9 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust,no_run
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let mut xmz_mod_touch_server = Server::new();
     /// xmz_mod_touch_server.basic_configuration().unwrap();
     /// ```
     pub fn basic_configuration(&mut self) -> Result<()> {
@@ -206,22 +199,22 @@ impl XMZModTouchServer {
         Ok(())
     }
 
-    /// Liefert die Versionsnummer des XMZModTouchServer's
+    /// Liefert die Versionsnummer des Server's
     ///
     /// Die Versionsnummer entspricht der Crate Versionsnummer, wird aus dieser automatisch gebildet.
     ///
     /// # Return values
     ///
-    /// Diese Funktion liefert eine neue XMZModTouchServer Instanz
+    /// Diese Funktion liefert eine neue Server Instanz
     ///
     /// # Parameters
     ///
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let xmz_mod_touch_server = Server::new();
     /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
     /// ```
     pub fn get_version(&self) -> String {
@@ -233,9 +226,9 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let mut xmz_mod_touch_server = Server::new();
     /// xmz_mod_touch_server.get_exceptions();
     /// ```
     pub fn get_exceptions(&self) -> &Mutex<HashSet<Exception>> {
@@ -251,9 +244,9 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let xmz_mod_touch_server = Server::new();
     /// assert_eq!(xmz_mod_touch_server.get_zones().len(), 0); // Eine Zone default
     /// ```
     pub fn get_zones(&self) -> &Vec<Zone> {
@@ -269,9 +262,9 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let mut xmz_mod_touch_server = Server::new();
     /// assert_eq!(xmz_mod_touch_server.get_zones_mut().len(), 0); // Eine Zone default
     /// ```
     pub fn get_zones_mut(&mut self) -> &mut Vec<Zone> {
@@ -291,9 +284,9 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let xmz_mod_touch_server = Server::new();
     /// assert!(xmz_mod_touch_server.get_zone(0).is_none());
     /// ```
     pub fn get_zone(&self, id: usize) -> Option<&Zone> {
@@ -313,9 +306,9 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let mut xmz_mod_touch_server = Server::new();
     /// assert!(xmz_mod_touch_server.get_zone_mut(0).is_none());
     /// ```
     pub fn get_zone_mut(&mut self, id: usize) -> Option<&mut Zone> {
@@ -327,8 +320,8 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// use xmz_mod_touch_server::Server;
+    /// let mut xmz_mod_touch_server = Server::new();
     /// assert!(xmz_mod_touch_server.get_zone(0).is_none());
     ///
     /// xmz_mod_touch_server.add_zone();
@@ -343,8 +336,8 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// use xmz_mod_touch_server::Server;
+    /// let xmz_mod_touch_server = Server::new();
     ///
     /// assert_eq!(xmz_mod_touch_server.get_max_wartungsintervall_days(), 365);
     /// ```
@@ -357,8 +350,8 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// use xmz_mod_touch_server::Server;
+    /// let mut xmz_mod_touch_server = Server::new();
     /// assert_eq!(xmz_mod_touch_server.get_max_wartungsintervall_days(), 365);
     ///
     /// xmz_mod_touch_server.set_max_wartungsintervall_days(0);
@@ -370,7 +363,7 @@ impl XMZModTouchServer {
 
     /// Uptime des Servers
     ///
-    /// Wieviel Zeit ist seit dem letzten Neustart des Servers vergangen. **Bitte nicht mit der [`runtime`](struct.XMZModTouchServer.html#method.runtime) des Servers verwechseln!**
+    /// Wieviel Zeit ist seit dem letzten Neustart des Servers vergangen. **Bitte nicht mit der [`runtime`](struct.Server.html#method.runtime) des Servers verwechseln!**
     ///
     /// # Return values
     ///
@@ -379,9 +372,9 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
+    /// use xmz_mod_touch_server::Server;
     ///
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// let xmz_mod_touch_server = Server::new();
     /// ::std::thread::sleep(::std::time::Duration::from_millis(10));
     /// assert!(xmz_mod_touch_server.uptime().num_milliseconds() >= 10);
     /// ```
@@ -401,8 +394,8 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// use xmz_mod_touch_server::Server;
+    /// let xmz_mod_touch_server = Server::new();
     ///
     /// let runtime = xmz_mod_touch_server.runtime();
     /// ```
@@ -415,8 +408,8 @@ impl XMZModTouchServer {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::XMZModTouchServer;
-    /// let mut xmz_mod_touch_server = XMZModTouchServer::new();
+    /// use xmz_mod_touch_server::Server;
+    /// let mut xmz_mod_touch_server = Server::new();
     /// assert_eq!(xmz_mod_touch_server.wartungsintervall_reached(), false);
     ///
     /// xmz_mod_touch_server.set_max_wartungsintervall_days(0);
@@ -428,7 +421,7 @@ impl XMZModTouchServer {
 
     // Macht was sie meint
     //
-    // Nachdem die Konfiguration mit `XMZModTouchServer::new_from_config()` wieder eingelesen wurde
+    // Nachdem die Konfiguration mit `Server::new_from_config()` wieder eingelesen wurde
     // muss der `start_time` Member auf die aktuelle Systemzeit gesetzt werden.
     //
     fn reset_start_time(&mut self) {
@@ -437,7 +430,7 @@ impl XMZModTouchServer {
 
 }
 
-impl Default for XMZModTouchServer {
+impl Default for Server {
     fn default() -> Self {
         Self::new()
     }

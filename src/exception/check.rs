@@ -22,10 +22,10 @@ impl<'a, O> Check<'a, O>
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::{Check, XMZModTouchServer};
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
+    /// use xmz_mod_touch_server::{Check, Server};
+    /// let server = Server::new();
     ///
-    /// let check = Check::new(&xmz_mod_touch_server, XMZModTouchServer::wartungsintervall_reached);
+    /// let check = Check::new(&server, Server::wartungsintervall_reached);
     /// ```
     pub fn new(object: &'a O, function: fn(&O) -> bool) -> Check<O> {
         Check {
@@ -39,9 +39,9 @@ impl<'a, O> Check<'a, O>
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::{Check, XMZModTouchServer};
-    /// let xmz_mod_touch_server = XMZModTouchServer::new();
-    /// let check = Check::new(&xmz_mod_touch_server, XMZModTouchServer::wartungsintervall_reached);
+    /// use xmz_mod_touch_server::{Check, Server};
+    /// let server = Server::new();
+    /// let check = Check::new(&server, Server::wartungsintervall_reached);
     ///
     /// assert!(!check.test());
     /// ```
@@ -55,10 +55,10 @@ mod tests {
     use super::*;
 
     fn new_check() {
-        use xmz_mod_touch_server::XMZModTouchServer;
-        let xmz_mod_touch_server = XMZModTouchServer::new();
+        use server::Server;
+        let server = Server::new();
 
-        let check = Check::new(&xmz_mod_touch_server, XMZModTouchServer::wartungsintervall_reached);
+        let check = Check::new(&server, Server::wartungsintervall_reached);
     }
 
 //     #[test]

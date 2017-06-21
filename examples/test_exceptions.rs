@@ -1,6 +1,6 @@
 extern crate xmz_mod_touch_server;
 
-use xmz_mod_touch_server::{Action, ShiftRegister, ShiftRegisterType};
+use xmz_mod_touch_server::{Action, Server, ShiftRegister, ShiftRegisterType};
 
 
 pub struct Exception<'a>
@@ -22,8 +22,7 @@ fn main() {
     let leds = ShiftRegister::new(ShiftRegisterType::Simulation);
     let relais = ShiftRegister::new(ShiftRegisterType::Simulation);
 
-    use xmz_mod_touch_server::XMZModTouchServer;
-    let mut xmz_mod_touch_server = XMZModTouchServer::new_from_config().unwrap();
+    let mut xmz_mod_touch_server = Server::new_from_config().unwrap();
     xmz_mod_touch_server.set_max_wartungsintervall_days(0);
     // drop mutable
     let xmz_mod_touch_server = xmz_mod_touch_server;
