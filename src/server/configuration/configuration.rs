@@ -1,8 +1,5 @@
 //! Konfiguration Datei Managment
 //!
-use std::sync::{Arc, Mutex};
-use serde_json;
-use xmz_mod_touch_server::XMZModTouchServer;
 use errors::*;
 use std::fs::File;
 use std::path::Path;
@@ -40,7 +37,7 @@ impl Configuration {
                 match File::open(&p) {
                     Ok(mut file) => {
                         println!("Verwende Konfigurationsdatei: {}", p.display());
-                        file.read_to_string(&mut ret);
+                        file.read_to_string(&mut ret)?;
                     }
                     Err(_) => panic!("Could not open file: {}", p.display()),
                 };

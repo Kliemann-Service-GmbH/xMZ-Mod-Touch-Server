@@ -7,21 +7,20 @@ use std::error::Error;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use xmz_mod_touch_server::{XMZModTouchServer, json_api};
+use xmz_mod_touch_server::server::Server;
+use xmz_mod_touch_server::json_api;
 use xmz_mod_touch_server::errors::*;
 
 pub const UPDATE_INTERVALL_MS: u64 = 100;
 
 
-/// `start_basic_configuration` - Aufruf der Basis Konfiguration des XMZModTouchServer
+/// `start_basic_configuration` - Aufruf der Basis Konfiguration des erver
 ///
-fn start_basic_configuration(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                -> Result<()>
-{
+fn start_basic_configuration(server: Arc<Mutex<Server>>) -> Result<()> {
     loop {
-        if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+        if let Ok(mut server) = server.lock() {
             debug!("start_basic_configuration()");
-            xmz_mod_touch_server.basic_configuration();
+            server.basic_configuration();
             break;
         }
     }
@@ -29,24 +28,22 @@ fn start_basic_configuration(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>
     Ok(())
 }
 
-/// `start_update`  - Starte die Update Thread des XMZModTouchServer
+/// `start_update`  - Starte die Update Thread des erver
 ///
-fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                -> Result<()>
-{
+fn start_update(server: Arc<Mutex<Server>>) -> Result<()> {
     thread::spawn(move || {
         loop {
             {
-                // DIESER SCOPE IST SEHR WICHTIG! Ohne diesen würde der xmz_mod_touch_server.lock() niemals beendet!
-                if let Ok(mut xmz_mod_touch_server) = xmz_mod_touch_server.lock() {
+                // DIESER SCOPE IST SEHR WICHTIG! Ohne diesen würde der server.lock() niemals beendet!
+                if let Ok(mut server) = server.lock() {
                     // Ausnahmen prüfen
-                    xmz_mod_touch_server.check();
-                    // XMZModTouchServer Kombonenten aktualisieren, Kombisensoren auslesen, ....
-                    xmz_mod_touch_server.update();
-                    // println!("{:#?}", &*xmz_mod_touch_server);
+                    server.check();
+                    // erver Kombonenten aktualisieren, Kombisensoren auslesen, ....
+                    server.update();
+                    // println!("{:#?}", &*server);
                 }
 
-            } // xmz_mod_touch_server.lock() frei gegeben
+            } // server.lock() frei gegeben
 
             thread::sleep(Duration::from_millis(UPDATE_INTERVALL_MS));
         }
@@ -57,9 +54,8 @@ fn start_update(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
 
 /// `start_web_interface` - Startet das JSON Web API
 ///
-fn start_web_interface(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
-                       -> Result<()> {
-    json_api::init(xmz_mod_touch_server)?;
+fn start_web_interface(server: Arc<Mutex<Server>>) -> Result<()> {
+    json_api::init(server)?;
 
     Ok(())
 }
@@ -67,15 +63,15 @@ fn start_web_interface(xmz_mod_touch_server: Arc<Mutex<XMZModTouchServer>>)
 // Starte die Aufgaben des Server Prozesses
 fn run() -> Result<()> {
     /// Server Konfiguration aus Konfig File auslesen
-    let xmz_mod_touch_server = Arc::new(Mutex::new(XMZModTouchServer::new_from_config()?));
+    let server = Arc::new(Mutex::new(Server::new_from_config()?));
 
-    start_basic_configuration(xmz_mod_touch_server.clone())?;
+    start_basic_configuration(server.clone())?;
 
     // Update thread
-    start_update(xmz_mod_touch_server.clone())?;
+    start_update(server.clone())?;
 
     // IPC/ Web Interface
-    start_web_interface(xmz_mod_touch_server.clone())?;
+    start_web_interface(server.clone())?;
 
     Ok(())
 }

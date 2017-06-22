@@ -1,10 +1,12 @@
 {
-  "version": "0.51.2",
-  "create_time": "2017-06-01T10:51:26.151391940Z",
-  "start_time": "2017-06-01T10:51:26.151394831Z",
+  "version": "0.99.2",
+  "create_time": "2017-06-22T07:08:39.502593753Z",
+  "start_time": "2017-06-22T07:08:39.502601951Z",
+  "wartungsintervall_days": 365,
   "exceptions": [],
   "zones": [
     {
+      "status": "Normal",
       "kombisensors": [
         {
           "kombisensor_type": "RAGas",
@@ -25,10 +27,10 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -42,13 +44,14 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
-          "error_count": 0
+          "error_count": 0,
+          "status": "Normal"
         },
         {
           "kombisensor_type": "RAGas",
@@ -69,10 +72,10 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -86,13 +89,14 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
-          "error_count": 0
+          "error_count": 0,
+          "status": "Normal"
         },
         {
           "kombisensor_type": "RAGas",
@@ -113,10 +117,10 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -130,13 +134,14 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
-          "error_count": 0
+          "error_count": 0,
+          "status": "Normal"
         },
         {
           "kombisensor_type": "RAGas",
@@ -157,10 +162,10 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -174,13 +179,14 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
-          "error_count": 0
+          "error_count": 0,
+          "status": "Normal"
         },
         {
           "kombisensor_type": "RAGas",
@@ -201,10 +207,10 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -218,13 +224,14 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
-          "error_count": 0
+          "error_count": 0,
+          "status": "Normal"
         },
         {
           "kombisensor_type": "RAGas",
@@ -245,10 +252,10 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -262,13 +269,14 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
-          "error_count": 0
+          "error_count": 0,
+          "status": "Normal"
         },
         {
           "kombisensor_type": "RAGas",
@@ -289,10 +297,10 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 3,
-              "alarm2_average_15min": 6,
-              "alarm3_direct_value": 15
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 3.0,
+              "alarm2_average_15min": 6.0,
+              "alarm3_direct_value": 15.0
             },
             {
               "adc_value": 0,
@@ -306,13 +314,14 @@
               "si": "ppm",
               "config": 0,
               "error_count": 0,
-              "adc_value_average_15min": 0.0,
-              "alarm1_average_15min": 30,
-              "alarm2_average_15min": 60,
-              "alarm3_direct_value": 150
+              "adc_value_average_15min": 0,
+              "alarm1_average_15min": 30.0,
+              "alarm2_average_15min": 60.0,
+              "alarm3_direct_value": 150.0
             }
           ],
-          "error_count": 0
+          "error_count": 0,
+          "status": "Normal"
         }
       ]
     }

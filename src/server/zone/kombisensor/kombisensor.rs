@@ -1,9 +1,28 @@
 //! CO-NO2 Kombisensor mit Modbus Transceiver
 //!
 use errors::*;
-use kombisensor::{Sensor, SensorType};
+use server::zone::kombisensor::sensor::{Sensor, SensorType};
 use std::fmt;
 
+
+#[derive(Clone)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug)]
+pub enum KombisensorType {
+    Unknown,    // Default Werte, keine Sensoren, ich wollte hier nicht Default als Member Name verwenden
+    RAGas,
+    RAGasSimulation,
+}
+
+#[derive(Clone)]
+#[derive(PartialEq, PartialOrd)]
+#[derive(Serialize, Deserialize, Debug)]
+pub enum KombisensorStatus {
+    // alles Ok
+    Normal,
+    // Kabelbruch
+    Kabelbruch,
+}
 
 /// Ein Kombisensor kann `n` Sensormesszellen enthalten, nomal sind 2 Messzellen (NO2 und CO)
 ///
@@ -18,14 +37,7 @@ pub struct Kombisensor {
     modbus_debug: bool,
     sensors: Vec<Sensor>,
     error_count: u64,
-}
-
-#[derive(Clone)]
-#[derive(Eq, PartialEq)]
-#[derive(Serialize, Deserialize, Debug)]
-pub enum KombisensorType {
-    RAGas,
-    RAGasSimulation,
+    status: KombisensorStatus,
 }
 
 impl Kombisensor {
@@ -41,20 +53,18 @@ impl Kombisensor {
     /// use xmz_mod_touch_server::Kombisensor;
     ///
     /// let kombisensor = Kombisensor::new();
-    /// assert_eq!(kombisensor.get_sensors().len(), 2); // 2 Kombisensoren sind default
+    /// assert_eq!(kombisensor.get_sensors().len(), 0);
     /// ```
     pub fn new() -> Self {
         Kombisensor {
-            kombisensor_type: KombisensorType::RAGasSimulation,
+            kombisensor_type: KombisensorType::Unknown,
             firmware_version: "0.0.0".to_string(),
             modbus_address: 247,
             modbus_device: "/dev/ttyUSB0".to_string(),
             modbus_debug: false,
-            sensors: vec![
-                Sensor::new_with_type(SensorType::NemotoNO2),
-                Sensor::new_with_type(SensorType::NemotoCO),
-            ],
+            sensors: vec![],
             error_count: 0,
+            status: KombisensorStatus::Normal,
         }
     }
     /// Erzeugt eine spezielle Kombisensor Instanz
@@ -81,6 +91,10 @@ impl Kombisensor {
                 Kombisensor {
                     kombisensor_type: kombisensor_type,
                     modbus_device: "/dev/ttyS1".to_string(),
+                    sensors: vec![
+                        Sensor::new_with_type(SensorType::NemotoNO2),
+                        Sensor::new_with_type(SensorType::NemotoCO),
+                    ],
                     ..Default::default()
                 }
             }
@@ -89,6 +103,10 @@ impl Kombisensor {
                     kombisensor_type: kombisensor_type,
                     modbus_device: "/dev/ttyUSB0".to_string(),
                     modbus_debug: true,
+                    sensors: vec![
+                        Sensor::new_with_type(SensorType::SimulationNO2),
+                        Sensor::new_with_type(SensorType::SimulationCO),
+                    ],
                     ..Default::default()
                 }
             }
@@ -126,7 +144,7 @@ impl Kombisensor {
     /// ```rust
     /// use xmz_mod_touch_server::{Kombisensor, KombisensorType};
     ///
-    /// let kombisensor = Kombisensor::new();
+    /// let kombisensor = Kombisensor::new_with_type(KombisensorType::RAGasSimulation);
     /// assert_eq!(kombisensor.get_kombisensor_type(), KombisensorType::RAGasSimulation);
     /// ```
     pub fn get_kombisensor_type(&self) -> KombisensorType {
@@ -267,6 +285,7 @@ impl Kombisensor {
         self.modbus_debug = modbus_debug
     }
 
+    /// TODO: Referenz auf Vector durch &[T] ersetzen
     /// Liefert eine Referenz auf einen Vector mit den Sensoren
     ///
     /// # Examples
@@ -275,10 +294,24 @@ impl Kombisensor {
     /// use xmz_mod_touch_server::Kombisensor;
     ///
     /// let kombisensor = Kombisensor::new();
-    /// assert_eq!(kombisensor.get_sensors().len(), 2); // 2 Kombisensoren sind default
+    /// assert_eq!(kombisensor.get_sensors().len(), 0);
     /// ```
     pub fn get_sensors(&self) -> &Vec<Sensor> {
         &self.sensors
+    }
+
+    /// Liefert eine Referenz auf einen Vector mit den Sensoren
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::Kombisensor;
+    ///
+    /// let kombisensor = Kombisensor::new();
+    /// assert_eq!(kombisensor.get_sensors().len(), 0);
+    /// ```
+    pub fn add_sensor(&mut self, sensor: Sensor) {
+        self.sensors.push(sensor);
     }
 
     /// Liefert eine mutable Referenz auf einen Vector mit den Sensoren
@@ -289,7 +322,7 @@ impl Kombisensor {
     /// use xmz_mod_touch_server::Kombisensor;
     ///
     /// let mut kombisensor = Kombisensor::new();
-    /// assert_eq!(kombisensor.get_sensors_mut().len(), 2); // 2 Kombisensoren sind default
+    /// assert_eq!(kombisensor.get_sensors_mut().len(), 0);
     /// ```
     pub fn get_sensors_mut(&mut self) -> &mut Vec<Sensor> {
         &mut self.sensors
@@ -308,20 +341,20 @@ impl Kombisensor {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::Kombisensor;
+    /// use xmz_mod_touch_server::{Kombisensor, KombisensorType};
     ///
-    /// let kombisensor = Kombisensor::new();
+    /// let kombisensor = Kombisensor::new_with_type(KombisensorType::RAGasSimulation);
     /// assert!(kombisensor.get_sensor(0).is_some());
     /// ```
     pub fn get_sensor(&self, id: usize) -> Option<&Sensor> {
         self.sensors.get(id)
     }
 
-    /// Mutable Refernz auf Sensor Messzellen des Kombisensors
+    /// Optionale, mutable Referenz auf eine Sensor Messzelle des Kombisensors
     ///
     /// # Return values
     ///
-    /// Liefert ein Option Type, mit den mut Sensoren
+    /// Liefert ein Option Type, mit der mut Referenz auf den Sensor
     ///
     /// # Parameters
     ///
@@ -330,9 +363,9 @@ impl Kombisensor {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::Kombisensor;
+    /// use xmz_mod_touch_server::{Kombisensor, KombisensorType};
     ///
-    /// let mut kombisensor = Kombisensor::new();
+    /// let mut kombisensor = Kombisensor::new_with_type(KombisensorType::RAGasSimulation);
     /// assert!(kombisensor.get_sensor_mut(0).is_some());
     /// ```
     pub fn get_sensor_mut(&mut self, id: usize) -> Option<&mut Sensor> {
@@ -357,7 +390,7 @@ impl Kombisensor {
         self.error_count
     }
 
-    /// Erhöht den  Error Counter
+    /// Erhöht den Fehlerzähler (Error Counter)
     ///
     /// # Examples
     ///
@@ -374,7 +407,7 @@ impl Kombisensor {
         self.error_count += 1
     }
 
-    /// Reset den Error Counter
+    /// Reset den Fehlerzähler (Error Counter)
     ///
     /// # Examples
     ///
@@ -397,15 +430,9 @@ impl Kombisensor {
     ///
     /// Die Funktion liefert ein Result
     ///
-    /// # Examples
-    ///
-    /// ```rust,no_run
-    /// use xmz_mod_touch_server::Kombisensor;
-    /// let mut kombisensor = Kombisensor::new();
-    ///
-    /// assert!(kombisensor.get_from_modbus().is_ok());
-    /// ```
-    pub fn get_from_modbus(&mut self) -> Result<()> {
+    fn update_via_modbus(&mut self) -> Result<()> {
+        if self.status != KombisensorStatus::Normal { bail!("Kabelbruch") };
+
         use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH, SerialMode, RequestToSendMode};
 
         let mut modbus = Modbus::new_rtu(&self.modbus_device, 9600, 'N', 8, 1)?;
@@ -429,6 +456,8 @@ impl Kombisensor {
 
         if response_register.len() < 28 { bail!("Modbus Data invalid: {:?}", response_register) }
 
+        // Parse die empfangenen Daten
+        // TODO: unwrap() entfernen!
         let firmware_version_major = *response_register.get(0).unwrap();
         let firmware_version_minor = *response_register.get(1).unwrap();
         let firmware_version_patch = *response_register.get(2).unwrap();
@@ -482,11 +511,43 @@ impl Kombisensor {
 
         Ok(())
     }
+
+    /// Gibt den Status des Kombisensors wieder
+    pub fn get_status(&self) -> KombisensorStatus {
+        self.status.clone()
+    }
+
+    // Update Status des Kombisensors
+    //
+    // Diese Funktion wird in der public `update()` Funktion aufgerufen.
+    fn update_status(&mut self) {
+        if self.error_count >= 5 {
+            self.status = KombisensorStatus::Kabelbruch;
+        } else {
+            self.status = KombisensorStatus::Normal;
+        }
+
+    }
+
+
+    /// Update Funktion des Kombisensors
+    ///
+    /// Diese Funktion fast die einzelnen Update Funktionen des Kombisensors zusammen
+    pub fn update(&mut self) {
+        match self.update_via_modbus() {
+            Ok(_) => {}
+            Err(_) => self.error_count += 1,
+        }
+
+        self.update_status();
+    }
+
 }
 
 impl fmt::Display for KombisensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
+            KombisensorType::Unknown => write!(f, "Unbekannter Kombisensor"),
             KombisensorType::RAGas => write!(f, "RA-GAS CO/ NO2 Kombisensor"),
             KombisensorType::RAGasSimulation => write!(f, "RA-GAS CO/ NO2 Kombisensor (Sim)"),
         }

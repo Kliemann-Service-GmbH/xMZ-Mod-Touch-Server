@@ -1,6 +1,6 @@
 [package]
 name = "xmz_mod_touch_server"
-version = "0.99.0"
+version = "0.99.4"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "Serverteil der 'xMZ-Mod-Touch'-Platform"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
@@ -22,7 +22,7 @@ doc = false
 development = []
 
 [dependencies]
-chrono = { git = "https://github.com/chronotope/chrono.git", features = ["serde"] }
+chrono = { version = "0.4", features = ["serde"] }
 env_logger = "0.4"
 error-chain = "0.10"
 iron = "0.5.1"

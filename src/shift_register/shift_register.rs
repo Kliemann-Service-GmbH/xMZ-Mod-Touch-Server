@@ -5,6 +5,7 @@
 //!
 use errors::*;
 use rand::Rng;
+use std::sync::RwLock;
 use std::thread;
 use std::time::Duration;
 use sysfs_gpio::{Direction, Pin};
@@ -26,7 +27,9 @@ pub struct ShiftRegister {
     pub ds_pin: Option<u64>,
     pub clock_pin: Option<u64>,
     pub latch_pin: Option<u64>,
-    pub data: u64,
+    // Interior Mutability wird benötigt, um die ShiftRegister nicht als &mut Referenzen
+    // durch die gesammte Anwendung schleifen zu müssen.
+    pub data: RwLock<u64>,
 }
 
 impl Default for ShiftRegister {
@@ -37,7 +40,7 @@ impl Default for ShiftRegister {
             ds_pin: None,
             clock_pin: None,
             latch_pin: None,
-            data: 0,
+            data: RwLock::new(0),
         }
     }
 }
@@ -60,7 +63,7 @@ impl ShiftRegister {
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
-    /// assert_eq!(sim.data, 0b0);
+    /// assert_eq!(sim.get_data().unwrap(), 0b0);
     /// ```
     pub fn new(register_type: ShiftRegisterType) -> Self {
         match register_type {
@@ -70,7 +73,7 @@ impl ShiftRegister {
                 ds_pin: Some(38),
                 clock_pin: Some(44),
                 latch_pin: Some(40),
-                data: 0,
+                ..Default::default()
             },
             ShiftRegisterType::Relais => ShiftRegister {
                 register_type: register_type,
@@ -78,15 +81,11 @@ impl ShiftRegister {
                 ds_pin: Some(45),
                 clock_pin: Some(39),
                 latch_pin: Some(37),
-                data: 0,
+                ..Default::default()
             },
-            ShiftRegisterType::Simulation => ShiftRegister {
+            _ => ShiftRegister { // der Catch all Arm fängt auch `ShiftRegisterType::Simulation`
                 register_type: register_type,
-                oe_pin: None,
-                ds_pin: None,
-                clock_pin: None,
-                latch_pin: None,
-                data: 0,
+                ..Default::default()
             }
         }
     }
@@ -101,19 +100,22 @@ impl ShiftRegister {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
-    /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
-    /// assert_eq!(sim.data, 0b0);
+    /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
+    /// assert_eq!(sim.get_data().unwrap(), 0b0);
     /// sim.set(3);
-    /// assert_eq!(sim.data, 0b100);
+    /// assert_eq!(sim.get_data().unwrap(), 0b100);
     /// ```
     /// More info: http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c
-    pub fn set(&mut self, num: u64) -> Result<()> {
-        self.data |= 1 << (num -1);
-        self.shift_out()?;
-
+    pub fn set(&self, num: u64) -> Result<()> {
+        if let Ok(mut data) = self.data.write() {
+            *data |= 1 << (num -1);
+            self.shift_out()?;
+        } else {
+            bail!("Could not write lock data member")
+        }
         Ok(())
     }
 
@@ -128,21 +130,25 @@ impl ShiftRegister {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
-    /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
+    /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// sim.set(1);
     /// sim.set(3);
-    /// assert_eq!(sim.get(1), true);
-    /// assert_eq!(sim.get(2), false);
-    /// assert_eq!(sim.get(3), true);
+    /// assert_eq!(sim.get(1).unwrap(), true);
+    /// assert_eq!(sim.get(2).unwrap(), false);
+    /// assert_eq!(sim.get(3).unwrap(), true);
     /// ```
     /// More info: http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c
-    pub fn get(&self, num: u64) -> bool {
-        match (self.data >> (num -1)) & 1 {
-            0 => false,
-            _ => true,
+    pub fn get(&self, num: u64) -> Result<bool> {
+        if let Ok(data) = self.data.read() {
+            match (*data >> (num -1)) & 1 {
+                0 => Ok(false),
+                _ => Ok(true),
+            }
+        } else {
+            bail!("Could not read lock data member");
         }
     }
 
@@ -157,24 +163,28 @@ impl ShiftRegister {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
-    /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
-    /// assert_eq!(sim.data, 0b0);
+    /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
+    /// assert_eq!(sim.get_data().unwrap(), 0b0);
     ///
     /// sim.set(1);
     /// sim.set(3);
-    /// assert_eq!(sim.get(1), true);
-    /// assert_eq!(sim.get(3), true);
+    /// assert_eq!(sim.get(1).unwrap(), true);
+    /// assert_eq!(sim.get(3).unwrap(), true);
     ///
     /// sim.clear(3);
-    /// assert_eq!(sim.get(1), true);
-    /// assert_eq!(sim.get(3), false);
+    /// assert_eq!(sim.get(1).unwrap(), true);
+    /// assert_eq!(sim.get(3).unwrap(), false);
     /// ```
-    pub fn clear(&mut self, num: u64) -> Result<()> {
-        self.data &= !(1 << (num - 1));
-        self.shift_out()?;
+    pub fn clear(&self, num: u64) -> Result<()> {
+        if let Ok(mut data) = self.data.write() {
+            *data &= !(1 << (num - 1));
+            self.shift_out()?;
+        } else {
+            bail!("Could not write lock data member")
+        }
 
         Ok(())
     }
@@ -190,20 +200,24 @@ impl ShiftRegister {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
-    /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
-    /// assert_eq!(sim.data, 0b0);
+    /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
+    /// assert_eq!(sim.get_data().unwrap(), 0b0);
     ///
     /// sim.toggle(3);
-    /// assert_eq!(sim.get(3), true);
+    /// assert_eq!(sim.get(3).unwrap(), true);
     /// sim.toggle(3);
-    /// assert_eq!(sim.get(3), false);
+    /// assert_eq!(sim.get(3).unwrap(), false);
     /// ```
-    pub fn toggle(&mut self, num: u64) -> Result<()> {
-        self.data ^= 1 << (num -1);
-        self.shift_out()?;
+    pub fn toggle(&self, num: u64) -> Result<()> {
+        if let Ok(mut data) = self.data.write() {
+            *data ^= 1 << (num -1);
+            self.shift_out()?;
+        } else {
+            bail!("Could not write lock data member")
+        }
 
         Ok(())
     }
@@ -212,19 +226,23 @@ impl ShiftRegister {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
-    /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
-    /// assert_eq!(sim.get(1), false);
+    /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
+    /// assert_eq!(sim.get(1).unwrap(), false);
     /// sim.set(1);
-    /// assert_eq!(sim.get(1), true);
+    /// assert_eq!(sim.get(1).unwrap(), true);
     /// sim.reset();
-    /// assert_eq!(sim.get(1), false);
+    /// assert_eq!(sim.get(1).unwrap(), false);
     /// ```
-    pub fn reset(&mut self) -> Result<()> {
-        self.data = 0;
-        self.shift_out()?;
+    pub fn reset(&self) -> Result<()> {
+        if let Ok(mut data) = self.data.write() {
+            *data = 0;
+            self.shift_out()?;
+        } else {
+            bail!("Could not write lock data member")
+        }
 
         Ok(())
     }
@@ -237,29 +255,42 @@ impl ShiftRegister {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
-    /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
+    /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     ///
     /// sim.set(1);
     /// sim.clear(10);
     /// sim.test();
-    /// assert_eq!(sim.get(1), true);
-    /// assert_eq!(sim.get(10), false);
+    /// assert_eq!(sim.get(1).unwrap(), true);
+    /// assert_eq!(sim.get(10).unwrap(), false);
     /// ```
-    pub fn test(&mut self) -> Result<()> {
-        // Alten Stand speichern
-        let old_state = self.data;
-        // Buffer komplett mit Einsen füllen
-        self.data = u64::max_value();
-        self.shift_out()?;
+    pub fn test(&self) -> Result<()> {
+        let old_state;
+
+        if let Ok(mut data) = self.data.write() {
+            // Alten Stand speichern
+            old_state = *data;
+            // Buffer komplett mit Einsen füllen
+            *data = u64::max_value();
+            self.shift_out()?;
+        } else {
+            bail!("Could not write lock data member")
+        }
+
         // 1Sec warten
         thread::sleep(Duration::new(1, 0));
+
         self.reset()?;
-        // alten Stand wieder herstellen
-        self.data = old_state;
-        self.shift_out()?;
+
+        if let Ok(mut data) = self.data.write() {
+            // alten Stand wieder herstellen
+            *data = old_state;
+            self.shift_out()?;
+        } else {
+            bail!("Could not write lock data member")
+        }
 
         Ok(())
     }
@@ -271,26 +302,47 @@ impl ShiftRegister {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
-    /// let mut sim = ShiftRegister::new(ShiftRegisterType::Simulation);
+    /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     ///
     /// sim.test_random();
     /// ```
-    pub fn test_random(&mut self) -> Result<()> {
-        // Alten Stand speichern
-        let old_state = self.data;
-        // Buffer mit Zufallsdaten füllen
-        self.data =  ::rand::thread_rng().gen_range(1, u64::max_value());
-        self.shift_out()?;
+    pub fn test_random(&self) -> Result<()> {
+        let old_state;
+
+        if let Ok(mut data) = self.data.write() {
+            // Alten Stand speichern
+            old_state = *data;
+            // Buffer mit Zufallsdaten füllen
+            *data = ::rand::thread_rng().gen_range(1, u64::max_value());
+            self.shift_out()?;
+        } else {
+            bail!("Could not write lock data member")
+        }
+
+        // 1Sec warten
         thread::sleep(Duration::new(1, 0));
+
         self.reset()?;
-        // alten Stand wieder herstellen
-        self.data = old_state;
-        self.shift_out()?;
+
+        if let Ok(mut data) = self.data.write() {
+            // alten Stand wieder herstellen
+            *data = old_state;
+            self.shift_out()?;
+        } else {
+            bail!("Could not write lock data member")
+        }
 
         Ok(())
+    }
+
+    pub fn get_data(&self) -> Result<u64> {
+        match self.data.read() {
+            Ok(data) => Ok(data.clone()),
+            Err(_) => bail!("Could not read lock data member"),
+        }
     }
 
 
@@ -324,8 +376,8 @@ impl ShiftRegister {
     /// Toogelt den Clock Pin high->low
     ///
     fn clock_in(&self) -> Result<()> {
-        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(1)) };
-        if let Some(clock_pin) = self.clock_pin { try!(Pin::new(clock_pin).set_value(0)) };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(1)? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(0)? };
 
         Ok(())
     }
@@ -333,8 +385,8 @@ impl ShiftRegister {
     /// Toggelt den Latch Pin pin high->low,
     ///
     fn latch_out(&self) -> Result<()> {
-        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(1)) };
-        if let Some(latch_pin) = self.latch_pin { try!(Pin::new(latch_pin).set_value(0)) };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(1)? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(0)? };
 
         Ok(())
     }
@@ -344,18 +396,18 @@ impl ShiftRegister {
     ///
     fn shift_out(&self) -> Result<()> {
         // Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonsten passiert nix
-        try!(self.export_pins());
-        try!(self.set_pin_direction_output());
+        self.export_pins()?;
+        self.set_pin_direction_output()?;
 
         // Daten einclocken
         for i in (0..64).rev() {
-            match (self.data >> i) & 1 {
-                1 => { if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).set_value(1)) } },
-                _ => { if let Some(ds_pin) = self.ds_pin { try!(Pin::new(ds_pin).set_value(0)) } },
-            }
-            try!(self.clock_in());
+            // match (self.data >> i) & 1 {
+            //     1 => { if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(1)? } },
+            //     _ => { if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(0)? } },
+            // }
+            self.clock_in()?;
         }
-        try!(self.latch_out());
+        self.latch_out()?;
 
         Ok(())
     }

@@ -3,7 +3,6 @@
 
 #[macro_use] extern crate error_chain;
 extern crate libmodbus_rs;
-extern crate xmz_mod_touch_server;
 
 use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH};
 
