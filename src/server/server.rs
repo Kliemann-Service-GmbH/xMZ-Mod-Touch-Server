@@ -22,9 +22,9 @@ use server::zone::kombisensor::{Kombisensor, KombisensorStatus};
 pub struct Server {
     version: String,
     // `create_time` wird nur ein mal beim erstellen der Konfiguration gesetzt
-    create_time: chrono::DateTime<UTC>,
+    create_time: chrono::DateTime<Utc>,
     // Wird jedes mal wenn der Serverprozess gestartet wurde, gesetzt
-    start_time: chrono::DateTime<UTC>,
+    start_time: chrono::DateTime<Utc>,
     // Anzahl Tage der max. Laufzeit. Wird diese Anzahl erreicht wird der Wartungsintervall Alarm ausgelöst
     wartungsintervall_days: i64,
     // Ausnahmen
@@ -54,8 +54,8 @@ impl Server {
     pub fn new() -> Self {
         Server {
             version: env!("CARGO_PKG_VERSION").to_string(),
-            create_time: chrono::UTC::now(),
-            start_time: chrono::UTC::now(),
+            create_time: chrono::Utc::now(),
+            start_time: chrono::Utc::now(),
             wartungsintervall_days: 365,
             exceptions: Mutex::new(HashSet::new()),
             zones: vec![],
@@ -379,7 +379,7 @@ impl Server {
     /// assert!(xmz_mod_touch_server.uptime().num_milliseconds() >= 10);
     /// ```
     pub fn uptime(&self) -> chrono::Duration {
-        chrono::UTC::now().signed_duration_since(self.start_time)
+        chrono::Utc::now().signed_duration_since(self.start_time)
     }
 
     /// Runtime des Servers
@@ -400,7 +400,7 @@ impl Server {
     /// let runtime = xmz_mod_touch_server.runtime();
     /// ```
     pub fn runtime(&self) -> chrono::Duration {
-        chrono::UTC::now().signed_duration_since(self.create_time)
+        chrono::Utc::now().signed_duration_since(self.create_time)
     }
 
     // Prüfung Wartungsintervall erreicht
@@ -425,7 +425,7 @@ impl Server {
     // muss der `start_time` Member auf die aktuelle Systemzeit gesetzt werden.
     //
     fn reset_start_time(&mut self) {
-        self.start_time = UTC::now();
+        self.start_time = Utc::now();
     }
 
 }

@@ -3,7 +3,7 @@
 //! Dieses Modul representiert eine Messzelle, eines [CO-NO2-Kombisensor-Mod](https://github.com/Kliemann-Service-GmbH/CO-NO2-Kombisensor-Mod) der Firma RA-GAS
 //! `Firmware Version: 0.14.0`
 //!
-use ::chrono::{DateTime, UTC};
+use ::chrono::{DateTime, Utc};
 use exception::{Exception, ExceptionType};
 use shift_register::ShiftRegister;
 use std::collections::HashSet;
@@ -75,7 +75,7 @@ pub struct Sensor {
     pub alarm2_average_15min: f64,
     pub alarm3_direct_value: f64,
     #[serde(skip_deserializing, skip_serializing)]
-    pub adc_values_average: Vec<(u16, DateTime<UTC>)>,
+    pub adc_values_average: Vec<(u16, DateTime<Utc>)>,
 }
 
 impl Sensor {
@@ -746,12 +746,12 @@ impl Sensor {
         if !self.is_enabled() { return; }
 
         // Update der ADC Werte Liste (adc_value, timestamp)
-        self.adc_values_average.push((self.adc_value, UTC::now()));
+        self.adc_values_average.push((self.adc_value, Utc::now()));
 
         // Die [`position()`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.position) Funktion
         // sucht in einem Iterator (Iterator über die Liste der ADC Werte/ Zeitstempel) nach einem Element und liefert dessen Index Wert.
         // Dieser Index wird benutzt um die Liste der ADC Werte/ Zeitstempel zu teilen [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
-        if let Some(index) = self.adc_values_average.iter().position(|&(_, timestamp)| UTC::now().signed_duration_since(timestamp).num_seconds() < AVERAGE_15MIN_SEC ) {
+        if let Some(index) = self.adc_values_average.iter().position(|&(_, timestamp)| Utc::now().signed_duration_since(timestamp).num_seconds() < AVERAGE_15MIN_SEC ) {
             // Mit `split_off()` kann man nun den Vector teilen, es bleiben nur noch die (Messerte, Zeitstempel) der letzten AVERAGE_15MIN_SEC übrig.
             // **Dieser Rest wird nun wieder als adc_values_average übernommen, alle anderen Werte werden verworfen.**
             //
