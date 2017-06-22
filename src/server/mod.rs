@@ -2,8 +2,6 @@
 //!
 //! Hier werden alle Komponenten des Servers verwaltet.
 //!
-extern crate chrono;
-
 pub mod configuration;
 pub mod server;
 pub mod zone;

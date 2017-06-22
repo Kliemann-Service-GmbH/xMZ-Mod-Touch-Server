@@ -16,19 +16,15 @@
 //!
 
 // TODO: https://disconnected.systems/blog/rover-rest-api/
-extern crate iron;
-extern crate router;
-extern crate serde_json;
-
 use errors::*;
 use iron::prelude::*;
 use iron::status;
 use router::Router;
+use serde_json;
+use Server;
 use std::error::Error;
 use std::fmt;
 use std::sync::{Arc, Mutex};
-use Server;
-
 
 /// Json Web Interface Fehler
 /// TODO: port to error-chain
