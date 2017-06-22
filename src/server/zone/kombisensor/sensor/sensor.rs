@@ -761,14 +761,14 @@ impl Sensor {
         let num_adc_values_average = self.adc_values_average.len();
         debug!("num adc_values_average: {}", num_adc_values_average);
         // Die Variable sum_adc_values_average speichert die Summe aller ADC Werte
-        let mut sum_adc_values_average = 0;
+        let mut sum_adc_values_average: u64 = 0;
         // Durchlaufe den Tuppel, verwende aber nur den ADC Wert (`value`), und bilde die Summer aller ADC Werte
         for &(adc_value, _) in self.adc_values_average.iter(){
-            sum_adc_values_average += adc_value;
+            sum_adc_values_average += adc_value as u64;
         }
         // Die Summe aller ADC Werte wird durch die Anzahl der ADC Werte geteilt um den Mittelwert zu erhalten.
         // Dieser Mittelwert wird dann im `adc_value_average_15min` Member der `Sensor` Struct gespeichert
-        self.adc_value_average_15min = sum_adc_values_average / num_adc_values_average as u16;
+        self.adc_value_average_15min = (sum_adc_values_average / num_adc_values_average as u64) as u16;
     }
 
     /// Berechnet die Gaskonzentration mit einer linearen Funktion

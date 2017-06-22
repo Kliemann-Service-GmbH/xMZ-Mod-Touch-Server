@@ -27,6 +27,8 @@ pub struct ShiftRegister {
     pub ds_pin: Option<u64>,
     pub clock_pin: Option<u64>,
     pub latch_pin: Option<u64>,
+    // Interior Mutability wird benötigt, um die ShiftRegister nicht als &mut Referenzen
+    // durch die gesammte Anwendung schleifen zu müssen.
     pub data: RwLock<u64>,
 }
 
@@ -338,7 +340,7 @@ impl ShiftRegister {
 
     pub fn get_data(&self) -> Result<u64> {
         match self.data.read() {
-            Ok(data) => Ok(*data),
+            Ok(data) => Ok(data.clone()),
             Err(_) => bail!("Could not read lock data member"),
         }
     }
