@@ -1,8 +1,8 @@
 {
   "server_type": "Real",
-  "version": "0.99.4",
-  "create_time": "2017-06-23T09:01:03.018356691Z",
-  "start_time": "2017-06-23T09:01:03.018360535Z",
+  "version": "0.99.5",
+  "create_time": "2017-06-23T11:06:19.742442205Z",
+  "start_time": "2017-06-23T11:06:19.742449314Z",
   "wartungsintervall_days": 365,
   "exceptions": [],
   "zones": [
@@ -17,6 +17,7 @@
           "modbus_debug": false,
           "sensors": [
             {
+              "sensor_type": "NemotoNO2",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
@@ -24,7 +25,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "NemotoNO2",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -34,6 +34,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "NemotoCO",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
@@ -41,7 +42,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "NemotoCO",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -62,6 +62,7 @@
           "modbus_debug": false,
           "sensors": [
             {
+              "sensor_type": "NemotoNO2",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
@@ -69,7 +70,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "NemotoNO2",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -79,6 +79,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "NemotoCO",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
@@ -86,7 +87,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "NemotoCO",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -107,6 +107,7 @@
           "modbus_debug": false,
           "sensors": [
             {
+              "sensor_type": "NemotoNO2",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
@@ -114,7 +115,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "NemotoNO2",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -124,6 +124,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "NemotoCO",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
@@ -131,7 +132,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "NemotoCO",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -152,6 +152,7 @@
           "modbus_debug": false,
           "sensors": [
             {
+              "sensor_type": "NemotoNO2",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
@@ -159,7 +160,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "NemotoNO2",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -169,6 +169,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "NemotoCO",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
@@ -176,7 +177,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "NemotoCO",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -197,6 +197,7 @@
           "modbus_debug": false,
           "sensors": [
             {
+              "sensor_type": "NemotoNO2",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
@@ -204,7 +205,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "NemotoNO2",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -214,6 +214,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "NemotoCO",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
@@ -221,7 +222,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "NemotoCO",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -242,6 +242,7 @@
           "modbus_debug": false,
           "sensors": [
             {
+              "sensor_type": "NemotoNO2",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
@@ -249,7 +250,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "NemotoNO2",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -259,6 +259,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "NemotoCO",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
@@ -266,7 +267,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "NemotoCO",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -287,6 +287,7 @@
           "modbus_debug": false,
           "sensors": [
             {
+              "sensor_type": "NemotoNO2",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 30,
@@ -294,7 +295,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "NemotoNO2",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -304,6 +304,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "NemotoCO",
               "adc_value": 0,
               "min_value": 0,
               "max_value": 300,
@@ -311,7 +312,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "NemotoCO",
               "si": "ppm",
               "config": 0,
               "error_count": 0,
@@ -328,11 +328,9 @@
     }
   ],
   "leds": {
-    "register_type": "LED",
-    "data": 0
+    "register_type": "LED"
   },
   "relais": {
-    "register_type": "Relais",
-    "data": 0
+    "register_type": "Relais"
   }
 }

@@ -187,6 +187,7 @@ impl Zone {
             // Alle Sensoren durchlaufen
             // ...
         }
+
         // Alle Kombisensoren durchlaufen
         // ...
         self.status = hightes_state;
