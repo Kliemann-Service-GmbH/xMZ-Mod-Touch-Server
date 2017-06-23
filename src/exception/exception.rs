@@ -12,7 +12,8 @@ pub enum ExceptionType {
     SensorAP1Average15min { num_zone: usize, num_sensor: usize },
 }
 
-/// Ausnahme (Fehler der auftreten kann)
+/// Ausnahme (Fehler die auftreten können)
+/// 
 #[derive(Debug)]
 #[derive(Hash, Eq, PartialEq)]
 #[derive(Serialize, Deserialize)]

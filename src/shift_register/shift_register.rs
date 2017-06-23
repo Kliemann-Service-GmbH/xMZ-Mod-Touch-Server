@@ -1,8 +1,3 @@
-//! Shiftregister Steuerung
-//!
-//! Die Relais und LEDs der XMZModTouchServer Platform sind mit 8bit serial-in paralel-out Shiftregistern
-//! angeschlossen.
-//!
 use errors::*;
 use rand::Rng;
 use std::sync::RwLock;
@@ -11,6 +6,9 @@ use std::time::Duration;
 use sysfs_gpio::{Direction, Pin};
 
 
+/// Verwendungszweck des ShiftRegister Arrays
+///
+/// Je nach Typ werden andere Hardware Pins angesprochen.
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub enum ShiftRegisterType {
@@ -19,17 +17,23 @@ pub enum ShiftRegisterType {
     Simulation,
 }
 
+/// Representation der Shiftregister Hardware
+///
+/// Diese Struct hält neben dem ShiftRegisterTypen,
+/// die Hardware Pins (in Options so das Testumgebungen ohne Hardware simmuliert werden kann).
+/// Der Data Member dieser Stuctur ist in ein RwLock gekapselt, so das der Wert auch
+/// bei immutablen Referenzen geändert werden kann.
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct ShiftRegister {
     register_type: ShiftRegisterType,
-    pub oe_pin: Option<u64>,
-    pub ds_pin: Option<u64>,
-    pub clock_pin: Option<u64>,
-    pub latch_pin: Option<u64>,
+    oe_pin: Option<u64>,
+    ds_pin: Option<u64>,
+    clock_pin: Option<u64>,
+    latch_pin: Option<u64>,
     // Interior Mutability wird benötigt, um die ShiftRegister nicht als &mut Referenzen
     // durch die gesammte Anwendung schleifen zu müssen.
-    pub data: RwLock<u64>,
+    data: RwLock<u64>,
 }
 
 impl Default for ShiftRegister {

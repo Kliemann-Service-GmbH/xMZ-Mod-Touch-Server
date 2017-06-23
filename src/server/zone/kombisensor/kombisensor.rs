@@ -6,17 +6,22 @@ use std::fmt;
 
 
 #[derive(Clone)]
+#[derive(Debug)]
 #[derive(Eq, PartialEq)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum KombisensorType {
-    Unknown,    // Default Werte, keine Sensoren, ich wollte hier nicht Default als Member Name verwenden
+    // Default, keine Sensoren
+    Unknown,    // ich wollte hier nicht Default als Member Name verwenden
+    // echte Hardware, NO2/ CO Sensoren (Type: NemotoNO2/ NemotoCO)
     RAGas,
+    // simmulierte Hardware, und Hardware an den Entwickler PC angeschlossen
     RAGasSimulation,
 }
 
 #[derive(Clone)]
+#[derive(Debug)]
 #[derive(PartialEq, PartialOrd)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum KombisensorStatus {
     // alles Ok
     Normal,
@@ -431,25 +436,24 @@ impl Kombisensor {
     /// Die Funktion liefert ein Result
     ///
     fn update_via_modbus(&mut self) -> Result<()> {
-        if self.status != KombisensorStatus::Normal { bail!("Kabelbruch") };
-
         use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH, SerialMode, RequestToSendMode};
-
         let mut modbus = Modbus::new_rtu(&self.modbus_device, 9600, 'N', 8, 1)?;
+
         modbus.set_slave(self.modbus_address)?;
 
         // Debug Modus einschalten wenn gewünscht
         modbus.set_debug(self.modbus_debug)?;
 
+        // Auf der xMZ-Mod-Touch Hardware muss der RTS Pin genutzt werden
         if self.kombisensor_type == KombisensorType::RAGas {
             // debug!("modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)");
             // modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)?;
-            debug!("modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)");
+            info!("modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)");
             modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)?;
         }
 
-        // modbus.connect().map_err(|_| self.inc_error_count() );
-        modbus.connect()?;
+        modbus.connect().map_err(|_| self.inc_error_count() );
+        // modbus.connect()?;
 
         let mut response_register = vec![0u16; MODBUS_RTU_MAX_ADU_LENGTH as usize];
         modbus.read_registers(0, 30, &mut response_register)?;
@@ -534,9 +538,11 @@ impl Kombisensor {
     ///
     /// Diese Funktion fast die einzelnen Update Funktionen des Kombisensors zusammen
     pub fn update(&mut self) {
-        match self.update_via_modbus() {
-            Ok(_) => {}
-            Err(_) => self.error_count += 1,
+        if self.error_count < 4 {
+            match self.update_via_modbus() {
+                Ok(_)  => { self.reset_error_count(); }
+                Err(_) => { self.inc_error_count(); },
+            }
         }
 
         self.update_status();
