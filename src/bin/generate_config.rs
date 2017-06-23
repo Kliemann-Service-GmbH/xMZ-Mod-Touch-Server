@@ -14,7 +14,7 @@ use clap::{App, Arg, ArgMatches};
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
-use xmz_mod_touch_server::{Server, Kombisensor, KombisensorType};
+use xmz_mod_touch_server::{Server, ServerType, Kombisensor, KombisensorType};
 use xmz_mod_touch_server::errors::*;
 
 
@@ -24,6 +24,7 @@ enum Environment {
     Production,
     Development,
 }
+
 #[derive(Debug)]
 struct Config<'a> {
     environment: Environment,
@@ -32,6 +33,7 @@ struct Config<'a> {
     kombisensors: u8,
     debug: bool,
 }
+
 impl<'a> Config<'a> {
     fn new(
         environment: Environment,
@@ -56,7 +58,10 @@ fn generate_config(config: &Config) -> Result<()> {
     // Config file
     let mut config_file = File::create(config.config_file)?;
     // The Server
-    let mut xmz_mod_touch_server = Server::new();
+    let mut xmz_mod_touch_server = match config.environment {
+        Environment::Development => Server::new_with_type(ServerType::Simulation),
+        Environment::Production => Server::new_with_type(ServerType::Real),
+    };
 
     // Kombisensor Typ nach Environment
     let kombisensor_type = match config.environment {

@@ -17,8 +17,9 @@ pub const AVERAGE_15MIN_SEC: i64 = 15 * 60;
 
 /// Typ der Messzelle
 #[derive(Clone)]
+#[derive(Debug)]
 #[derive(Eq, PartialEq)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum SensorType {
     /// Nemoto NO2 Messzelle, EC NAP-550
     /// Datenblatt: https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
@@ -38,8 +39,9 @@ pub enum SensorType {
 
 /// SI Einheit des zu messenden Mediums
 #[derive(Clone)]
+#[derive(Debug)]
 #[derive(Eq, PartialEq)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 #[allow(non_camel_case_types)]
 pub enum SI {
     none,
@@ -52,7 +54,8 @@ pub enum SI {
 ///
 /// Firmware Version: 0.14.0
 #[derive(Clone)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct Sensor {
     /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
     adc_value: u16,
@@ -134,7 +137,7 @@ impl Sensor {
                     alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
                     alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
                     alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
-                    sensor_type: sensor_type,
+                    sensor_type,
                     ..Default::default()
                 }
             }
@@ -149,7 +152,7 @@ impl Sensor {
                     alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
                     alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
                     alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
-                    sensor_type: sensor_type,
+                    sensor_type,
                     ..Default::default()
                 }
             }
@@ -164,7 +167,7 @@ impl Sensor {
                     alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
                     alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
                     alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
-                    sensor_type: sensor_type,
+                    sensor_type,
                     ..Default::default()
                 }
             }
@@ -177,7 +180,7 @@ impl Sensor {
                     alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
                     alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
                     alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
-                    sensor_type: sensor_type,
+                    sensor_type,
                     ..Default::default()
                 }
             }
@@ -192,7 +195,7 @@ impl Sensor {
                     alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
                     alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
                     alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
-                    sensor_type: sensor_type,
+                    sensor_type,
                     ..Default::default()
                 }
             }
@@ -207,12 +210,9 @@ impl Sensor {
                     alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
                     alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
                     alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
-                    sensor_type: sensor_type,
+                    sensor_type,
                     ..Default::default()
                 }
-            }
-            _ => {
-                Sensor { sensor_type: sensor_type, ..Default::default() }
             }
         }
     }
@@ -786,12 +786,6 @@ impl Sensor {
         // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
         if concentration < 0.0 { 0.0 } else { concentration }
     }
-    #[test]
-    fn test_concentration_from_adc_value() {
-        let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
-
-        assert_eq!(sensor.concentration_from_adc_value(564), 20.0);
-    }
 
     /// Berechnet den ADC Wert aus der übergebenen Konzentration
     ///
@@ -805,22 +799,30 @@ impl Sensor {
 
         adc_value as u16
     }
-    #[test]
-    fn test_adc_value_from_concentration() {
-        let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
-
-        assert_eq!(sensor.adc_value_from_concentration(20.0), 564);
-    }
 }
 
+// Spezieller Test der privaten Funktion
+#[test]
+fn test_concentration_from_adc_value() {
+    let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+
+    assert_eq!(sensor.concentration_from_adc_value(564), 20.0);
+}
+// Spezieller Test der privaten Funktion
+#[test]
+fn test_adc_value_from_concentration() {
+    let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+
+    assert_eq!(sensor.adc_value_from_concentration(20.0), 564);
+}
 
 
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             // SensorType::NemotoNO2 => write!(f, "Nemoto™ NO2"),
-            SensorType::NemotoNO2 => write!(f, "NO2 Messzelle"),
             // SensorType::NemotoCO => write!(f, "Nemoto™ CO"),
+            SensorType::NemotoNO2 => write!(f, "NO2 Messzelle"),
             SensorType::NemotoCO => write!(f, "CO Messzelle"),
             SensorType::SimulationNO2Fix => write!(f, "Simulation NO2 (Fix)"),
             SensorType::SimulationCOFix => write!(f, "Simulation CO (Fix)"),

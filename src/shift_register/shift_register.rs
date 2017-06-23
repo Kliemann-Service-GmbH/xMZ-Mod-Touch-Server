@@ -1,6 +1,6 @@
 use errors::*;
 use rand::Rng;
-use std::sync::RwLock;
+use std::sync::{RwLock};
 use std::thread;
 use std::time::Duration;
 use sysfs_gpio::{Direction, Pin};
@@ -22,17 +22,23 @@ pub enum ShiftRegisterType {
 /// Diese Struct hält neben dem ShiftRegisterTypen,
 /// die Hardware Pins (in Options so das Testumgebungen ohne Hardware simmuliert werden kann).
 /// Der Data Member dieser Stuctur ist in ein RwLock gekapselt, so das der Wert auch
-/// bei immutablen Referenzen geändert werden kann.
+/// bei immutablen Referenzen auf den ShiftRegister geändert werden kann.
+///
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct ShiftRegister {
     register_type: ShiftRegisterType,
-    oe_pin: Option<u64>,
-    ds_pin: Option<u64>,
-    clock_pin: Option<u64>,
-    latch_pin: Option<u64>,
+    #[serde(skip_deserializing, skip_serializing)]
+    oe_pin: Option<Pin>,
+    #[serde(skip_deserializing, skip_serializing)]
+    ds_pin: Option<Pin>,
+    #[serde(skip_deserializing, skip_serializing)]
+    clock_pin: Option<Pin>,
+    #[serde(skip_deserializing, skip_serializing)]
+    latch_pin: Option<Pin>,
     // Interior Mutability wird benötigt, um die ShiftRegister nicht als &mut Referenzen
     // durch die gesammte Anwendung schleifen zu müssen.
+    #[serde(skip_deserializing, skip_serializing)]
     data: RwLock<u64>,
 }
 
@@ -73,18 +79,18 @@ impl ShiftRegister {
         match register_type {
             ShiftRegisterType::LED => ShiftRegister {
                 register_type: register_type,
-                oe_pin: Some(276),
-                ds_pin: Some(38),
-                clock_pin: Some(44),
-                latch_pin: Some(40),
+                oe_pin: Some(Pin::new(276)),
+                ds_pin: Some(Pin::new(38)),
+                clock_pin: Some(Pin::new(44)),
+                latch_pin: Some(Pin::new(40)),
                 ..Default::default()
             },
             ShiftRegisterType::Relais => ShiftRegister {
                 register_type: register_type,
-                oe_pin: Some(277),
-                ds_pin: Some(45),
-                clock_pin: Some(39),
-                latch_pin: Some(37),
+                oe_pin: Some(Pin::new(277)),
+                ds_pin: Some(Pin::new(45)),
+                clock_pin: Some(Pin::new(39)),
+                latch_pin: Some(Pin::new(37)),
                 ..Default::default()
             },
             _ => ShiftRegister { // der Catch all Arm fängt auch `ShiftRegisterType::Simulation`
@@ -109,17 +115,19 @@ impl ShiftRegister {
     ///
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.get_data().unwrap(), 0b0);
-    /// sim.set(3);
+    /// sim.set(3).unwrap();
     /// assert_eq!(sim.get_data().unwrap(), 0b100);
     /// ```
     /// More info: http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c
     pub fn set(&self, num: u64) -> Result<()> {
         if let Ok(mut data) = self.data.write() {
             *data |= 1 << (num -1);
-            self.shift_out()?;
         } else {
             bail!("Could not write lock data member")
-        }
+        } // RwLock der `data` wird wieder frei gegeben, wichtig sonnst funktioniert `self.shift_out()` nicht
+
+        self.shift_out()?;
+
         Ok(())
     }
 
@@ -138,8 +146,8 @@ impl ShiftRegister {
     /// use xmz_mod_touch_server::{ShiftRegister, ShiftRegisterType};
     ///
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
-    /// sim.set(1);
-    /// sim.set(3);
+    /// sim.set(1).unwrap();
+    /// sim.set(3).unwrap();
     /// assert_eq!(sim.get(1).unwrap(), true);
     /// assert_eq!(sim.get(2).unwrap(), false);
     /// assert_eq!(sim.get(3).unwrap(), true);
@@ -173,22 +181,23 @@ impl ShiftRegister {
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.get_data().unwrap(), 0b0);
     ///
-    /// sim.set(1);
-    /// sim.set(3);
+    /// sim.set(1).unwrap();
+    /// sim.set(3).unwrap();
     /// assert_eq!(sim.get(1).unwrap(), true);
     /// assert_eq!(sim.get(3).unwrap(), true);
     ///
-    /// sim.clear(3);
+    /// sim.clear(3).unwrap();
     /// assert_eq!(sim.get(1).unwrap(), true);
     /// assert_eq!(sim.get(3).unwrap(), false);
     /// ```
     pub fn clear(&self, num: u64) -> Result<()> {
         if let Ok(mut data) = self.data.write() {
             *data &= !(1 << (num - 1));
-            self.shift_out()?;
         } else {
             bail!("Could not write lock data member")
-        }
+        } // RwLock der `data` wird wieder frei gegeben, wichtig sonnst funktioniert `self.shift_out()` nicht
+
+        self.shift_out()?;
 
         Ok(())
     }
@@ -210,18 +219,19 @@ impl ShiftRegister {
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.get_data().unwrap(), 0b0);
     ///
-    /// sim.toggle(3);
+    /// sim.toggle(3).unwrap();
     /// assert_eq!(sim.get(3).unwrap(), true);
-    /// sim.toggle(3);
+    /// sim.toggle(3).unwrap();
     /// assert_eq!(sim.get(3).unwrap(), false);
     /// ```
     pub fn toggle(&self, num: u64) -> Result<()> {
         if let Ok(mut data) = self.data.write() {
             *data ^= 1 << (num -1);
-            self.shift_out()?;
         } else {
             bail!("Could not write lock data member")
-        }
+        } // RwLock der `data` wird wieder frei gegeben, wichtig sonnst funktioniert `self.shift_out()` nicht
+
+        self.shift_out()?;
 
         Ok(())
     }
@@ -235,18 +245,19 @@ impl ShiftRegister {
     ///
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     /// assert_eq!(sim.get(1).unwrap(), false);
-    /// sim.set(1);
+    /// sim.set(1).unwrap();
     /// assert_eq!(sim.get(1).unwrap(), true);
-    /// sim.reset();
+    /// sim.reset().unwrap();
     /// assert_eq!(sim.get(1).unwrap(), false);
     /// ```
     pub fn reset(&self) -> Result<()> {
         if let Ok(mut data) = self.data.write() {
             *data = 0;
-            self.shift_out()?;
         } else {
             bail!("Could not write lock data member")
-        }
+        } // RwLock der `data` wird wieder frei gegeben, wichtig sonnst funktioniert `self.shift_out()` nicht
+
+        self.shift_out()?;
 
         Ok(())
     }
@@ -264,9 +275,9 @@ impl ShiftRegister {
     ///
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     ///
-    /// sim.set(1);
-    /// sim.clear(10);
-    /// sim.test();
+    /// sim.set(1).unwrap();
+    /// sim.clear(10).unwrap();
+    /// sim.test().unwrap();
     /// assert_eq!(sim.get(1).unwrap(), true);
     /// assert_eq!(sim.get(10).unwrap(), false);
     /// ```
@@ -278,10 +289,11 @@ impl ShiftRegister {
             old_state = *data;
             // Buffer komplett mit Einsen füllen
             *data = u64::max_value();
-            self.shift_out()?;
         } else {
             bail!("Could not write lock data member")
-        }
+        } // RwLock der `data` wird wieder frei gegeben, wichtig sonnst funktioniert `self.shift_out()` nicht
+
+        self.shift_out()?;
 
         // 1Sec warten
         thread::sleep(Duration::new(1, 0));
@@ -291,10 +303,11 @@ impl ShiftRegister {
         if let Ok(mut data) = self.data.write() {
             // alten Stand wieder herstellen
             *data = old_state;
-            self.shift_out()?;
         } else {
             bail!("Could not write lock data member")
-        }
+        } // RwLock der `data` wird wieder frei gegeben, wichtig sonnst funktioniert `self.shift_out()` nicht
+
+        self.shift_out()?;
 
         Ok(())
     }
@@ -311,7 +324,7 @@ impl ShiftRegister {
     ///
     /// let sim = ShiftRegister::new(ShiftRegisterType::Simulation);
     ///
-    /// sim.test_random();
+    /// sim.test_random().unwrap();
     /// ```
     pub fn test_random(&self) -> Result<()> {
         let old_state;
@@ -321,10 +334,11 @@ impl ShiftRegister {
             old_state = *data;
             // Buffer mit Zufallsdaten füllen
             *data = ::rand::thread_rng().gen_range(1, u64::max_value());
-            self.shift_out()?;
         } else {
             bail!("Could not write lock data member")
-        }
+        } // RwLock der `data` wird wieder frei gegeben, wichtig sonnst funktioniert `self.shift_out()` nicht
+
+        self.shift_out()?;
 
         // 1Sec warten
         thread::sleep(Duration::new(1, 0));
@@ -334,10 +348,11 @@ impl ShiftRegister {
         if let Ok(mut data) = self.data.write() {
             // alten Stand wieder herstellen
             *data = old_state;
-            self.shift_out()?;
         } else {
             bail!("Could not write lock data member")
-        }
+        } // RwLock der `data` wird wieder frei gegeben, wichtig sonnst funktioniert `self.shift_out()` nicht
+
+        self.shift_out()?;
 
         Ok(())
     }
@@ -349,14 +364,13 @@ impl ShiftRegister {
         }
     }
 
-
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
     fn export_pins(&self) -> Result<()> {
-        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).export()? };
-        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).export()? };
-        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).export()? };
-        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).export()? };
+        if let Some(oe_pin) = self.oe_pin { oe_pin.export()? };
+        if let Some(ds_pin) = self.ds_pin { ds_pin.export()? };
+        if let Some(clock_pin) = self.clock_pin { clock_pin.export()? };
+        if let Some(latch_pin) = self.latch_pin { latch_pin.export()? };
 
         Ok(())
     }
@@ -364,24 +378,14 @@ impl ShiftRegister {
     /// Schaltet die Pins in den OUTPUT Pin Modus
     ///
     fn set_pin_direction_output(&self) -> Result<()> {
-        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).set_direction(Direction::Out)? };
-        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).set_value(0)? }; // !OE pin low == Shift register enabled.
-        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_direction(Direction::Out)? };
-        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(0)? };
-        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_direction(Direction::Out)? };
-        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(0)? };
-        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_direction(Direction::Out)? };
-        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(0)? };
-
-        Ok(())
-    }
-
-
-    /// Toogelt den Clock Pin high->low
-    ///
-    fn clock_in(&self) -> Result<()> {
-        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(1)? };
-        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(0)? };
+        if let Some(oe_pin) = self.oe_pin { oe_pin.set_direction(Direction::Out)? };
+        if let Some(oe_pin) = self.oe_pin { oe_pin.set_value(0)? }; // !OE pin low == Shift register enabled.
+        if let Some(ds_pin) = self.ds_pin { ds_pin.set_direction(Direction::Out)? };
+        if let Some(ds_pin) = self.ds_pin { ds_pin.set_value(0)? };
+        if let Some(clock_pin) = self.clock_pin { clock_pin.set_direction(Direction::Out)? };
+        if let Some(clock_pin) = self.clock_pin { clock_pin.set_value(0)? };
+        if let Some(latch_pin) = self.latch_pin { latch_pin.set_direction(Direction::Out)? };
+        if let Some(latch_pin) = self.latch_pin { latch_pin.set_value(0)? };
 
         Ok(())
     }
@@ -389,14 +393,23 @@ impl ShiftRegister {
     /// Toggelt den Latch Pin pin high->low,
     ///
     fn latch_out(&self) -> Result<()> {
-        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(1)? };
-        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(0)? };
+        if let Some(latch_pin) = self.latch_pin { latch_pin.set_value(1)? };
+        if let Some(latch_pin) = self.latch_pin { latch_pin.set_value(0)? };
 
         Ok(())
     }
 
-    /// Schiebt die kompletten Daten in die Schiebe Register und schaltet die Ausgänge dieser
-    /// Schiebe Register (latch out)
+    /// Toogelt den Clock Pin high->low
+    ///
+    fn clock_in(&self) -> Result<()> {
+        if let Some(clock_pin) = self.clock_pin { clock_pin.set_value(1)? };
+        if let Some(clock_pin) = self.clock_pin { clock_pin.set_value(0)? };
+
+        Ok(())
+    }
+
+    /// Schiebt die kompletten Daten in die Schiebe Register und schaltet anschließend
+    /// die Ausgänge dieser Schiebe Register (latch out)
     ///
     fn shift_out(&self) -> Result<()> {
         // Wenn export_pins erfolgreich ist werden die Daten eingeclocked, ansonsten passiert nix
@@ -405,10 +418,13 @@ impl ShiftRegister {
 
         // Daten einclocken
         for i in (0..64).rev() {
-            // match (self.data >> i) & 1 {
-            //     1 => { if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(1)? } },
-            //     _ => { if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(0)? } },
-            // }
+            // RwLock von `data`
+            if let Ok(data) = self.data.read() {
+                match (*data >> i) & 1 {
+                    1 => { if let Some(ds_pin) = self.ds_pin { ds_pin.set_value(1)? } },
+                    _ => { if let Some(ds_pin) = self.ds_pin { ds_pin.set_value(0)? } },
+                }
+            } // RwLock der `data` wird wieder frei gegeben
             self.clock_in()?;
         }
         self.latch_out()?;

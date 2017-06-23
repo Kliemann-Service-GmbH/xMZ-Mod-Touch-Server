@@ -27,7 +27,7 @@ fn ein_kombisensor_ein_sensor_diw() {
     assert_eq!(zone.get_status(), ZoneStatus::DIW);
 }
 
-// #[test]
+#[test]
 fn ein_kombisensor_ein_sensor_ap1() {
     let mut zone = Zone::new();
     zone.add_kombisensor(Kombisensor::new_with_type(KombisensorType::RAGasSimulation));
@@ -43,7 +43,7 @@ fn ein_kombisensor_ein_sensor_ap1() {
     assert_eq!(zone.get_status(), ZoneStatus::AP1);
 }
 
-// #[test]
+#[test]
 fn ein_kombisensor_zwei_sensoren_einer_ap1() {
     let mut zone = Zone::new();
     zone.add_kombisensor(Kombisensor::new_with_type(KombisensorType::RAGasSimulation));
@@ -60,7 +60,7 @@ fn ein_kombisensor_zwei_sensoren_einer_ap1() {
     assert_eq!(zone.get_status(), ZoneStatus::AP1);
 }
 
-// #[test]
+#[test]
 fn ein_kombisensor_zwei_sensoren_einer_ap1_einer_diw() {
     let mut zone = Zone::new();
     zone.add_kombisensor(Kombisensor::new_with_type(KombisensorType::RAGasSimulation));
@@ -80,7 +80,7 @@ fn ein_kombisensor_zwei_sensoren_einer_ap1_einer_diw() {
     assert_eq!(zone.get_status(), ZoneStatus::DIW);
 }
 
-// #[test]
+#[test]
 fn ein_kombisensor_zwei_sensoren_einer_diw_einer_ap1() {
     // Dieser Test ist die gedrehte Version des vorheringen Tests. Der Sensor mit DIW überschritten
     // muss den ZoneStatus::DIW triggern. Der Sensor mit AP1 überschritten darf dann aber nicht
@@ -104,7 +104,7 @@ fn ein_kombisensor_zwei_sensoren_einer_diw_einer_ap1() {
 }
 
 // Zwei Kombisensoren
-// #[test]
+#[test]
 fn zwei_kombisensoren_ein_sensor_diw() {
     let mut zone = Zone::new();
     zone.add_kombisensor(Kombisensor::new_with_type(KombisensorType::RAGasSimulation));
@@ -120,7 +120,7 @@ fn zwei_kombisensoren_ein_sensor_diw() {
     assert_eq!(zone.get_status(), ZoneStatus::DIW);
 }
 
-// #[test]
+#[test]
 fn zwei_kombisensoren_zwei_sensoren_einer_ap1_einer_diw() {
     let mut zone = Zone::new();
     zone.add_kombisensor(Kombisensor::new_with_type(KombisensorType::RAGasSimulation));
@@ -140,7 +140,7 @@ fn zwei_kombisensoren_zwei_sensoren_einer_ap1_einer_diw() {
     assert_eq!(zone.get_status(), ZoneStatus::DIW);
 }
 
-// #[test]
+#[test]
 fn zwei_kombisensoren_zwei_sensoren_einer_diw_einer_ap1() {
     // Dieser Test ist die gedrehte Version des vorheringen Tests. Der Sensor mit DIW überschritten
     // muss den ZoneStatus::DIW triggern. Der Sensor mit AP1 überschritten darf dann aber nicht
@@ -165,7 +165,7 @@ fn zwei_kombisensoren_zwei_sensoren_einer_diw_einer_ap1() {
 
 // Nicht halten Funktion testen
 
-// #[test]
+#[test]
 fn zone_in_status_diw_ein_kombisensor_ohne_messwert() {
     // Dieser Test soll das "nicht Halten" des ZonenStatus testen.
     // War eine Zone im Status DIW, und sind die Sensoren alle ohne überhöhten Messwert,
@@ -184,7 +184,7 @@ fn zone_in_status_diw_ein_kombisensor_ohne_messwert() {
     assert_eq!(zone.get_status(), ZoneStatus::Normal);
 }
 
-// #[test]
+#[test]
 fn zone_in_status_diw_ein_kombisensor_ap2() {
     let mut zone = Zone::new();
     zone.add_kombisensor(Kombisensor::new_with_type(KombisensorType::RAGasSimulation));
@@ -201,7 +201,7 @@ fn zone_in_status_diw_ein_kombisensor_ap2() {
     assert_eq!(zone.get_status(), ZoneStatus::AP2);
 }
 
-// #[test]
+#[test]
 fn zone_in_status_ap2_ein_kombisensor_diw() {
     let mut zone = Zone::new();
     zone.add_kombisensor(Kombisensor::new_with_type(KombisensorType::RAGasSimulation));

@@ -19,8 +19,8 @@ pub const UPDATE_INTERVALL_MS: u64 = 100;
 fn start_basic_configuration(server: Arc<Mutex<Server>>) -> Result<()> {
     loop {
         if let Ok(mut server) = server.lock() {
-            debug!("start_basic_configuration()");
-            server.basic_configuration();
+            info!("start_basic_configuration() erfolgreich");
+            server.basic_configuration()?;
             break;
         }
     }
