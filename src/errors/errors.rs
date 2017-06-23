@@ -1,7 +1,3 @@
-//! Fehlerbehandlung mit [error-chain](https://github.com/brson/error-chain)
-//!
-//! https://github.com/brson/error-chain
-//!
 use serde_json::error::Error as SerdeError;
 
 error_chain!{

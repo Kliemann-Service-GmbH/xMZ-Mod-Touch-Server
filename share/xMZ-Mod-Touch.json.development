@@ -1,7 +1,8 @@
 {
-  "version": "0.99.2",
-  "create_time": "2017-06-22T07:08:39.708786035Z",
-  "start_time": "2017-06-22T07:08:39.708790797Z",
+  "server_type": "Simulation",
+  "version": "0.99.5",
+  "create_time": "2017-06-23T11:06:19.976938688Z",
+  "start_time": "2017-06-23T11:06:19.976942167Z",
   "wartungsintervall_days": 365,
   "exceptions": [],
   "zones": [
@@ -16,6 +17,7 @@
           "modbus_debug": true,
           "sensors": [
             {
+              "sensor_type": "SimulationNO2",
               "adc_value": 920,
               "min_value": 0,
               "max_value": 30,
@@ -23,7 +25,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "SimulationNO2",
               "si": "ppm",
               "config": 1,
               "error_count": 0,
@@ -33,6 +34,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "SimulationCO",
               "adc_value": 112,
               "min_value": 0,
               "max_value": 300,
@@ -40,7 +42,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "SimulationCO",
               "si": "ppm",
               "config": 1,
               "error_count": 0,
@@ -61,6 +62,7 @@
           "modbus_debug": true,
           "sensors": [
             {
+              "sensor_type": "SimulationNO2",
               "adc_value": 920,
               "min_value": 0,
               "max_value": 30,
@@ -68,7 +70,6 @@
               "adc_value_at_messgas": 564,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 20,
-              "sensor_type": "SimulationNO2",
               "si": "ppm",
               "config": 1,
               "error_count": 0,
@@ -78,6 +79,7 @@
               "alarm3_direct_value": 15.0
             },
             {
+              "sensor_type": "SimulationCO",
               "adc_value": 112,
               "min_value": 0,
               "max_value": 300,
@@ -85,7 +87,6 @@
               "adc_value_at_messgas": 760,
               "concentration_at_nullgas": 0,
               "concentration_at_messgas": 270,
-              "sensor_type": "SimulationCO",
               "si": "ppm",
               "config": 1,
               "error_count": 0,
@@ -102,19 +103,9 @@
     }
   ],
   "leds": {
-    "register_type": "LED",
-    "oe_pin": 276,
-    "ds_pin": 38,
-    "clock_pin": 44,
-    "latch_pin": 40,
-    "data": 0
+    "register_type": "Simulation"
   },
   "relais": {
-    "register_type": "Relais",
-    "oe_pin": 277,
-    "ds_pin": 45,
-    "clock_pin": 39,
-    "latch_pin": 37,
-    "data": 0
+    "register_type": "Simulation"
   }
 }

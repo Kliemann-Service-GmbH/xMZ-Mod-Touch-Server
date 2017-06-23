@@ -15,11 +15,22 @@ use std::sync::{Arc, Mutex};
 use server::zone::{Zone, ZoneStatus};
 use server::zone::kombisensor::{Kombisensor, KombisensorStatus};
 
+
+#[derive(Clone)]
+#[derive(Debug)]
+#[derive(Eq, PartialEq)]
+#[derive(Serialize, Deserialize)]
+pub enum ServerType {
+    Simulation,
+    Real,
+}
+
 /// Der Server kann `n` [Zonen](struct.Zone.html) enthalten
 ///
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct Server {
+    server_type: ServerType,
     version: String,
     // `create_time` wird nur ein mal beim erstellen der Konfiguration gesetzt
     create_time: chrono::DateTime<Utc>,
@@ -37,30 +48,64 @@ pub struct Server {
 impl Server {
     /// Erzeugt eine neue Server Instanz
     ///
-    /// # Return values
-    ///
     /// Diese Funktion liefert eine neue Server Instanz
-    ///
-    /// # Parameters
     ///
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_mod_touch_server::Server;
+    /// use xmz_mod_touch_server::{Server, ServerType};
     ///
     /// let xmz_mod_touch_server = Server::new();
+    /// // per default wird ein Simulation Server erstellt
+    /// assert_eq!(xmz_mod_touch_server.get_server_type(), ServerType::Simulation);
     /// assert_eq!(xmz_mod_touch_server.get_version(), env!("CARGO_PKG_VERSION").to_string());
     /// ```
     pub fn new() -> Self {
         Server {
+            server_type: ServerType::Simulation,
             version: env!("CARGO_PKG_VERSION").to_string(),
             create_time: chrono::Utc::now(),
             start_time: chrono::Utc::now(),
             wartungsintervall_days: 365,
             exceptions: Mutex::new(HashSet::new()),
+            leds: ShiftRegister::new(ShiftRegisterType::Simulation),
+            relais: ShiftRegister::new(ShiftRegisterType::Simulation),
             zones: vec![],
-            leds: ShiftRegister::new(ShiftRegisterType::LED),
-            relais: ShiftRegister::new(ShiftRegisterType::Relais),
+        }
+    }
+
+    /// Erstellt eine neue Server Instanz vom gegebenen Typ
+    ///
+    /// # Parameters
+    ///
+    /// * `server_type` - `ServerTyp` der neuen Instanz
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::{Server, ServerType};
+    ///
+    /// let xmz_mod_touch_server = Server::new_with_type(ServerType::Real);
+    /// assert_eq!(xmz_mod_touch_server.get_server_type(), ServerType::Real);
+    /// ```
+    pub fn new_with_type(server_type: ServerType) -> Self {
+        match server_type {
+            ServerType::Simulation => {
+                Server {
+                    server_type,
+                    leds: ShiftRegister::new(ShiftRegisterType::Simulation),
+                    relais: ShiftRegister::new(ShiftRegisterType::Simulation),
+                    ..Default::default()
+                }
+            }
+            ServerType::Real => {
+                Server {
+                    server_type,
+                    leds: ShiftRegister::new(ShiftRegisterType::LED),
+                    relais: ShiftRegister::new(ShiftRegisterType::Relais),
+                    ..Default::default()
+                }
+            }
         }
     }
 
@@ -79,9 +124,11 @@ impl Server {
     /// let xmz_mod_touch_server = Server::new_from_config();
     /// ```
     pub fn new_from_config() -> Result<Server> {
-        let mut xmz_mod_touch_server: Server = match serde_json::from_str(&Configuration::get_config()?) {
+        let config = Configuration::get_config()?;
+
+        let mut xmz_mod_touch_server: Server = match serde_json::from_str(&config) {
             Ok(xmz_mod_touch_server) => xmz_mod_touch_server,
-            _ => panic!("Konnte Konfigurationsdatei nicht lesen. Server konnte nicht erstellt werden."),
+            Err(_) => bail!("Konnte Konfigurationsdatei nicht lesen. Server konnte nicht erstellt werden."),
         };
 
         // Update start_time to now
@@ -197,6 +244,20 @@ impl Server {
         self.relais.set(1)?;
 
         Ok(())
+    }
+
+    /// Liefert den Typen des Servers
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_mod_touch_server::{Server, ServerType};
+    ///
+    /// let xmz_mod_touch_server = Server::new_with_type(ServerType::Real);
+    /// assert_eq!(xmz_mod_touch_server.get_server_type(), ServerType::Real);
+    /// ```
+    pub fn get_server_type(&self) -> ServerType {
+        self.server_type.clone()
     }
 
     /// Liefert die Versionsnummer des Server's

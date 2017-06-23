@@ -17,8 +17,9 @@ pub const AVERAGE_15MIN_SEC: i64 = 15 * 60;
 
 /// Typ der Messzelle
 #[derive(Clone)]
+#[derive(Debug)]
 #[derive(Eq, PartialEq)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum SensorType {
     /// Nemoto NO2 Messzelle, EC NAP-550
     /// Datenblatt: https://www.nemoto.co.jp/nse/sensor-search/nap-550.html?lang=en
@@ -38,8 +39,9 @@ pub enum SensorType {
 
 /// SI Einheit des zu messenden Mediums
 #[derive(Clone)]
+#[derive(Debug)]
 #[derive(Eq, PartialEq)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 #[allow(non_camel_case_types)]
 pub enum SI {
     none,
@@ -52,8 +54,11 @@ pub enum SI {
 ///
 /// Firmware Version: 0.14.0
 #[derive(Clone)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct Sensor {
+    /// Typ des Sensors
+    sensor_type: SensorType,
     /// ADC Wert    - wird vom Server Prozess über das Modbus Protokoll ausgelesen und aktualisiert
     adc_value: u16,
     min_value: u16,
@@ -63,7 +68,6 @@ pub struct Sensor {
     concentration_at_nullgas: u16,
     concentration_at_messgas: u16,
     // Typ der Messzelle
-    sensor_type: SensorType,
     /// SI Einheit des Sensors (ppm, % UEG, Vol %)
     si: SI,
     config: u16,
@@ -71,8 +75,14 @@ pub struct Sensor {
     error_count: u64,
     /// 15min Average
     adc_value_average_15min: u16,
+    /// Alarm1 `15min` Mittelwert (zeitlich gewichtet)
+    /// siehe DIN EN 50545-1 (VDE 0400-80):2012-04; Seite 15ff
     pub alarm1_average_15min: f64,
+    /// Alarm2 `15min` Mittelwert (zeitlich gewichtet)
+    /// siehe DIN EN 50545-1 (VDE 0400-80):2012-04; Seite 15ff
     pub alarm2_average_15min: f64,
+    /// Alarm3 Direktwert
+    /// siehe DIN EN 50545-1 (VDE 0400-80):2012-04; Seite 15ff
     pub alarm3_direct_value: f64,
     #[serde(skip_deserializing, skip_serializing)]
     pub adc_values_average: Vec<(u16, DateTime<Utc>)>,
@@ -90,6 +100,7 @@ impl Sensor {
     /// ```
     pub fn new() -> Self {
         Sensor {
+            sensor_type: SensorType::SimulationNO2Fix,
             adc_value: 0,
             min_value: 0,
             max_value: 0,
@@ -97,7 +108,6 @@ impl Sensor {
             adc_value_at_messgas: 0,
             concentration_at_nullgas: 0,
             concentration_at_messgas: 0,
-            sensor_type: SensorType::SimulationNO2Fix,
             si: SI::ppm,
             config: 0,
             error_count: 0,
@@ -127,6 +137,7 @@ impl Sensor {
         match sensor_type {
             SensorType::NemotoNO2 => {
                 Sensor {
+                    sensor_type,
                     max_value: 30,
                     adc_value_at_nullgas: 920,
                     adc_value_at_messgas: 564,
@@ -134,12 +145,12 @@ impl Sensor {
                     alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
                     alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
                     alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
-                    sensor_type: sensor_type,
                     ..Default::default()
                 }
             }
             SensorType::SimulationNO2Fix => {
                 Sensor {
+                    sensor_type,
                     adc_value: 564,
                     max_value: 30,
                     adc_value_at_nullgas: 920,
@@ -149,12 +160,12 @@ impl Sensor {
                     alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
                     alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
                     alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
-                    sensor_type: sensor_type,
                     ..Default::default()
                 }
             }
             SensorType::SimulationNO2 => {
                 Sensor {
+                    sensor_type,
                     adc_value: 920,
                     max_value: 30,
                     adc_value_at_nullgas: 920,
@@ -164,12 +175,12 @@ impl Sensor {
                     alarm1_average_15min: 3.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für NO2
                     alarm2_average_15min: 6.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für NO2
                     alarm3_direct_value: 15.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für NO2
-                    sensor_type: sensor_type,
                     ..Default::default()
                 }
             }
             SensorType::NemotoCO => {
                 Sensor {
+                    sensor_type,
                     max_value: 300,
                     adc_value_at_nullgas: 112,
                     adc_value_at_messgas: 760,
@@ -177,12 +188,12 @@ impl Sensor {
                     alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
                     alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
                     alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
-                    sensor_type: sensor_type,
                     ..Default::default()
                 }
             }
             SensorType::SimulationCOFix => {
                 Sensor {
+                    sensor_type,
                     adc_value: 760,
                     max_value: 300,
                     adc_value_at_nullgas: 112,
@@ -192,12 +203,12 @@ impl Sensor {
                     alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
                     alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
                     alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
-                    sensor_type: sensor_type,
                     ..Default::default()
                 }
             }
             SensorType::SimulationCO => {
                 Sensor {
+                    sensor_type,
                     adc_value: 112,
                     max_value: 300,
                     adc_value_at_nullgas: 112,
@@ -207,12 +218,8 @@ impl Sensor {
                     alarm1_average_15min: 30.0, // laut DIN EN 50545-1 Alarm1 (15min Mittelwert) bei 3ppm für CO
                     alarm2_average_15min: 60.0, // laut DIN EN 50545-1 Alarm2 (15min Mittelwert) bei 6ppm für CO
                     alarm3_direct_value: 150.0, // laut DIN EN 50545-1 Alarm3 (Direktwert) bei 15ppm für CO
-                    sensor_type: sensor_type,
                     ..Default::default()
                 }
-            }
-            _ => {
-                Sensor { sensor_type: sensor_type, ..Default::default() }
             }
         }
     }
@@ -758,8 +765,8 @@ impl Sensor {
             self.adc_values_average = self.adc_values_average.split_off(index);
         }
         // Länge der Liste der ADC Werte/ Zeitstempel ermitteln. Dieser Wert wird für den Mittelwert benötigt
-        let num_adc_values_average = self.adc_values_average.len();
-        debug!("num adc_values_average: {}", num_adc_values_average);
+        let len_adc_values_average = self.adc_values_average.len();
+        debug!("Anzahl adc_values_average: {}", len_adc_values_average);
         // Die Variable sum_adc_values_average speichert die Summe aller ADC Werte
         let mut sum_adc_values_average: u64 = 0;
         // Durchlaufe den Tuppel, verwende aber nur den ADC Wert (`value`), und bilde die Summer aller ADC Werte
@@ -768,7 +775,7 @@ impl Sensor {
         }
         // Die Summe aller ADC Werte wird durch die Anzahl der ADC Werte geteilt um den Mittelwert zu erhalten.
         // Dieser Mittelwert wird dann im `adc_value_average_15min` Member der `Sensor` Struct gespeichert
-        self.adc_value_average_15min = (sum_adc_values_average / num_adc_values_average as u64) as u16;
+        self.adc_value_average_15min = (sum_adc_values_average / len_adc_values_average as u64) as u16;
     }
 
     /// Berechnet die Gaskonzentration mit einer linearen Funktion
@@ -786,12 +793,6 @@ impl Sensor {
         // Ist die Konzentration kleiner Null, wird Null ausgegeben, ansonnsten die berechnete Konzentration
         if concentration < 0.0 { 0.0 } else { concentration }
     }
-    #[test]
-    fn test_concentration_from_adc_value() {
-        let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
-
-        assert_eq!(sensor.concentration_from_adc_value(564), 20.0);
-    }
 
     /// Berechnet den ADC Wert aus der übergebenen Konzentration
     ///
@@ -805,22 +806,30 @@ impl Sensor {
 
         adc_value as u16
     }
-    #[test]
-    fn test_adc_value_from_concentration() {
-        let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
-
-        assert_eq!(sensor.adc_value_from_concentration(20.0), 564);
-    }
 }
 
+// Spezieller Test der privaten Funktion
+#[test]
+fn test_concentration_from_adc_value() {
+    let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+
+    assert_eq!(sensor.concentration_from_adc_value(564), 20.0);
+}
+// Spezieller Test der privaten Funktion
+#[test]
+fn test_adc_value_from_concentration() {
+    let sensor = Sensor::new_with_type(SensorType::SimulationNO2Fix);
+
+    assert_eq!(sensor.adc_value_from_concentration(20.0), 564);
+}
 
 
 impl fmt::Display for SensorType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             // SensorType::NemotoNO2 => write!(f, "Nemoto™ NO2"),
-            SensorType::NemotoNO2 => write!(f, "NO2 Messzelle"),
             // SensorType::NemotoCO => write!(f, "Nemoto™ CO"),
+            SensorType::NemotoNO2 => write!(f, "NO2 Messzelle"),
             SensorType::NemotoCO => write!(f, "CO Messzelle"),
             SensorType::SimulationNO2Fix => write!(f, "Simulation NO2 (Fix)"),
             SensorType::SimulationCOFix => write!(f, "Simulation CO (Fix)"),

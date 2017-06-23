@@ -7,5 +7,5 @@ pub mod server;
 pub mod zone;
 
 pub use self::configuration::Configuration;
-pub use self::server::Server;
+pub use self::server::{Server, ServerType};
 pub use self::zone::{Zone, ZoneStatus};

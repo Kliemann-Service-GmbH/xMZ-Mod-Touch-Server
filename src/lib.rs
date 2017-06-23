@@ -29,7 +29,7 @@ pub mod server;
 pub mod shift_register;
 
 pub use self::exception::{Action, Check, Exception, ExceptionType};
-pub use self::server::{Server};
+pub use self::server::{Server, ServerType};
 pub use self::server::zone::{Zone, ZoneStatus};
 pub use self::server::zone::kombisensor::{Kombisensor, KombisensorType};
 pub use self::server::zone::kombisensor::sensor::{Sensor, SensorType, SI};

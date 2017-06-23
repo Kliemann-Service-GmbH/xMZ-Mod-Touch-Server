@@ -1,6 +1,6 @@
 [package]
 name = "xmz_mod_touch_server"
-version = "0.99.4"
+version = "0.99.5"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "Serverteil der 'xMZ-Mod-Touch'-Platform"
 documentation = "https://gaswarnanlagen.com/xmz-mod-touch"
@@ -10,12 +10,12 @@ license = "GPLv2"
 
 [[bin]]
 name = "xmz-mod-touch-server"
-path = "src/bin/xmz_mod_touch_server.rs"
+path = "src/bin/server.rs"
 doc = false
 
 [[bin]]
 name = "xmz-generate-config"
-path = "src/bin/xmz_generate_config.rs"
+path = "src/bin/generate_config.rs"
 doc = false
 
 [features]
