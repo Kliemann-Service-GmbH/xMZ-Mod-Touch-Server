@@ -1,8 +1,8 @@
 {
   "server_type": "Real",
   "version": "0.99.5",
-  "create_time": "2017-06-23T11:06:19.742442205Z",
-  "start_time": "2017-06-23T11:06:19.742449314Z",
+  "create_time": "2017-06-23T14:27:13.114126686Z",
+  "start_time": "2017-06-23T14:27:13.114130678Z",
   "wartungsintervall_days": 365,
   "exceptions": [],
   "zones": [
@@ -328,9 +328,19 @@
     }
   ],
   "leds": {
-    "register_type": "LED"
+    "register_type": "LED",
+    "oe_pin": 276,
+    "ds_pin": 38,
+    "clock_pin": 44,
+    "latch_pin": 40,
+    "data": 0
   },
   "relais": {
-    "register_type": "Relais"
+    "register_type": "Relais",
+    "oe_pin": 277,
+    "ds_pin": 45,
+    "clock_pin": 39,
+    "latch_pin": 37,
+    "data": 0
   }
 }

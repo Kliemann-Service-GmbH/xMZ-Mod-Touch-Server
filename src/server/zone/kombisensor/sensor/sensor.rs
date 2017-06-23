@@ -4,9 +4,6 @@
 //! `Firmware Version: 0.14.0`
 //!
 use ::chrono::{DateTime, Utc};
-use exception::{Exception, ExceptionType};
-use shift_register::ShiftRegister;
-use std::collections::HashSet;
 use std::fmt;
 
 

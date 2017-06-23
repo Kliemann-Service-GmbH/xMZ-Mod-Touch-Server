@@ -20,7 +20,10 @@ pub enum ShiftRegisterType {
 /// Representation der Shiftregister Hardware
 ///
 /// Diese Struct hält neben dem ShiftRegisterTypen,
-/// die Hardware Pins (in Options so das Testumgebungen ohne Hardware simmuliert werden kann).
+/// die Pin Nummern der Hardware Pins (in Options so das Testumgebungen ohne Hardware simuliert werden kann).
+/// **In den Options werden absichtlich nicht direkt die Pin::new() Instanzen gespeichert, da diese nicht serialisiert
+/// werden können. Das Speichern der Server Konfig wäre somit nicht möglich.**
+///
 /// Der Data Member dieser Stuctur ist in ein RwLock gekapselt, so das der Wert auch
 /// bei immutablen Referenzen auf den ShiftRegister geändert werden kann.
 ///
@@ -28,17 +31,12 @@ pub enum ShiftRegisterType {
 #[derive(Serialize, Deserialize)]
 pub struct ShiftRegister {
     register_type: ShiftRegisterType,
-    #[serde(skip_deserializing, skip_serializing)]
-    oe_pin: Option<Pin>,
-    #[serde(skip_deserializing, skip_serializing)]
-    ds_pin: Option<Pin>,
-    #[serde(skip_deserializing, skip_serializing)]
-    clock_pin: Option<Pin>,
-    #[serde(skip_deserializing, skip_serializing)]
-    latch_pin: Option<Pin>,
+    oe_pin: Option<u64>,
+    ds_pin: Option<u64>,
+    clock_pin: Option<u64>,
+    latch_pin: Option<u64>,
     // Interior Mutability wird benötigt, um die ShiftRegister nicht als &mut Referenzen
     // durch die gesammte Anwendung schleifen zu müssen.
-    #[serde(skip_deserializing, skip_serializing)]
     data: RwLock<u64>,
 }
 
@@ -79,18 +77,18 @@ impl ShiftRegister {
         match register_type {
             ShiftRegisterType::LED => ShiftRegister {
                 register_type: register_type,
-                oe_pin: Some(Pin::new(276)),
-                ds_pin: Some(Pin::new(38)),
-                clock_pin: Some(Pin::new(44)),
-                latch_pin: Some(Pin::new(40)),
+                oe_pin: Some(276),
+                ds_pin: Some(38),
+                clock_pin: Some(44),
+                latch_pin: Some(40),
                 ..Default::default()
             },
             ShiftRegisterType::Relais => ShiftRegister {
                 register_type: register_type,
-                oe_pin: Some(Pin::new(277)),
-                ds_pin: Some(Pin::new(45)),
-                clock_pin: Some(Pin::new(39)),
-                latch_pin: Some(Pin::new(37)),
+                oe_pin: Some(277),
+                ds_pin: Some(45),
+                clock_pin: Some(39),
+                latch_pin: Some(37),
                 ..Default::default()
             },
             _ => ShiftRegister { // der Catch all Arm fängt auch `ShiftRegisterType::Simulation`
@@ -367,10 +365,10 @@ impl ShiftRegister {
     /// Exportiert die Pins in das sysfs des Linux Kernels
     ///
     fn export_pins(&self) -> Result<()> {
-        if let Some(oe_pin) = self.oe_pin { oe_pin.export()? };
-        if let Some(ds_pin) = self.ds_pin { ds_pin.export()? };
-        if let Some(clock_pin) = self.clock_pin { clock_pin.export()? };
-        if let Some(latch_pin) = self.latch_pin { latch_pin.export()? };
+        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).export()? };
+        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).export()? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).export()? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).export()? };
 
         Ok(())
     }
@@ -378,14 +376,14 @@ impl ShiftRegister {
     /// Schaltet die Pins in den OUTPUT Pin Modus
     ///
     fn set_pin_direction_output(&self) -> Result<()> {
-        if let Some(oe_pin) = self.oe_pin { oe_pin.set_direction(Direction::Out)? };
-        if let Some(oe_pin) = self.oe_pin { oe_pin.set_value(0)? }; // !OE pin low == Shift register enabled.
-        if let Some(ds_pin) = self.ds_pin { ds_pin.set_direction(Direction::Out)? };
-        if let Some(ds_pin) = self.ds_pin { ds_pin.set_value(0)? };
-        if let Some(clock_pin) = self.clock_pin { clock_pin.set_direction(Direction::Out)? };
-        if let Some(clock_pin) = self.clock_pin { clock_pin.set_value(0)? };
-        if let Some(latch_pin) = self.latch_pin { latch_pin.set_direction(Direction::Out)? };
-        if let Some(latch_pin) = self.latch_pin { latch_pin.set_value(0)? };
+        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).set_direction(Direction::Out)? };
+        if let Some(oe_pin) = self.oe_pin { Pin::new(oe_pin).set_value(0)? }; // !OE pin low == Shift register enabled.
+        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_direction(Direction::Out)? };
+        if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(0)? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_direction(Direction::Out)? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(0)? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_direction(Direction::Out)? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(0)? };
 
         Ok(())
     }
@@ -393,8 +391,8 @@ impl ShiftRegister {
     /// Toggelt den Latch Pin pin high->low,
     ///
     fn latch_out(&self) -> Result<()> {
-        if let Some(latch_pin) = self.latch_pin { latch_pin.set_value(1)? };
-        if let Some(latch_pin) = self.latch_pin { latch_pin.set_value(0)? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(1)? };
+        if let Some(latch_pin) = self.latch_pin { Pin::new(latch_pin).set_value(0)? };
 
         Ok(())
     }
@@ -402,8 +400,8 @@ impl ShiftRegister {
     /// Toogelt den Clock Pin high->low
     ///
     fn clock_in(&self) -> Result<()> {
-        if let Some(clock_pin) = self.clock_pin { clock_pin.set_value(1)? };
-        if let Some(clock_pin) = self.clock_pin { clock_pin.set_value(0)? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(1)? };
+        if let Some(clock_pin) = self.clock_pin { Pin::new(clock_pin).set_value(0)? };
 
         Ok(())
     }
@@ -421,8 +419,8 @@ impl ShiftRegister {
             // RwLock von `data`
             if let Ok(data) = self.data.read() {
                 match (*data >> i) & 1 {
-                    1 => { if let Some(ds_pin) = self.ds_pin { ds_pin.set_value(1)? } },
-                    _ => { if let Some(ds_pin) = self.ds_pin { ds_pin.set_value(0)? } },
+                    1 => { if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(1)? } },
+                    _ => { if let Some(ds_pin) = self.ds_pin { Pin::new(ds_pin).set_value(0)? } },
                 }
             } // RwLock der `data` wird wieder frei gegeben
             self.clock_in()?;
