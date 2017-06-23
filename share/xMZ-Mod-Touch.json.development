@@ -1,8 +1,8 @@
 {
   "server_type": "Simulation",
   "version": "0.99.5",
-  "create_time": "2017-06-23T11:06:19.976938688Z",
-  "start_time": "2017-06-23T11:06:19.976942167Z",
+  "create_time": "2017-06-23T14:27:13.317627218Z",
+  "start_time": "2017-06-23T14:27:13.317630503Z",
   "wartungsintervall_days": 365,
   "exceptions": [],
   "zones": [
@@ -103,9 +103,19 @@
     }
   ],
   "leds": {
-    "register_type": "Simulation"
+    "register_type": "Simulation",
+    "oe_pin": null,
+    "ds_pin": null,
+    "clock_pin": null,
+    "latch_pin": null,
+    "data": 0
   },
   "relais": {
-    "register_type": "Simulation"
+    "register_type": "Simulation",
+    "oe_pin": null,
+    "ds_pin": null,
+    "clock_pin": null,
+    "latch_pin": null,
+    "data": 0
   }
 }
