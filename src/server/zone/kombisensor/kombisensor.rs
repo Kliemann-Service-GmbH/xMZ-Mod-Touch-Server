@@ -1,6 +1,7 @@
 //! CO-NO2 Kombisensor mit Modbus Transceiver
 //!
 use errors::*;
+use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH, RequestToSendMode};
 use server::zone::kombisensor::sensor::{Sensor, SensorType};
 use std::fmt;
 
@@ -436,29 +437,26 @@ impl Kombisensor {
     /// Die Funktion liefert ein Result
     ///
     fn update_via_modbus(&mut self) -> Result<()> {
-        use libmodbus_rs::{Modbus, ModbusRTU, ModbusClient, MODBUS_RTU_MAX_ADU_LENGTH, SerialMode, RequestToSendMode};
         let mut modbus = Modbus::new_rtu(&self.modbus_device, 9600, 'N', 8, 1)?;
 
         modbus.set_slave(self.modbus_address)?;
 
-        // Debug Modus einschalten wenn gewünscht
+        // Debug Modus einschalten wenn gewünscht. Siehe Konfigurationsdatein und `Configuration` Modul
         modbus.set_debug(self.modbus_debug)?;
 
-        // Auf der xMZ-Mod-Touch Hardware muss der RTS Pin genutzt werden
+        // Auf der 'xMZ-Mod-Touch'-Hardware muss der RTS Pin genutzt werden
         if self.kombisensor_type == KombisensorType::RAGas {
-            // debug!("modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)");
-            // modbus.rtu_set_serial_mode(SerialMode::MODBUS_RTU_RS485)?;
-            info!("modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)");
+            info!("'xMZ-Mod-Touch'-Hardware erkannt, setze SerialMode RTS_DOWN");
             modbus.rtu_set_rts(RequestToSendMode::MODBUS_RTU_RTS_DOWN)?;
         }
 
-        modbus.connect().map_err(|_| self.inc_error_count() );
-        // modbus.connect()?;
+        // Connecte via Modbus
+        modbus.connect()?;
 
         let mut response_register = vec![0u16; MODBUS_RTU_MAX_ADU_LENGTH as usize];
         modbus.read_registers(0, 30, &mut response_register)?;
 
-        if response_register.len() < 28 { bail!("Modbus Data invalid: {:?}", response_register) }
+        if response_register.len() < 28 { bail!("Modbus Data invalid: {:?}", response_register) } // else { println!("{:?}", response_register); }
 
         // Parse die empfangenen Daten
         // TODO: unwrap() entfernen!
@@ -466,7 +464,7 @@ impl Kombisensor {
         let firmware_version_minor = *response_register.get(1).unwrap();
         let firmware_version_patch = *response_register.get(2).unwrap();
         // let modbus_address = *response_register.get(3).unwrap();
-        let sensor1_num = *response_register.get(10).unwrap();
+        let _sensor1_num = *response_register.get(10).unwrap();
         let sensor1_adc_value = *response_register.get(11).unwrap();
         let sensor1_min_value = *response_register.get(12).unwrap();
         let sensor1_max_value = *response_register.get(13).unwrap();
@@ -475,7 +473,7 @@ impl Kombisensor {
         let sensor1_concentration_at_nullgas = *response_register.get(16).unwrap();
         let sensor1_concentration_at_messgas = *response_register.get(17).unwrap();
         let sensor1_config = *response_register.get(18).unwrap();
-        let sensor2_num = *response_register.get(20).unwrap();
+        let _sensor2_num = *response_register.get(20).unwrap();
         let sensor2_adc_value = *response_register.get(21).unwrap();
         let sensor2_min_value = *response_register.get(22).unwrap();
         let sensor2_max_value = *response_register.get(23).unwrap();
@@ -512,7 +510,6 @@ impl Kombisensor {
             sensor2.set_config(sensor2_config);
         }
 
-
         Ok(())
     }
 
@@ -536,12 +533,27 @@ impl Kombisensor {
 
     /// Update Funktion des Kombisensors
     ///
-    /// Diese Funktion fast die einzelnen Update Funktionen des Kombisensors zusammen
+    /// Diese Funktion fast die einzelnen Update Funktionen des Kombisensors zusammen.
+    /// Hier werden auch der Status des Sensos verändert, wenn die Parameter erreicht sind.
     pub fn update(&mut self) {
-        if self.error_count < 4 {
-            match self.update_via_modbus() {
-                Ok(_)  => { self.reset_error_count(); }
-                Err(_) => { self.inc_error_count(); },
+        // Nur Kombisensoren im normal Status sollen via Modbus abegfragt werden
+        match self.status {
+            KombisensorStatus::Normal => {
+                match self.update_via_modbus() {
+                    Ok(_)  => {
+                        // Wenn die Modbus Kommunikation erfolgreich war, wird der Error Coutner wieder reseted
+                        self.reset_error_count();
+                    }
+                    Err(_) => {
+                        // Im Fehlerfall wird der Error Coutner um eins erhöht, sind 5 zusammenhängende Fehler hinter einander
+                        // aufgetreten, dann wird in der Funktion `update_status()` der Status des Kombisensors auf Kabelbruch gesetzt.
+                        self.inc_error_count();
+                    },
+                }
+            },
+            KombisensorStatus::Kabelbruch => {
+                // Hier kann eine Cool Down funktion eingebaut werden.
+                // Wenn seit dem Kabelbruch 3 Minuten vergangen sind, versuche den Sensor wieder in den Normal Staus zu schalten.
             }
         }
 
