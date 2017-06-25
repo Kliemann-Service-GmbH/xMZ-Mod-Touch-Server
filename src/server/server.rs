@@ -148,50 +148,58 @@ impl Server {
     /// use xmz_mod_touch_server::Server;
     ///
     /// let xmz_mod_touch_server = Server::new();
-    /// xmz_mod_touch_server.check();
+    /// assert!(xmz_mod_touch_server.check().is_ok());
     /// ```
-    pub fn check(&self) {
+    pub fn check(&self) -> Result<()> {
         debug!("Check Server ...");
         if self.wartungsintervall_reached() {
-            self.leds.set(2); self.leds.set(3);
+            self.leds.set(2)?; self.leds.set(3)?;
         } else {
-            self.leds.clear(2); self.leds.clear(3);
+            self.leds.clear(2)?; self.leds.clear(3)?;
         }
 
         for (num_zone, zone) in self.get_zones().iter().enumerate() {
             debug!("\tCheck Zone {} ...", num_zone);
+            let zone_offset = num_zone as u64 * 4; // Zone0=0 (leds:5,6,7), Zone1=4 (leds: 9,10,11) ... led_num + offset
             match zone.get_status() {
                 ZoneStatus::DIW => {
-                    self.leds.set(5); self.leds.set(6); self.leds.set(7);
-                    self.relais.set(2); self.relais.set(3); self.relais.set(4);
+                    self.leds.set(5 + zone_offset)?; self.leds.set(6 + zone_offset)?; self.leds.set(7 + zone_offset)?;
+                    self.relais.set(2 + zone_offset)?; self.relais.set(3 + zone_offset)?; self.relais.set(4 + zone_offset)?;
                 }
                 ZoneStatus::AP2 => {
-                    self.leds.set(5); self.leds.set(6); self.leds.clear(7);
-                    self.relais.set(2); self.relais.set(3); self.relais.clear(4);
+                    self.leds.set(5 + zone_offset)?; self.leds.set(6 + zone_offset)?; self.leds.clear(7 + zone_offset)?;
+                    self.relais.set(2 + zone_offset)?; self.relais.set(3 + zone_offset)?; self.relais.clear(4 + zone_offset)?;
                 }
                 ZoneStatus::AP1 => {
-                    self.leds.set(5); self.leds.clear(6); self.leds.clear(7);
-                    self.relais.set(2); self.relais.clear(3); self.relais.clear(4);
+                    self.leds.set(5 + zone_offset)?; self.leds.clear(6 + zone_offset)?; self.leds.clear(7 + zone_offset)?;
+                    self.relais.set(2 + zone_offset)?; self.relais.clear(3 + zone_offset)?; self.relais.clear(4 + zone_offset)?;
                 }
-                _ => {}
+                ZoneStatus::Normal => {
+                    self.leds.clear(5 + zone_offset)?; self.leds.clear(6 + zone_offset)?; self.leds.clear(7 + zone_offset)?;
+                    self.relais.clear(2 + zone_offset)?; self.relais.clear(3 + zone_offset)?; self.relais.clear(4 + zone_offset)?;
+                }
             }
 
             for (num_kombisensor, kombisensor) in zone.get_kombisensors().iter().enumerate() {
                 debug!("\t\tCheck Kombisensor {} ...", num_kombisensor);
                 match kombisensor.get_status() {
                     KombisensorStatus::Kabelbruch => {
-                        self.leds.set(2);
+                        self.leds.set(2)?;
+                        //self.relais.clear(1)?;
                     }
                     _ => {
-                        self.leds.clear(2);
+                        self.leds.clear(2)?;
+                        //self.relais.clear(1)?;
                     }
                 }
 
-                for (num_sensor, sensor) in kombisensor.get_sensors().iter().enumerate() {
+                for (num_sensor, _sensor) in kombisensor.get_sensors().iter().enumerate() {
                     debug!("\t\t\tCheck Sensor {} ...", num_sensor);
                 }
             }
         }
+
+        Ok(())
     }
 
     /// Update Funktion des Server
