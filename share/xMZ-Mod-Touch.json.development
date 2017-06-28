@@ -1,8 +1,8 @@
 {
   "server_type": "Simulation",
   "version": "0.99.5",
-  "create_time": "2017-06-23T14:27:13.317627218Z",
-  "start_time": "2017-06-23T14:27:13.317630503Z",
+  "create_time": "2017-06-28T09:29:19.321637865Z",
+  "start_time": "2017-06-28T09:29:19.321640814Z",
   "wartungsintervall_days": 365,
   "exceptions": [],
   "zones": [
