@@ -75,7 +75,7 @@ fn generate_config(config: &Config) -> Result<()> {
 
         for num_kombisensor in 1..(config.kombisensors + 1) {
             let mut kombisensor = Kombisensor::new_with_type(kombisensor_type.clone());
-            kombisensor.set_modbus_address(num_kombisensor);
+            kombisensor.set_modbus_address(num_kombisensor + ((num_zone - 1) * 10));
             kombisensor.set_modbus_debug(config.debug);
             xmz_mod_touch_server.get_zone_mut((num_zone - 1) as usize).unwrap().add_kombisensor( kombisensor );
         }
@@ -87,6 +87,7 @@ fn generate_config(config: &Config) -> Result<()> {
 
     // Zusammenfassung ausgeben
     println!("Konfiguration:");
+    println!("Version: {}", xmz_mod_touch_server.get_version());
     println!("Umgebung '{:?}', '{}' Zonen mit je '{}' Kombisensoren", config.environment, config.num_zones, config.kombisensors);
     println!("Modbus DEBUG Modus: {}", config.debug);
     println!("nach '{}' geschrieben", config.config_file);
