@@ -1,3 +1,7 @@
+* COPYING nach LICENSE
+* Projektname xmz-mod-touch-server
+
+
 # Fehler
 
 - wird in der Konfig der NO2 Sensor ausgetragen dann findet keine Sensorauswertung mehr statt
